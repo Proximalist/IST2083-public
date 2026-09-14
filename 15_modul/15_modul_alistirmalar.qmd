@@ -1,0 +1,193 @@
+---
+title: "Modül 15 — Alıştırmalar"
+subtitle: "Quarto ile Raporlama"
+author: "Prof. Dr. Hakan Mehmetcik"
+date: today
+lang: tr
+format: pdf
+editor: visual
+---
+
+## Bu Alıştırmalar Hakkında
+
+Bu alıştırmalar **notlandırılmaz ve teslim edilmez.** Amacı, sınavdan
+önce kendi durumunuzu ölçebilmenizdir. Sınav soruları da bu biçimde
+(çoktan seçmeli, tek doğru cevap) kurgulanır.
+
+Her soru 4 şıklıdır ve yalnızca **bir tanesi** doğrudur. Sınavda
+bilgisayar olmayacak; önce kâğıt üzerinde düşünün, R'da doğrulamayı
+sonraya bırakın.
+
+Cevaplarınızı not edin, sonra `15_modul_cevap_anahtari.qmd` dosyasıyla
+karşılaştırın.
+
+------------------------------------------------------------------------
+
+## Bölüm A — YAML ve Belge Yapısı
+
+**1.** `lang: tr` alanı YAML başlığında ne işe yarar?
+
+a\) PDF motorunu LaTeX yerine Word yapar\
+b) Kod öbeklerinin Türkçe yorumlanmasını sağlar\
+c) Otomatik üretilen etiketlerin (Şekil, Tablo, İçindekiler gibi) Türkçe
+olmasını sağlar\
+d) Belgenin karakter kodlamasını UTF-8'e çevirir
+
+**2.** Bir Quarto belgesinde YAML başlığı nerede bulunmalıdır?
+
+a\) Belgenin en başında, `---` işaretleri arasında\
+b) Belgenin en sonunda\
+c) İlk kod öbeğinin içinde\
+d) Herhangi bir yerde, sırası önemli değildir
+
+**3.** Aşağıdakilerden hangisi bir Quarto belgesinin üç temel içerik
+türünden biri **değildir**?
+
+a\) YAML başlığı\
+b) Kod öbekleri\
+c) Markdown ile biçimlendirilmiş metin\
+d) Harici bir `.docx` şablonu
+
+**4.** `format: pdf` yerine `format: revealjs` yazıldığında ne değişir?
+
+a\) Belge artık render edilemez\
+b) Belge, slaytlar hâlinde bir sunuma dönüşür\
+c) Kod öbekleri artık çalıştırılmaz\
+d) YAML başlığı zorunlu olmaktan çıkar
+
+**5.** Kod öbeği eklemenin klavye kısayolu (Windows/Linux) hangisidir?
+
+a\) Ctrl+Alt+I\
+b) Ctrl+Shift+I\
+c) Ctrl+Alt+R\
+d) Ctrl+Enter
+
+## Bölüm B — Kod Öbeği Seçenekleri
+
+**6.** Bir kod öbeğine `#| eval: false` eklendiğinde ne olur?
+
+a\) Kod çalıştırılır ama sonuç gizlenir\
+b) Kod gizlenir ama sonuç gösterilir\
+c) Kod hem çalıştırılır hem gösterilir, yalnızca renklendirme kapanır\
+d) Kod çalıştırılmaz, yalnızca metin olarak gösterilir
+
+**7.** Bir paket yükleme öbeğinin (`library(...)`) raporda ne kodu ne de
+çıktısı görünsün istemiyorsunuz, ama öbeğin **çalışmasını** istiyorsunuz.
+Hangi seçenek kullanılır?
+
+a\) `echo: false`\
+b) `include: false`\
+c) `eval: false`\
+d) `message: true`
+
+**8.** `#| error: true` seçeneğinin amacı nedir?
+
+a\) Kodu tamamen gizler\
+b) Uyarı mesajlarını bastırır\
+c) Kod hata verse bile render işleminin durmasını engeller\
+d) Hata mesajını İngilizceye çevirir
+
+**9.** `echo: false` ile `include: false` arasındaki fark nedir?
+
+a\) İkisi de aynı şeyi yapar\
+b) `echo: false` kodu çalıştırmaz, `include: false` çalıştırır\
+c) `include: false` yalnızca grafiklerde geçerlidir\
+d) `echo: false` sonucu gösterir, `include: false` hiçbir şeyi göstermez
+
+**10.** Belge genelinde geçerli olacak bir varsayılan öbek seçeneği
+(örneğin tüm öbeklerde `warning: false`) nasıl ayarlanır?
+
+a\) YAML başlığındaki `execute:` bloğuna eklenerek\
+b) Her öbeğe tek tek yazılarak\
+c) Yalnızca `_quarto.yml` dosyasına eklenerek, başka yerde ayarlanamaz\
+d) RStudio ayarlar menüsünden, YAML'a dokunmadan
+
+## Bölüm C — Satır İçi Kod ve Tablolar
+
+**11.** Satır içi kod nasıl yazılır?
+
+a\) Çift ters tırnak içinde `{r}` ile\
+b) Köşeli parantez içinde `$...$` ile\
+c) Tek ters tırnak içinde, `r` ile başlayarak: `` `r ifade` ``\
+d) Süslü parantez içinde `#| inline` ile
+
+**12.** Bir raporda "örneklemde 42 ülke vardır" cümlesindeki 42 sayısını
+elle yazmak yerine satır içi kodla üretmenin temel avantajı nedir?
+
+a\) Render süresini kısaltır\
+b) Veri değiştiğinde sayı kendiliğinden güncellenir\
+c) PDF dosyasının boyutunu küçültür\
+d) LaTeX hatalarını önler
+
+**13.** `knitr::kable()` fonksiyonunda `digits = 1` argümanı ne işe
+yarar?
+
+a\) Sayısal sütunları bir ondalık basamağa yuvarlar\
+b) Tabloya bir satır daha ekler\
+c) Tablonun başlığını bir seviye küçültür\
+d) Yalnızca ilk sütunu gösterir
+
+**14.** Bir kod öbeğinin ürettiği ham veri çerçevesi çıktısı ile aynı
+verinin `knitr::kable()` ile yazdırılmış hâli arasındaki temel fark
+nedir?
+
+a\) İkisi de birebir aynı görünür\
+b) Ham çıktı yalnızca PDF'te, `kable()` yalnızca HTML'de çalışır\
+c) `kable()` veriyi değiştirir, ham çıktı değiştirmez\
+d) `kable()` biçimlendirilmiş, okunaklı bir tablo üretirken ham çıktı
+konsol biçiminde basılır
+
+## Bölüm D — Şekiller, Çapraz Başvuru ve Atıflar
+
+**15.** Bir kod öbeğinin ürettiği şekle metinden çapraz başvuru
+yapabilmek için öbek etiketi neyle başlamalıdır?
+
+a\) `img-`\
+b) `plot-`\
+c) `fig-`\
+d) `sekil-`
+
+**16.** Metinde `@fig-yasam-gsyih` yazıldığında Quarto ne yapar?
+
+a\) Bu metni olduğu gibi, değiştirmeden basar\
+b) Otomatik olarak ilgili şeklin numarasına dönüştürür ve tıklanabilir
+bir bağlantı oluşturur\
+c) Hata verir, çünkü `@` yalnızca bibliyografik atıflarda kullanılır\
+d) Şekli metnin o noktasına yeniden çizer
+
+**17.** Belgeye, mevcut üçüncü etiketli şekilden **önce** yeni bir
+etiketli şekil eklendiğinde ne olur?
+
+a\) Yeni şekil numarasız kalır\
+b) Belge render edilemez\
+c) Eski şekle yapılan tüm atıflar elle güncellenmelidir\
+d) Sonraki tüm şekil numaraları ve metindeki atıflar kendiliğinden
+güncellenir
+
+**18.** Görsel Düzenleyici'de bir Zotero kaynağı eklendiğinde bu kaynak
+nereye kaydedilir?
+
+a\) `bibliography.bib` dosyasına, arka planda otomatik olarak\
+b) Yalnızca YAML başlığına, metne değil\
+c) Kaydedilmez, yalnızca geçici olarak gösterilir\
+d) Doğrudan PDF dosyasının içine gömülür
+
+## Bölüm E — Sorun Giderme
+
+**19.** Konsolda tanımladığınız bir nesneyi kod öbeğinde kullanmaya
+çalıştığınızda "object not found" hatası alıyorsunuz. Nedeni nedir?
+
+a\) Nesne adı çok uzun\
+b) R sürümü uyumsuz\
+c) Quarto belgeyi konsoldan bağımsız, temiz bir oturumda render eder\
+d) Nesne yanlış türde tanımlanmış
+
+**20.** `read.csv("/Users/adiniz/Masaüstü/veri.csv")` yerine
+`read.csv(here::here("data", "veri.csv"))` kullanmanın temel nedeni
+nedir?
+
+a\) `here()` daha hızlı çalışır\
+b) Mutlak yol yalnızca o bilgisayarda çalışır; `here()` proje köküne
+göre yol kurar, başka bilgisayarlarda da çalışır\
+c) `here()` yalnızca Excel dosyaları için kullanılır\
+d) `read.csv()` mutlak yollarla çalışmaz

@@ -1,0 +1,153 @@
+---
+title: "Modül 14 — Alıştırmalar"
+subtitle: "Çoklu ve Sıralı Lojistik Regresyon"
+author: "Prof. Dr. Hakan Mehmetcik"
+date: today
+lang: tr
+format: pdf
+editor: visual
+---
+
+## Bu Alıştırmalar Hakkında
+
+Bu alıştırmalar **notlandırılmaz ve teslim edilmez.** Amacı, sınavdan önce kendi durumunuzu ölçebilmenizdir.
+
+Her soru 4 şıklıdır ve yalnızca **bir tanesi** doğrudur.
+
+Cevaplarınızı not edin, sonra `14_modul_cevap_anahtari.qmd` dosyasıyla karşılaştırın.
+
+------------------------------------------------------------------------
+
+## Bölüm A — Neden Bu Genişleme?
+
+**1.** `pid1` (Conservative/Labour/SNP) değişkeni neden ikili lojistik regresyona (13. modül) sığmaz?
+
+a\) Değişkende eksik veri var\
+b) Değişken sayısal değil\
+c) Değişken zaten bağımsız değişken olarak kullanılıyor, bağımlı olamaz\
+d) Değişkenin ikiden fazla kategorisi var ve aralarında doğal bir sıralama yok
+
+**2.** `trust` değişkeni ile `pid1` arasındaki temel ölçek farkı nedir?
+
+a\) `trust`'ın kategorileri sıralıdır (ordinal), `pid1`'in kategorileri sıralı değildir (nominal)\
+b) `pid1` sayısal bir değişkendir\
+c) İkisi de aynı türdendir\
+d) `trust` sürekli, `pid1` kategoriktir
+
+------------------------------------------------------------------------
+
+## Bölüm B — Çoklu Lojistik Regresyonun Mantığı
+
+**3.** Bağımlı değişkenin $K=4$ kategorisi olsaydı, çoklu lojistik regresyon kaç ayrı log-odds denklemi kurardı?
+
+a\) $1$\
+b) $4$\
+c) $K^2$\
+d) $3$
+
+**4.** Çoklu lojistik regresyonda her denklem hangi karşılaştırmayı ifade eder?
+
+a\) O kategorinin genel popülasyona göre olasılığını\
+b) Tüm kategoriler arasındaki ortalama farkı\
+c) O kategorinin **referans kategoriye göre** log-odds'unu\
+d) Değişkenin varyansını
+
+**5.** `multinom()` çıktısında $e^{\beta}$ değerine ne ad verilir?
+
+a\) Korelasyon katsayısı\
+b) Göreli risk oranı (RRR)\
+c) Odds oranı\
+d) VIF
+
+------------------------------------------------------------------------
+
+## Bölüm C — R Sözdizimi ve p-değeri
+
+**6.** `nnet::multinom()`'u `glm()`'den ayıran temel fark nedir?
+
+a\) `multinom()`'da `~` operatörü kullanılmaz\
+b) `multinom()` yalnızca ikili bağımlı değişkenlerle çalışır\
+c) `multinom()` `data =` argümanını kabul etmez\
+d) `multinom()`'da `family` argümanı yoktur; ayrı bir paketten gelen ayrı bir fonksiyondur
+
+**7.** `summary(model_multi)` çıktısı doğrudan neyi **vermez**?
+
+a\) p-değerlerini\
+b) Değişken isimlerini\
+c) Katsayıları\
+d) Standart hataları
+
+**8.** p-değerini `z <- katsayı/standart_hata` ve `p <- (1 - pnorm(abs(z))) * 2` ile hesaplarken, sondaki `* 2` neyi sağlar?
+
+a\) Standart hatayı ölçeklendirir\
+b) Örneklem büyüklüğünü düzeltir\
+c) Testin iki yönlü (two-tailed) olmasını sağlar\
+d) Herhangi bir işlevi yoktur, ihmal edilebilir
+
+------------------------------------------------------------------------
+
+## Bölüm D — RRR ve Tahmin
+
+**9.** Bir modelde $RRR = 3$ bulunmuştur. Bu ne anlama gelir?
+
+a\) Model güvenilmezdir\
+b) O kategoride olmanın **referans kategoriye göre göreli odds'u** üç kattır\
+c) O kategoride olma **olasılığı** %3'tür\
+d) O kategoride olma **olasılığı** üç kattır
+
+**10.** `predict(model_multi, newdata = ..., type = "probs")` çıktısındaki sayıların toplamı ne olmalıdır?
+
+a\) $0$\
+b) Kategorinin sayısı kadar\
+c) Belirsiz, veri setine göre değişir\
+d) $1$
+
+**11.** `type = "probs"` ile `type = "class"` arasındaki fark nedir?
+
+a\) `probs` her kategori için bir olasılık verir, `class` yalnızca en yüksek olasılıklı tek kategoriyi döndürür\
+b) `probs` yalnızca referans kategorinin olasılığını verir\
+c) `class` yalnızca ikili bağımlı değişkenlerde çalışır\
+d) İkisi aynı sonucu farklı biçimde gösterir
+
+------------------------------------------------------------------------
+
+## Bölüm E — Sıralı Lojistik Regresyonun Mantığı
+
+**12.** Sıralı lojistik regresyon, olasılığı hangi biçimde modeller?
+
+a\) Kümülatif olarak: "$j$. kategori veya altında olma" olasılığının log-odds'u\
+b) Her kategori için ayrı, birbirinden bağımsız bir olasılık\
+c) Yalnızca en yüksek ve en düşük kategoriler arasındaki farkı\
+d) Sürekli bir doğrusal fonksiyon olarak (`lm()` gibi)
+
+**13.** "Orantılı odds varsayımı" ne anlama gelir?
+
+a\) Bağımlı değişkenin ortalaması sıfırdır\
+b) Model yalnızca iki kategoriyle çalışır\
+c) Bağımsız değişkenlerin katsayıları, ölçeğin tüm eşikleri için **aynı** kabul edilir\
+d) Her eşiğin (cutpoint) kendine özgü, birbirinden bağımsız katsayıları vardır
+
+**14.** `MASS::polr()` bu varsayımı nasıl ele alır?
+
+a\) Otomatik olarak test eder ve uyarı verir\
+b) Varsayım yalnızca `Hess = TRUE` verildiğinde devreye girer\
+c) Varsayımı doğrudan modele gömer, ayrıca **sınamaz**\
+d) Varsayımı asla yapmaz
+
+------------------------------------------------------------------------
+
+## Bölüm F — `polr()` Sözdizimi ve Yorumlama
+
+**15.** `polr()` çağrısında `Hess = TRUE` unutulursa ne olur?
+
+a\) Katsayılar yanlış işaretli çıkar\
+b) Model kurulur ama `summary()` standart hataları (dolayısıyla p-değerlerini) hesaplayamaz\
+c) Model hiç kurulmaz, hata verir\
+d) Yalnızca görselleştirme etkilenir
+
+**16.** `exp(coef(model_ord))` ile hesaplanan değerler için hangi ifade doğrudur?
+
+a\) Bunlar RRR değerleridir, odds oranı değildir\
+b) Bunlar açıklayıcı değişkenlerin katsayılarının üsteli olan odds oranlarıdır; eşikler ayrı tutulur\
+c) Bunlar eşik (`zeta`/intercept) değerlerinin üstelidir\
+d) `coef()` `polr` nesnelerinde çalışmaz

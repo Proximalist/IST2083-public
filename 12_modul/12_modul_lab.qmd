@@ -1,0 +1,162 @@
+---
+title: "Modül 12 — Rehberli Laboratuvar"
+subtitle: "Çoklu Doğrusal Regresyon"
+author: "Prof. Dr. Hakan Mehmetcik"
+date: "`r Sys.Date()`"
+lang: tr
+format: pdf
+editor: visual
+execute:
+  echo: true
+  warning: true
+  message: false
+  cache: false
+df-print: kable
+knitr:
+  opts_chunk:
+    dev: "cairo_pdf"
+---
+
+## Bu Belge Nedir?
+
+Bu bir **sınav provası değildir**; ders saatinde birlikte, bilgisayar başında yapılacak bir uygulama defteridir. Notlandırılmaz.
+
+Belge iki bölümden oluşur:
+
+-   **Görevler** (Bölüm A–D): `____` gördüğünüz yerleri siz dolduracaksınız. Kodlar render sırasında çalıştırılmaz.
+-   **Çözümler** (belgenin sonu): tüm görevlerin çalışan hâli.
+
+Bu modülde `car::vif()` kullanılacak. Paketin kurulu olduğundan emin olun (`Rscript scripts/paketler.R`).
+
+------------------------------------------------------------------------
+
+## Bölüm A — Paralel Eğimler Modeli
+
+Ders notundaki Tayvan emlak veri setini kullanacağız.
+
+### Görev A1 — Veriyi yükleyin ve modeli kurun
+
+```{r}
+#| eval: false
+library(dplyr); library(here); library(fst)
+taiwan_real_estate <- read_fst(here("data", "____"))
+
+mdl_both <- lm(price_twd_msq ~ ____ + ____ + 0, data = taiwan_real_estate)
+summary(mdl_both)
+```
+
+**Yorumunuz:** `0-15 yaş` grubu ile `30-45 yaş` grubunun kesme noktalarını karşılaştırın — hangisi daha yüksek?
+
+------------------------------------------------------------------------
+
+## Bölüm B — Çoklu Doğrusallık ve VIF
+
+### Görev B1 — İki sürekli değişkenli model
+
+```{r}
+#| eval: false
+mdl_2cont <- lm(price_twd_msq ~ n_convenience + ____, data = taiwan_real_estate)
+summary(mdl_2cont)
+
+cor(taiwan_real_estate$n_convenience, taiwan_real_estate$____)
+```
+
+### Görev B2 — VIF hesaplayın
+
+```{r}
+#| eval: false
+library(car)
+vif(____)
+```
+
+**Yorumunuz:** VIF değerleri 5'in altında mı? Bu, iki değişkeni birlikte kullanmanın güvenli olduğu anlamına mı gelir?
+
+------------------------------------------------------------------------
+
+## Bölüm C — Kategorik Değişken: Dummy Kodlama
+
+`data/Fish.csv` içindeki balık veri setini kullanın (yalnızca Bream, Perch, Pike, Roach türleri).
+
+### Görev C1 — Sıfır kesişimli model
+
+```{r}
+#| eval: false
+fish <- read.csv(here("data", "Fish.csv"))
+fish <- fish[fish$Species %in% c("Bream", "Perch", "Pike", "Roach"), ]
+
+model_no_intercept <- lm(Weight ~ ____ + 0, data = fish)
+summary(model_no_intercept)
+```
+
+**Yorumunuz:** Hangi tür en ağır, hangisi en hafif tahmin ediliyor?
+
+------------------------------------------------------------------------
+
+## Bölüm D — Tahmin Yapmak
+
+### Görev D1 — Yeni bir gözlem için tahmin
+
+Bölüm A'daki paralel eğimler modelini kullanarak, `15-30 yaş` grubunda ve yakınında **8 market** bulunan bir ev için fiyat tahmini yapın.
+
+```{r}
+#| eval: false
+yeni_ev <- data.frame(n_convenience = ____,
+                       house_age_years = "____")
+predict(mdl_both, newdata = yeni_ev)
+```
+
+**Yorumunuz:** Bu tahmin, ders notundaki Örnek 5 ve Örnek 6'nın **ayrı ayrı** verdiği tahminlerden nasıl farklıdır?
+
+------------------------------------------------------------------------
+
+## Çözümler
+
+### A1
+
+```{r}
+library(dplyr); library(here); library(fst)
+taiwan_real_estate <- read_fst(here("data", "taiwan_real_estate.fst"))
+
+mdl_both <- lm(price_twd_msq ~ n_convenience + house_age_years + 0,
+               data = taiwan_real_estate)
+summary(mdl_both)
+```
+
+`0-15 yaş` grubunun kesme noktası ($\approx 9.41$), `30-45 yaş` grubunundan ($\approx 7.51$) daha yüksektir — market sayısı sabit tutulduğunda en yeni evler en pahalı grup.
+
+### B1–B2
+
+```{r}
+mdl_2cont <- lm(price_twd_msq ~ n_convenience + dist_to_mrt_m,
+                data = taiwan_real_estate)
+summary(mdl_2cont)
+
+cor(taiwan_real_estate$n_convenience, taiwan_real_estate$dist_to_mrt_m)
+
+library(car)
+vif(mdl_2cont)
+```
+
+VIF $\approx 1.57$, 5'in çok altında. Bu, $-0.60$'lık orta düzey korelasyona rağmen iki değişkeni birlikte kullanmanın katsayı tahminlerini ciddi biçimde kararsızlaştırmadığı anlamına gelir.
+
+### C1
+
+```{r}
+fish <- read.csv(here("data", "Fish.csv"))
+fish <- fish[fish$Species %in% c("Bream", "Perch", "Pike", "Roach"), ]
+
+model_no_intercept <- lm(Weight ~ Species + 0, data = fish)
+summary(model_no_intercept)
+```
+
+En ağır tahmin edilen tür **Pike** ($\approx 718.7$ gram), en hafif **Roach** ($\approx 152.1$ gram).
+
+### D1
+
+```{r}
+yeni_ev <- data.frame(n_convenience = 8,
+                       house_age_years = "15 to 30")
+predict(mdl_both, newdata = yeni_ev)
+```
+
+Bu tahmin, hem yaş grubunu hem de market sayısını **aynı anda** hesaba katar; Örnek 5 (yalnızca market sayısı) ve Örnek 6 (yalnızca yaş grubu) ayrı ayrı bu ikisinden birini göz ardı ediyordu. Çoklu regresyonun temel kazanımı budur: birden fazla bilgiyi tek bir tahminde birleştirmek.

@@ -1,0 +1,208 @@
+---
+title: "Modül 07 — Alıştırmalar"
+subtitle: "Örnekleme ve Örneklem Dağılımı"
+author: "Prof. Dr. Hakan Mehmetcik"
+date: today
+lang: tr
+format: pdf
+editor: visual
+execute:
+  echo: true
+  warning: true
+  message: false
+  cache: false
+df-print: kable
+---
+
+## Bu Alıştırmalar Hakkında
+
+Bu alıştırmalar **notlandırılmaz ve teslim edilmez.** Amacı, sınavdan
+önce kendi durumunuzu ölçebilmenizdir. Sınav soruları da bu biçimde
+(çoktan seçmeli, tek doğru cevap) kurgulanır.
+
+Her soru 4 şıklıdır ve yalnızca **bir tanesi** doğrudur.
+
+Cevaplarınızı not edin, sonra `07_modul_cevap_anahtari.qmd` dosyasıyla
+karşılaştırın.
+
+------------------------------------------------------------------------
+
+## Bölüm A — Popülasyon Parametresi ve Örneklem İstatistiği
+
+**1.** Aşağıdakilerden hangisi bir **popülasyon parametresi**
+örneğidir?
+
+a\) Bir sınıftan rastgele seçilen 10 öğrencinin ortalama notu\
+b) Anket şirketinin aradığı 1000 kişilik grubun ortalama geliri\
+c) Bir ülkedeki **tüm** yetişkinlerin ortalama geliri\
+d) `gapminder`'dan rastgele çekilen 20 ülkenin ortalama yaşam
+beklentisi
+
+**2.** $\bar{x}$ sembolü neyi ifade eder?
+
+a\) Örneklem büyüklüğünü\
+b) Popülasyon standart sapmasını\
+c) Popülasyon ortalamasını\
+d) Örneklem ortalamasını
+
+**3.** "Örnekleme hatası" ifadesi neyi anlatır?
+
+a\) Veri setinde eksik (`NA`) gözlem bulunması\
+b) Kodda yapılan bir yazım hatası\
+c) Yanlış bir örnekleme yöntemi seçilmesi\
+d) Örneklem istatistiğinin, tesadüfen hangi birimlerin seçildiğine
+bağlı olarak popülasyon parametresinden sapması
+
+**4.** `gapminder`'ın 2007 kesitinden rastgele 20 ülke seçip ortalama
+yaşam beklentisini hesapladığınızda elde ettiğiniz sayı nedir?
+
+a\) Bir örneklem istatistiği\
+b) Bir güven aralığı\
+c) Bir popülasyon parametresi\
+d) Bir standart hata
+
+## Bölüm B — Örnekleme Yöntemleri
+
+**5.** *Literary Digest*'in 1936 seçim tahmininin başarısız olmasının
+**temel** nedeni neydi?
+
+a\) İstatistiksel hesaplamalarda yapılan bir aritmetik hata\
+b) Örneklem büyüklüğünün çok küçük olması\
+c) Örneklem çerçevesinin (otomobil/telefon/kulüp kayıtları) popülasyonu
+temsil etmemesi ve yanıt vermeme yanlılığı\
+d) Seçim gününün hava koşullarının kötü olması
+
+**6.** Bir araştırmacı, ülkeleri kıtalara göre gruplayıp her kıtadan
+orantılı sayıda ülke seçiyor. Bu hangi örnekleme yöntemidir?
+
+a\) Kolayda örnekleme\
+b) Kümeleme (cluster) örnekleme\
+c) Tabakalı örnekleme\
+d) Basit rastgele örnekleme
+
+**7.** Bir araştırmacı rastgele birkaç kıta seçip, o kıtalardaki
+**tüm** ülkeleri incelemeye karar veriyor. Bu hangi yöntemdir?
+
+a\) Amaçlı örnekleme\
+b) Küme (cluster) örnekleme\
+c) Sistematik örnekleme\
+d) Tabakalı örnekleme
+
+**8.** Aşağıdakilerden hangisi **rastgele olmayan** bir örnekleme
+yöntemidir?
+
+a\) Küme örnekleme\
+b) Kartopu (snowball) örnekleme\
+c) Basit rastgele örnekleme\
+d) Sistematik örnekleme
+
+**9.** R'da `group_by(continent) |> slice_sample(n = 3)` kodu ne
+yapar?
+
+a\) Yalnızca ilk 3 kıtayı seçer\
+b) **Her kıtadan ayrı ayrı** rastgele 3 ülke seçer (tabakalı
+örneklemenin R'daki karşılığı)\
+c) Veri setini kıtaya göre sıralar, hiçbir seçim yapmaz\
+d) Tüm veri setinden rastgele 3 satır seçer
+
+**10.** Bir tabakada (örneğin Okyanusya, yalnızca 2 ülke) istenen
+örneklem büyüklüğünden (örneğin 3) daha az birim varsa, `replace =
+FALSE` ile ne olur?
+
+a\) O tabakadaki **mevcut tüm birimler** seçilir\
+b) O tabaka örneklemden tamamen çıkarılır\
+c) Eksik birimler otomatik olarak `NA` ile doldurulur\
+d) R hata verir ve kod çalışmaz
+
+## Bölüm C — R'da Örnekleme Mekaniği
+
+**11.** `sample(x, size = 5, replace = FALSE)` ile
+`sample(x, size = 5, replace = TRUE)` arasındaki fark nedir?
+
+a\) İlkinde aynı birim birden fazla kez seçilemez, ikincisinde
+seçilebilir\
+b) İkisi arasında fark yoktur\
+c) İlki yalnızca sayısal verilerde çalışır\
+d) İlkinde 5 birim seçilir, ikincisinde 10 birim seçilir
+
+**12.** `set.seed(2027)` satırının amacı nedir?
+
+a\) Rastgele işlemin her çalıştırmada aynı sonucu üretmesini sağlamak\
+b) Popülasyonu küçültmek\
+c) Örneklem büyüklüğünü sabitlemek\
+d) Kodun çalışma hızını artırmak
+
+**13.** Aynı `set.seed()` değeriyle art arda iki kez
+`sample(gapminder$country, size = 5)` çalıştırırsanız ne olur?
+
+a\) R hata verir, aynı seed iki kez kullanılamaz\
+b) İlk seferde 5, ikinci seferde 10 ülke gelir\
+c) Her iki seferde de **birebir aynı** 5 ülke gelir\
+d) Her seferinde farklı 5 ülke gelir
+
+## Bölüm D — Örnekleme Dağılımı ve Merkezi Limit Teoremi
+
+**14.** "Örnekleme dağılımı" neyi ifade eder?
+
+a\) Bir örneklemdeki tek tek gözlemlerin dağılımı\
+b) Aynı popülasyondan tekrar tekrar çekilen örneklemlerin
+istatistiklerinin (örneğin ortalamalarının) dağılımı\
+c) Popülasyonun kendi dağılımı\
+d) Bir değişkenin zamanla nasıl değiştiği
+
+**15.** Merkezi Limit Teoremi'ne göre, örneklem büyüklüğü yeterince
+büyüdüğünde örnekleme dağılımı nasıl bir şekil alır?
+
+a\) Yalnızca popülasyon zaten normalse normal olur\
+b) Her zaman sağa çarpık olur\
+c\) Popülasyonun dağılımı ne olursa olsun, yaklaşık normal dağılım
+alır\
+d) Popülasyonla birebir aynı şekli alır
+
+**16.** Standart hata ($\sigma / \sqrt{n}$) formülüne göre, örneklem
+büyüklüğü ($n$) 4 katına çıkarılırsa standart hata nasıl değişir?
+
+a\) Değişmez\
+b) Yarıya iner (2'ye bölünür)\
+c\) 4 katına çıkar\
+d\) 4'e bölünür
+
+**17.** `gapminder`'ın 2007 kişi başı GSYİH'si (`gdpPercap`) **sağa
+çarpık** bir popülasyondur (birkaç zengin ülke ortalamayı yukarı
+çeker). n = 2 gibi çok küçük bir örneklem büyüklüğüyle inşa edilen
+örnekleme dağılımı için ne beklenir?
+
+a\) Örnekleme dağılımı da popülasyonun çarpıklığından iz taşır — CLT
+henüz tam "devreye girmemiştir"\
+b) Örnekleme dağılımı hesaplanamaz\
+c\) Popülasyon çarpık olsa bile örnekleme dağılımı anında mükemmel
+normal olur\
+d\) Örnekleme dağılımı sola çarpık olur
+
+**18.** Merkezi Limit Teoremi'nin **en dikkat çekici** yönü nedir?
+
+a\) Örneklem büyüklüğünden bağımsız olarak her zaman aynı sonucu
+vermesi\
+b) Yalnızca normal dağılımlı popülasyonlar için geçerli olması\
+c\) Yalnızca çok büyük popülasyonlar için geçerli olması\
+d\) Popülasyonun dağılımı ne olursa olsun (çarpık dahil) örnekleme
+dağılımının normale yaklaşması
+
+**19.** Bir örnekleme dağılımının **ortalaması** ile ilgili aşağıdaki
+ifadelerden hangisi doğrudur?
+
+a\) Örneklem büyüklüğünden bağımsız olarak sıfırdır\
+b) Her zaman popülasyon ortalamasından çok farklıdır\
+c\) Yalnızca $n \geq 100$ olduğunda popülasyon ortalamasına eşit olur\
+d\) Popülasyon ortalamasına eşittir
+
+**20.** Bu modülde örnekleme dağılımını `gapminder` popülasyonunun
+**tamamına erişimimiz olduğu için** simülasyonla inşa ettik. Gerçek
+araştırmada popülasyona erişimimiz olmadığında, örnekleme dağılımını
+tahmin etmenin bir yolu olarak bu derste **isim düzeyinde** tanıtılan
+yöntem hangisidir?
+
+a\) Ki-kare testi\
+b\) ANOVA\
+c\) Regresyon analizi\
+d\) Bootstrap

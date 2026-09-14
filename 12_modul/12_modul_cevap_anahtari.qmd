@@ -1,0 +1,63 @@
+---
+title: "Modül 12 — Cevap Anahtarı"
+subtitle: "Çoklu Doğrusal Regresyon"
+author: "Prof. Dr. Hakan Mehmetcik"
+date: today
+lang: tr
+format: pdf
+editor: visual
+---
+
+## Bölüm A — Çoklu Regresyona Giriş
+
+**1. Doğru cevap: a)** Çoklu doğrusal regresyonu basit regresyondan ayıran şey, birden fazla açıklayıcı değişkenin **aynı anda** modele girmesidir; bağımlı değişken sayısı gene birdir.
+
+**2. Doğru cevap: c)** `n_convenience` ve `dist_to_mrt_m` fiyat hakkında kısmen örtüşen ama kısmen farklı bilgi taşır; birlikte kullanıldıklarında modelin açıkladığı toplam varyans, ikisinin ayrı ayrı açıkladığından fazla olabilir (ama toplamlarından fazla olamaz — bkz. Soru 9-10'daki VIF mantığı).
+
+## Bölüm B — Paralel Eğimler Modeli
+
+**3. Doğru cevap: d)** `+ 0`, genel bir kesme noktası yerine her kategori (burada yaş grubu) için ayrı bir kesme noktası tahmin ettirir; sıfır kesişimli parametrelendirme olarak adlandırılır.
+
+**4. Doğru cevap: b)** Model, her kategori için farklı bir kesme noktasına izin verir ama sürekli açıklayıcı değişkenin (`n_convenience`) eğimini tüm kategoriler için sabit tutar — grafikte bu, birbirine paralel doğrular olarak görünür.
+
+**5. Doğru cevap: b)** Tahmin $= 9.41 + 0.79 \times 4 = 9.41 + 3.16 = 12.57$.
+
+**6. Doğru cevap: c)** `n_convenience` katsayısının paralel eğimler modelinde ($0.79$) tek-değişkenli modeldekine ($0.80$) çok yakın kalması, `n_convenience` ile `house_age_years` arasında güçlü bir ilişki olmadığının bir işaretidir — birbirlerinin bilgisini fazla "çalmıyorlar".
+
+## Bölüm C — Çoklu Doğrusallık ve VIF
+
+**7. Doğru cevap: b)** İki açıklayıcı değişken korelasyonluysa, birlikte modele girdiklerinde her biri artık diğerinin de taşıdığı bilgiyi paylaştığından, katsayı tahminleri tek-değişkenli modellerdeki değerlerinden farklılaşabilir (genelde küçülür).
+
+**8. Doğru cevap: a)** VIF, bir açıklayıcı değişkenin modeldeki diğer açıklayıcı değişkenler tarafından ne ölçüde açıklandığını (dolayısıyla o değişkenin katsayı tahmininin ne kadar "şiştiğini"/kararsızlaştığını) ölçer.
+
+**9. Doğru cevap: a)** $1.57$, yaygın kullanılan eşiklerin (VIF $>5$ dikkat, VIF $>10$ ciddi sorun) belirgin biçimde altındadır.
+
+**10. Doğru cevap: a)** Korelasyon varlığı tek başına ciddi bir çoklu doğrusallık sorununa işaret etmez; VIF, bu korelasyonun katsayı kararlılığını fiilen ne kadar etkilediğini doğrudan gösteren ölçüttür — bu modülün Örnek 7'sindeki temel ders budur ($r \approx -0.60$ olmasına rağmen VIF düşük çıkmıştır).
+
+## Bölüm D — Kategorik Değişkenler ve Dummy Kodlama
+
+**11. Doğru cevap: d)** Kategoriler (örn. balık türleri) arasında sayısal bir mesafe/sıra anlamı yoktur; model bunları doğrudan sayıya çevirip kullansa, anlamsız bir "eğim" (bir kategoriden diğerine "1 birim artış") üretirdi. Bu yüzden dummy değişkenlere dönüştürülürler.
+
+**12. Doğru cevap: b)** Kesme noktalı (referans kategorili) modelde her kategorinin katsayısı, referans kategoriye göre **fark**tır — kategorinin mutlak değeri değil.
+
+**13. Doğru cevap: c)** `+ 0` ile kesme noktası kaldırıldığında, her kategori kendi **doğrudan** tahmini ortalamasını katsayı olarak alır; artık bir referansa göre fark değildir.
+
+**14. Doğru cevap: d)** Kesme noktalı modelde referans tür (Bream) kesme noktası olur, diğer türler ona göre fark olarak raporlanır; bazı türlerin bu farkı Bream'in kendi ağırlığından büyük çıktığında, o türün "toplam" ağırlığı (kesme noktası + fark) fiziksel olarak anlamsız (negatif) görünebilir. Çözüm, sıfır kesişimli modele geçmektir (Soru 13).
+
+## Bölüm E — Model Karşılaştırma ve Tahmin
+
+**15. Doğru cevap: c)** Adjusted $R^2$, gereksiz değişken eklemeyi cezalandıracak şekilde düzeltilmiştir; iki model karşılaştırılırken daha yüksek olan genellikle tercih edilir.
+
+**16. Doğru cevap: b)** `predict()`, verilen açıklayıcı değişken değerleri (burada hem `n_convenience` hem `house_age_years`) için modelin ürettiği tahmini fiyatı hesaplar; tüm terimler hesaba katılır.
+
+**17. Doğru cevap: d)** Çoklu regresyonun kazanımı, tek bir değişkenin veremeyeceği kadar bütüncül — birden fazla faktörü aynı anda hesaba katan — bir tahmin/yorum sunmasıdır; $R^2$ artışı garanti değildir (yalnızca değişken faydalıysa artar) ve hesaplama karmaşıklığı da basit regresyondan fazladır.
+
+**18. Doğru cevap: d)** Ders notu bu varsayımı olduğu gibi bırakmaz: `n_convenience * house_age_years` etkileşim modeli kurulup `anova()` ile paralel eğimler modeliyle karşılaştırılmıştır (bkz. Soru 19).
+
+## Bölüm F — Etkileşim, Referans Kategori ve Standartlaştırma
+
+**19. Doğru cevap: a)** $p \approx 0.36 > 0.05$ olduğundan, etkileşim terimlerinin modele eklenmesi istatistiksel olarak anlamlı bir iyileşme sağlamamıştır; bu durumda daha basit (yorumlaması daha kolay) paralel eğimler modelini tercih etmek savunulabilir bir seçimdir — "her zaman en karmaşık model daha iyidir" varsayımına karşı bir örnektir.
+
+**20. Doğru cevap: c)** Kesme noktalı (referans kategorili) modelde her kategorinin katsayısı, referans kategoriye göre bir **fark**tır — mutlak bir değer değil. `-2.76`, `15-30 yaş` grubunun referans olan `0-15 yaş` grubuna göre ne kadar ucuz olduğunu gösterir.
+
+**21. Doğru cevap: b)** Farklı birimlerdeki (market sayısı vs. metre) değişkenlerin ham katsayıları doğrudan kıyaslanamaz. Standartlaştırma (Z-skoru, bkz. 9. modül), her değişkeni ortak bir ölçeğe (1 standart sapma) taşıyarak "hangi değişken daha etkili?" sorusuna adil bir cevap verilmesini sağlar.

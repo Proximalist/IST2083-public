@@ -1,0 +1,364 @@
+---
+title: "R Hızlı Referans"
+subtitle: "IST2083 boyunca öğrenilen R sözdizimi — kümülatif başvuru belgesi"
+author: "Prof. Dr. Hakan Mehmetcik"
+date: today
+lang: tr
+format:
+  html:
+    toc: true
+    toc-depth: 2
+  pdf:
+    toc: true
+    toc-depth: 2
+editor: visual
+execute:
+  echo: true
+  eval: false
+  warning: true
+  message: false
+  cache: false
+df-print: kable
+---
+
+## Bu Belge Nedir?
+
+Bu, **her hafta büyüyen** bir başvuru belgesidir. Yeni bir ders notunda
+yeni bir R fonksiyonu veya sözdizimi geçtiğinde, buraya kısa bir girişle
+eklenir. Amaç: 9. oturumda bir sözdiziminin nasıl yazıldığını
+unuttuğunuzda, o oturumun ders notunu baştan açmak yerine buraya bakıp
+tek satırda hatırlamanız.
+
+::: callout-important
+**Bu belgedeki kod örnekleri çalıştırılmaz** (render sırasında
+işletilmez) — bunlar birbirinden bağımsız, kısa hatırlatma parçalarıdır,
+tam bir script değildir. Çalışan, açıklamalı örnekler için ilgili
+oturumun ders notuna bakınız; her girişte hangi oturumda işlendiği
+belirtilmiştir.
+:::
+
+Her giriş şu düzendedir: **ne işe yarar**, kısa örnek, hangi oturumda
+tanıtıldı.
+
+------------------------------------------------------------------------
+
+# Operatörler
+
+## Aritmetik
+
+```r
+5 + 3    # toplama
+5 - 3    # çıkarma
+5 * 3    # çarpma
+5 / 3    # bölme
+2 ^ 3    # üs alma
+5 %% 3   # modülüs (kalan)
+5 %/% 3  # tam bölme
+```
+
+*1. oturum*
+
+## Karşılaştırma
+
+```r
+5 == 3   # eşit mi?
+5 != 3   # eşit değil mi?
+5 > 3; 5 < 3
+5 >= 3; 5 <= 3
+```
+
+*1. oturum*
+
+## Mantıksal
+
+```r
+TRUE & FALSE    # VE (vektörel — tüm elemanları karşılaştırır)
+TRUE && FALSE   # VE (yalnızca ilk elemanı karşılaştırır)
+TRUE | FALSE    # VEYA (vektörel)
+TRUE || FALSE   # VEYA (yalnızca ilk eleman)
+!TRUE           # DEĞİL
+```
+
+*1. oturum*
+
+## Diğer
+
+```r
+1:10               # ardışık sayı dizisi (kolon operatörü)
+seq(1, 10, by = 2) # dizi oluşturma, adım belirterek
+rep(1:3, times = 3) # tekrar
+3 %in% c(1, 2, 3)  # üyelik sorgusu — sağdaki vektörde var mı?
+```
+
+*1. oturum*
+
+------------------------------------------------------------------------
+
+# Değişkenler ve Atama
+
+```r
+x <- 10   # standart atama (tercih edilen)
+y = 20    # de çalışır, ama R camiasında <- yaygın
+```
+
+*1. oturum*
+
+R'da temel veri türleri: sayısal (`numeric`), karakter (`character`),
+mantıksal (`logical`). Bir değişkenin türünü öğrenmek için:
+
+```r
+class(x)
+```
+
+*2. oturum*
+
+------------------------------------------------------------------------
+
+# Veri Yapıları
+
+## Vektör
+
+Aynı türden elemanların sıralı listesi.
+
+```r
+v <- c(1, 2, 3, 4, 5)     # sayısal vektör
+k <- c("a", "b", "c")     # karakter vektör
+m <- c(TRUE, FALSE, TRUE) # mantıksal vektör
+
+v[2]          # 2. elemana eriş
+v[2] <- 10    # 2. elemanı güncelle
+sum(v)        # elemanların toplamı
+```
+
+*2. oturum*
+
+## Liste
+
+Farklı türden elemanları bir arada tutar.
+
+```r
+l <- list(sayi = 5, mesaj = "Merhaba", bayrak = TRUE)
+
+l$sayi          # elemana isimle eriş
+l$sayi <- 10    # güncelle
+l$yeni <- "ek"  # yeni eleman ekle
+l$yeni <- NULL  # elemanı sil
+```
+
+*2. oturum*
+
+## Matris
+
+Aynı türden, satır-sütun düzeninde iki boyutlu veri.
+
+```r
+mat <- matrix(1:6, nrow = 2, ncol = 3)
+
+mat[1, 2]   # 1. satır, 2. sütun
+mat[2, ]    # 2. satırın tamamı
+mat[, 3]    # 3. sütunun tamamı
+
+mat1 %*% mat2   # matris çarpımı (eleman eleman değil!)
+```
+
+*2. oturum*
+
+## Veri Çerçevesi (Data Frame)
+
+Farklı türden sütunları olan tablo — en çok kullanacağınız yapı.
+
+```r
+df <- data.frame(
+  sayi = c(1, 2, 3),
+  harf = c("a", "b", "c")
+)
+
+df[1, 2]       # 1. satır, 2. sütun
+df$sayi        # bir sütunun tamamı (isimle)
+df$sayi[2]     # bir sütunun belirli bir elemanı
+
+df$yeni <- c(10, 20, 30)          # yeni sütun ekle
+df <- rbind(df, list(4, "d", 40)) # yeni satır ekle
+```
+
+*2. oturum*
+
+## Faktör (kategorik değişken)
+
+Sonlu bir kategori kümesi; sosyal bilimde en sık kullanılan tür.
+
+```r
+rejim <- factor(c("Demokrasi", "Otokrasi", "Melez", "Demokrasi"))
+
+levels(rejim)      # kategorilerin kümesi (tekrarsız)
+table(rejim)       # frekans sayımı
+nlevels(rejim)     # kaç kategori var
+
+# Sıralı faktör: hiyerarşiyi siz tanımlarsınız
+egitim <- factor(c("Lisans", "Lise", "Doktora"),
+                 levels  = c("Lise", "Lisans", "Yüksek Lisans", "Doktora"),
+                 ordered = TRUE)
+egitim[1] > egitim[2]              # TRUE
+
+# TUZAK: faktörü sayıya çevirirken
+as.numeric(faktor)                 # seviye NUMARASI — genellikle yanlış
+as.numeric(as.character(faktor))   # gerçek değer — doğrusu
+```
+
+*2. oturum*
+
+------------------------------------------------------------------------
+
+## Tür zorlaması ve eksik veri
+
+```r
+class(c(1, 2, "üç"))     # "character" — tek metin tüm vektörü çevirir
+class(c(1, 2, TRUE))     # "numeric"   — TRUE, 1 olarak okunur
+sum(c(TRUE, TRUE, FALSE))# 2           — koşulu kaç eleman sağlıyor
+sum(x > 60)              # aynı mantık: kaç eleman 60'tan büyük
+
+# Hiyerarşi: logical -> integer -> double -> character
+
+5 + NA                   # NA — bilinmeyene ekleme yine bilinmez
+NA == NA                 # NA — TRUE değil!
+is.na(x)                 # eksik değerleri BÖYLE ararsınız
+sum(is.na(x))            # kaç eksik var
+mean(x, na.rm = TRUE)    # eksikleri dışlayarak hesapla
+```
+
+*2. oturum*
+
+------------------------------------------------------------------------
+
+## Mantıksal indeksleme
+
+Köşeli parantezin içine konum numarası yerine bir **koşul** yazarsanız,
+R önce koşulu her eleman için sınayıp bir `TRUE`/`FALSE` **maskesi**
+üretir, sonra `TRUE` olan konumları tutar.
+
+```r
+v <- c(4, 7, 2, 9, 5)
+
+v > 5                  # maske: FALSE TRUE FALSE TRUE FALSE
+v[v > 5]               # 7 9
+v[v > 3 & v < 9]       # 4 7 5      (VE)
+v[v > 8 | v < 3]       # 2 9        (VEYA)
+v[!(v == 2)]           # 4 7 9 5    (DEĞİL)
+
+df[df$sayi > 1, ]      # koşulu sağlayan SATIRLAR
+df[df$sayi > 1, "harf"] # koşulu sağlayan satırların bir sütunu
+```
+
+Virgül kritiktir: öncesi satırları, sonrası sütunları seçer.
+Eşitlik sınaması daima `==` iledir; `=` atama içindir.
+
+*2. oturum*
+
+------------------------------------------------------------------------
+
+# Veri İnceleme
+
+```r
+head(df)      # ilk birkaç satır
+tail(df)      # son birkaç satır
+str(df)       # yapı özeti (sütun türleri)
+summary(df)   # her sütun için özet istatistik
+class(df)     # nesnenin türü
+```
+
+*2. oturum*
+
+------------------------------------------------------------------------
+
+# Fonksiyonlar
+
+## Hazır fonksiyon kullanma
+
+```r
+mean(c(1, 2, 3))   # ortalama
+sum(c(1, 2, 3))    # toplam
+```
+
+*1. oturum*
+
+## Kendi fonksiyonunu yazma
+
+```r
+toplama_fonksiyonu <- function(a, b) {
+  return(a + b)
+}
+
+toplama_fonksiyonu(3, 5)
+```
+
+*2. oturum*
+
+------------------------------------------------------------------------
+
+# Paketler
+
+```r
+install.packages("gapminder")  # bir kez, kurulum aşamasında
+library(gapminder)              # her R oturumunda, kullanmadan önce
+```
+
+*1. oturum*
+
+------------------------------------------------------------------------
+
+# Yardım Alma
+
+```r
+?mean            # fonksiyonun yardım sayfasını aç
+help(mean)        # aynı şey, uzun biçim
+example(mean)     # fonksiyonun örnek kullanımını çalıştır
+```
+
+*1. oturum*
+
+------------------------------------------------------------------------
+
+# Veri İçe Aktarma / Kaydetme
+
+```r
+read.csv("dosya.csv")            # CSV okuma
+
+library(readxl)
+read_excel("dosya.xlsx")         # Excel okuma
+
+write.csv(df, "dosya.csv", row.names = FALSE)  # CSV'e kaydetme
+```
+
+*2. oturum*
+
+------------------------------------------------------------------------
+
+# Görselleştirme (ggplot2)
+
+::: callout-note
+`ggplot2` resmî olarak **4. oturumda** ayrıntılı işlenecek. Aşağıdaki
+temel iskelet, o oturuma kadar karşılaştığınız örnekleri hatırlamanız
+içindir.
+:::
+
+```r
+library(ggplot2)
+
+ggplot(veri, aes(x = degisken1, y = degisken2)) +
+  geom_col() +              # veya geom_point(), geom_line(), ...
+  labs(title = "Başlık", x = "X Ekseni", y = "Y Ekseni") +
+  theme_minimal()
+```
+
+*1. oturum (önizleme), 4. oturum (ayrıntılı)*
+
+------------------------------------------------------------------------
+
+# Ders Boyunca Kullanılan Veri Setleri
+
+| Veri seti | İçeriği | Nasıl yüklenir |
+|---|---|---|
+| `iris` | Çiçek türlerine ait ölçümler; R'ın içinde hazır gelir | Hiçbir şey — doğrudan kullanılır |
+| `gapminder` | Ülke/yıl bazlı yaşam beklentisi, nüfus, GSYH (1952–2007) | `library(gapminder)` |
+
+*1. oturum*

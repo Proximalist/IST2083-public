@@ -1,0 +1,188 @@
+---
+title: "Modül 12 — Alıştırmalar"
+subtitle: "Çoklu Doğrusal Regresyon"
+author: "Prof. Dr. Hakan Mehmetcik"
+date: today
+lang: tr
+format: pdf
+editor: visual
+---
+
+## Bu Alıştırmalar Hakkında
+
+Bu alıştırmalar **notlandırılmaz ve teslim edilmez.** Amacı, sınavdan önce kendi durumunuzu ölçebilmenizdir. Sınav soruları da bu biçimde (çoktan seçmeli, tek doğru cevap) kurgulanır.
+
+Her soru 4 şıklıdır ve yalnızca **bir tanesi** doğrudur.
+
+Cevaplarınızı not edin, sonra `12_modul_cevap_anahtari.qmd` dosyasıyla karşılaştırın.
+
+------------------------------------------------------------------------
+
+## Bölüm A — Çoklu Regresyona Giriş
+
+**1.** Basit doğrusal regresyon ile çoklu doğrusal regresyon arasındaki temel fark nedir?
+
+a\) Çoklu regresyonda birden fazla açıklayıcı (bağımsız) değişken aynı anda modele girer\
+b) Çoklu regresyonda bağımlı değişken sayısı birden fazladır\
+c) Çoklu regresyonda $R^2$ hesaplanamaz\
+d) Çoklu regresyon yalnızca kategorik değişkenler için kullanılır
+
+**2.** `price_twd_msq ~ n_convenience` modeli $R^2 = 0.326$, `price_twd_msq ~ dist_to_mrt_m` modeli $R^2 = 0.454$ veriyor. İkisini birlikte kullanan model $R^2 = 0.497$ veriyor. Bu artış hakkında ne söylenebilir?
+
+a\) Bu bir hesaplama hatasıdır, çünkü $R^2$ asla iki modelin ortalamasından büyük olamaz\
+b) İki değişkeni birlikte kullanmak her zaman $R^2$'yi ikisinin toplamı kadar artırır\
+c) İki değişken, fiyat hakkında kısmen farklı/tamamlayıcı bilgi taşıyor; birlikte kullanmak ayrı ayrı kullanmaktan daha fazla varyans açıklıyor\
+d) $R^2$ artışı yalnızca örneklem büyüklüğünün artmasından kaynaklanır
+
+------------------------------------------------------------------------
+
+## Bölüm B — Paralel Eğimler Modeli
+
+**3.** `lm(price_twd_msq ~ n_convenience + house_age_years + 0, data = df)` modelinde `+ 0` ne işe yarar?
+
+a\) `n_convenience` değişkenini modelden çıkarır\
+b) Modeli sıfırdan başlatarak eğimi sıfıra sabitler\
+c) Modelin $R^2$'sini sıfırlar\
+d) Genel bir kesme noktası yerine, her kategori (yaş grubu) için ayrı bir kesme noktası tahmin eder
+
+**4.** "Paralel eğimler modeli" adının nedeni nedir?
+
+a\) Grafikte doğrular birbirini kesmek zorundadır\
+b) Her kategori için ayrı kesme noktası vardır ama açıklayıcı sürekli değişkenin eğimi tüm kategorilerde **aynı** kabul edilir\
+c) Model yalnızca sürekli değişkenler için çalışır\
+d) Tüm gruplar için kesme noktası aynıdır
+
+**5.** Paralel eğimler modelinde `0-15 yaş` grubunun kesme noktası $9.41$, `n_convenience` katsayısı $0.79$'dur. Yakınında 4 market bulunan `0-15 yaş` bir ev için tahmini `price_twd_msq` nedir?
+
+a\) $9.41$\
+b) $12.57$\
+c) $0.79 \times 4 = 3.16$\
+d) $9.41 - 0.79 \times 4$
+
+**6.** Aynı modelde `n_convenience` katsayısı, tek başına kurulan `price_twd_msq ~ n_convenience` modelindeki katsayıya ($0.80$) çok yakındır ($0.79$). Bu ne anlama gelir?
+
+a\) Model yanlış kurulmuştur\
+b) `house_age_years` fiyatla hiç ilişkili değildir\
+c) `n_convenience` ile `house_age_years` arasında güçlü bir ilişki yoktur; bu yüzden yaş grubunu modele eklemek `n_convenience`'ın etkisini pek değiştirmemiştir\
+d) Model, `house_age_years`'ı görmezden gelmiştir
+
+------------------------------------------------------------------------
+
+## Bölüm C — Çoklu Doğrusallık ve VIF
+
+**7.** `n_convenience` ile `dist_to_mrt_m` arasındaki korelasyon $r \approx -0.60$ bulunmuştur. Bu iki değişkeni birlikte modele koyduğunuzda ne beklenir?
+
+a\) Model otomatik olarak hata verir ve çalışmaz\
+b) Her iki değişkenin katsayısı, tek başına kullanıldıklarındaki değerden farklılaşabilir çünkü artık birbirlerinin taşıdığı bilgiyi paylaşıyorlar\
+c) Hiçbir şey değişmez, korelasyon regresyonu etkilemez\
+d) $R^2$ mutlaka düşer
+
+**8.** VIF (Varyans Şişirme Faktörü) neyi ölçer?
+
+a\) Bir açıklayıcı değişkenin, modeldeki diğer açıklayıcı değişkenler tarafından ne kadar açıklandığını; yüksek VIF, o değişkenin katsayı tahmininin ne kadar kararsızlaştığını gösterir\
+b) Bağımlı değişkenin varyansını\
+c) Modelin genel anlamlılığını (F-testi)\
+d) Artıkların normal dağılıp dağılmadığını
+
+**9.** `vif(mdl_2cont)` çıktısı her iki değişken için de $1.57$ vermiştir. Bu değer hakkında ne söylenebilir?
+
+a\) Genel kabul gören eşiklerin (5 ve 10) altındadır; iki değişkeni birlikte kullanmak güvenlidir\
+b) Dikkat edilmesi gereken orta düzey bir sorun vardır (VIF $>5$)\
+c) Ciddi bir çoklu doğrusallık sorunu vardır (VIF $>10$)\
+d) VIF değeri $1$'in altında olmalıydı, bu nedenle hesaplama hatalıdır
+
+**10.** Aşağıdakilerden hangisi doğrudur?
+
+a\) Korelasyon var olması otomatik olarak ciddi çoklu doğrusallık anlamına gelmez; asıl ölçüt VIF'tir\
+b) VIF yalnızca kategorik değişkenler için hesaplanabilir\
+c) Çoklu doğrusallık yalnızca $R^2 = 1$ olduğunda ortaya çıkar\
+d) İki değişken arasında herhangi bir korelasyon varsa, onları asla aynı modelde kullanmamak gerekir
+
+------------------------------------------------------------------------
+
+## Bölüm D — Kategorik Değişkenler ve Dummy Kodlama
+
+**11.** Bir kategorik değişken (örn. `Species`, 4 kategori) neden regresyon denklemine doğrudan sayısal bir değişken gibi eklenemez?
+
+a\) R bunu teknik olarak hiç kabul etmez\
+b) Kategorik değişkenler her zaman ikiden fazla düzeye sahiptir\
+c) Kategorik değişkenler yalnızca `ggplot()` içinde kullanılabilir\
+d) Kategoriler arasında sıralı/sayısal bir mesafe anlamı yoktur; model bunu sayı olarak yorumlarsa anlamsız bir eğim üretir
+
+**12.** `lm(Weight ~ Species, data = fish)` (kesme noktalı, referans kategorili) modelinde `Species` için raporlanan katsayılar neyi ifade eder?
+
+a\) Her türün mutlak ortalama ağırlığını\
+b) Referans alınan türe (genelde alfabetik ilk kategori) göre **fark**i\
+c) Türlerin veri setindeki gözlem sayısını\
+d) Türler arasındaki korelasyonu
+
+**13.** `lm(Weight ~ Species + 0, data = fish)` modelinde (sıfır kesişimli) katsayılar neyi ifade eder?
+
+a\) Türler arası korelasyonu\
+b) Yine referans kategoriye göre farkı\
+c) Her türün **doğrudan** tahmini ortalama ağırlığını\
+d) Hiçbir şey; `+ 0` model hatasına yol açar
+
+**14.** Ders notundaki balık verisinde `SpeciesBream` katsayısı (kesme noktalı modelde) negatif ağırlıklar üretmesine neden olan sorun neydi?
+
+a\) Veri setinde eksik gözlem vardı\
+b) Veri setinde yalnızca bir tür vardı\
+c) `lm()` fonksiyonu kategorik değişkenlerle çalışmaz\
+d) Referans tür (Bream) kesme noktası olarak alınıp diğer türler ona göre fark olarak raporlandığında, bazı farkların Bream'in ağırlığından büyük çıkması negatif toplam ağırlık gibi görünen anlamsız bir sonuç doğurdu
+
+------------------------------------------------------------------------
+
+## Bölüm E — Model Karşılaştırma ve Tahmin
+
+**15.** Aynı veri setinde kurulan iki modelin Adjusted $R^2$ değerleri karşılaştırıldığında hangisi tercih edilir (diğer koşullar eşitken)?
+
+a\) Daha düşük Adjusted $R^2$'ye sahip olan\
+b) Adjusted $R^2$ model seçiminde kullanılmaz\
+c) Daha yüksek Adjusted $R^2$'ye sahip olan\
+d) İkisi arasında fark yoktur, her zaman aynıdır
+
+**16.** `predict(mdl_both, newdata = data.frame(n_convenience = 8, house_age_years = "15 to 30"))` komutu ne yapar?
+
+a\) Modeldeki tüm katsayıları sıfırlar\
+b) Verilen `n_convenience` ve `house_age_years` değerleri için modelin fiyat tahminini hesaplar\
+c) Yeni bir model kurar\
+d) Yalnızca `house_age_years` değişkenini kullanarak tahmin yapar, `n_convenience`'ı göz ardı eder
+
+**17.** Çoklu regresyonun temel avantajı basit regresyona göre nedir?
+
+a\) Her zaman daha yüksek bir $R^2$ garanti eder\
+b) Hesaplaması basit regresyondan daha kolaydır\
+c) Kategorik değişkenlerle asla kullanılamaz\
+d) Birden fazla açıklayıcı faktörü aynı anda hesaba katarak, tek bir değişkenin tek başına verdiğinden daha bütüncül bir tahmin/yorum sunar
+
+**18.** Paralel eğimler modelinde `n_convenience`'ın eğiminin her yaş grubunda **aynı** olduğu varsayımı gerçekte doğru olmayabilir. Ders notunda bu varsayım nasıl sınanmıştır?
+
+a\) VIF hesaplanarak sınanmıştır\
+b) Sınanmamıştır, varsayım olduğu gibi kabul edilmiştir\
+c) Yalnızca grafiğe bakılarak karar verilmiştir\
+d) `n_convenience * house_age_years` etkileşim modeli kurulup paralel eğimler modeliyle `anova()` ile karşılaştırılmıştır
+
+------------------------------------------------------------------------
+
+## Bölüm F — Etkileşim, Referans Kategori ve Standartlaştırma
+
+**19.** Ders notundaki etkileşim modeli karşılaştırmasında F-testi $p \approx 0.36$ çıkmıştır. Bu ne anlama gelir?
+
+a\) Etkileşim terimlerinin eklenmesi, modelin açıklayıcılığını istatistiksel olarak anlamlı biçimde artırmamıştır; daha basit paralel eğimler modeli tercih edilebilir\
+b) Paralel eğimler modeli artık kullanılamaz\
+c) $p$-değeri regresyonda hesaplanamaz\
+d) Etkileşim modeli kesinlikle yanlıştır
+
+**20.** `lm(price_twd_msq ~ house_age_years, data = df)` (kesme noktalı, `+ 0` olmadan) modelinde `house_age_years15 to 30` katsayısı $-2.76$ bulunmuştur. Bu sayı ne ifade eder?
+
+a\) `15-30 yaş` evlerin ortalama fiyatının $-2.76$ TWD/m$^2$ olduğunu\
+b) Modelin hatalı kurulduğunu, çünkü fiyat negatif olamaz\
+c) `15-30 yaş` evlerin, referans kategori olan `0-15 yaş` evlere kıyasla metrekarede ortalama 2.76 TWD daha ucuz olduğunu\
+d) İki grup arasında hiçbir fark olmadığını
+
+**21.** `n_convenience` ve `dist_to_mrt_m` değişkenleri `scale()` ile standartlaştırıldıktan sonra kurulan modelde katsayılar sırasıyla $1.07$ ve $-2.13$ bulunmuştur. Bu neden ham (standartlaştırılmamış) katsayılardan ($0.36$ ve $-0.0017$) daha kullanışlı bir karşılaştırmadır?
+
+a\) Standartlaştırılmış katsayılar her zaman ham katsayılardan büyük çıkar\
+b) İki değişken çok farklı ölçeklerde (market sayısı vs. metre) olduğundan, ham katsayıları doğrudan karşılaştırmak yanıltıcıdır; standartlaştırma her ikisini de "1 standart sapmalık değişimin etkisi" ortak birimine getirir\
+c) Ham katsayılar $R^2$'yi değiştirdiği için kullanılamaz\
+d) Standartlaştırma yalnızca kategorik değişkenler için gereklidir

@@ -1,0 +1,122 @@
+---
+title: "Modül 14: Çoklu ve Sıralı Lojistik Regresyon"
+author: "Prof. Dr. Hakan Mehmetcik"
+date: "`r Sys.Date()`"
+lang: tr
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    toc: true
+    toc-depth: 2
+    incremental: true
+    code-overflow: scroll
+    code-line-numbers: false
+    transition: fade
+    math: mathjax
+editor: visual
+execute:
+  echo: true
+  warning: false
+  message: false
+  cache: false
+df-print: kable
+knitr:
+  opts_chunk:
+    fig.width: 8
+    fig.height: 4.2
+    dpi: 110
+    dev: "cairo_pdf"
+---
+
+## 11. Oturum: İki Konu Birden
+
+Bugün 13. modülle birlikte işlenir. Bu materyal, ikili lojistik regresyonun doğal bir devamıdır ve final kapsamına girer.
+
+## Neden Bir Genişleme Gerekli?
+
+13. modülde bağımlı değişken hep **ikili** (0/1) idi. Ama veri setimizde:
+
+-   **`pid1`**: 3 kategorili, aralarında sıralama **yok** (nominal) → parti bağlılığı
+-   **`trust`**: 4 kademeli, aralarında sıralama **var** (ordinal) → güven düzeyi
+
+İkisi de ikili lojistik regresyona sığmıyor.
+
+## İki Yol
+
+| Bağımlı değişken | Yöntem | R |
+|---|---|---|
+| Nominal, 3+ kategori | **Çoklu (multinomial)** | `nnet::multinom()` |
+| Sıralı, 3+ kategori | **Sıralı (ordinal)** | `MASS::polr()` |
+
+## Çoklu Lojistik Regresyon: Mantık
+
+Referans kategoriye karşı $K-1$ ayrı log-odds denklemi:
+
+$$\log\left(\frac{P(Y = \text{Labour})}{P(Y = \text{Conservative})}\right) = \beta_0 + \beta_1 X_1 + \dots$$
+
+$e^{\beta}$ artık bir odds oranı değil, **göreli risk oranı (RRR)** olarak adlandırılır.
+
+## R'da Sözdizimi
+
+```r
+library(nnet)
+model <- multinom(pid1 ~ ScotID_NoNa + age + sex_erkek + libauth,
+                   data = scottish_clean, trace = FALSE)
+```
+
+`glm()`'den fark: `family` yok, ayrı bir paket ve fonksiyon.
+
+## Dikkat: p-değeri Otomatik Gelmez
+
+```{r}
+#| eval: false
+z <- summary(model_multi)$coefficients / summary(model_multi)$standard.errors
+p <- (1 - pnorm(abs(z))) * 2
+```
+
+Ya da `broom::tidy(model, exponentiate = TRUE)` ile tek tabloda.
+
+## Dikkat: RRR $\neq$ Olasılık
+
+::: {.callout-warning}
+$RRR = 3$, "olasılık üç kat" **değildir** — "referansa göre göreli odds üç kat" demektir. Mutlak olasılık için `predict(model, type = "probs")`.
+:::
+
+## Sıralı Lojistik Regresyon: Mantık
+
+Kümülatif logit — "$j$. kategori veya altında olma" olasılığı:
+
+$$\log\left(\frac{P(Y \le j)}{P(Y > j)}\right) = \zeta_j - (\beta_1 X_1 + \dots)$$
+
+**Orantılı odds varsayımı:** $\beta$ katsayıları tüm eşikler ($\zeta_j$) için aynı kabul edilir.
+
+## R'da Sözdizimi
+
+```r
+library(MASS)
+model <- polr(trust_ordfac ~ pid1 + age + sex_erkek,
+              data = scottish_clean, Hess = TRUE)
+```
+
+`Hess = TRUE` unutulursa standart hata hesaplanamaz.
+
+## Dikkat: Varsayım Test Edilmeli
+
+::: {.callout-note}
+`polr()` orantılı odds varsayımını **kabul eder, test etmez**. Gerçek araştırmada Brant testi (`brant` paketi) ile sınanır — kapsamımız dışında, ama unutulmamalı.
+:::
+
+## Üç Yöntem, Tek Aile
+
+| Bağımlı değişken | Yöntem | Katsayının anlamı |
+|---|---|---|
+| İkili | `glm(family=binomial)` | Odds oranı |
+| Nominal, 3+ | `multinom()` | Göreli risk oranı |
+| Sıralı, 3+ | `polr()` | Odds oranı (sabit varsayım) |
+
+Hepsi aynı ailenin (genelleştirilmiş doğrusal model) üyesi; fark bağımlı değişkenin ölçek türü.
+
+## Hatırlatma
+
+Final sınavı dönemin tamamını kapsar (ağırlık 6. oturum ve sonrasında); 14. modül de bu kapsama girer. Bu slaytların kendisi notlandırılmaz.

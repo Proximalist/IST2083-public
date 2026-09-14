@@ -1,0 +1,57 @@
+---
+title: "Modül 13 — Cevap Anahtarı"
+subtitle: "Lojistik Regresyon"
+author: "Prof. Dr. Hakan Mehmetcik"
+date: today
+lang: tr
+format: pdf
+editor: visual
+---
+
+## Bölüm A — Neden Lojistik Regresyon?
+
+**1. Doğru cevap: c)** `lm()` ile ikili bir bağımlı değişken modellendiğinde, tahmin edilen değerler $0$'ın altına veya $1$'in üstüne çıkabilir — bu bir olasılık için anlamsızdır. Lojistik regresyon, tahmini $0$-$1$ aralığında tutan bir dönüşüm (logit) kullanır.
+
+**2. Doğru cevap: c)** Lojistik regresyon olasılığın **log-odds**'unu (logit) doğrusal bir fonksiyon olarak modeller; olasılığın kendisi değil.
+
+## Bölüm B — Logit, Odds ve Odds Oranı
+
+**3. Doğru cevap: c)** $\text{Odds} = \dfrac{0.8}{1-0.8} = \dfrac{0.8}{0.2} = 4$.
+
+**4. Doğru cevap: c)** $e^{0.693} \approx 2$.
+
+**5. Doğru cevap: d)** Odds Oranı $1$'in altında olması, o değişkendeki artışın olayın odds'unu **azalttığı** anlamına gelir.
+
+**6. Doğru cevap: b)** `glm()`'i `lm()`'den ayıran temel unsur, bağımlı değişkenin dağılımını belirten `family` argümanıdır (lojistik regresyon için `family = binomial`).
+
+## Bölüm C — Tam Ayrışma (Perfect Separation)
+
+**7. Doğru cevap: c)** Bu uyarı, açıklayıcı değişken(ler)in bağımlı değişkeni kusursuz biçimde ayırdığının (tam ayrışma) işaretidir; bu durumda katsayı tahminleri ve standart hatalar güvenilmez hâle gelir.
+
+**8. Doğru cevap: c)** Tam ayrışma durumunda standart hatalar, katsayının kendisinden kat kat (bazen binlerce kat) büyük çıkar — bu, tahminin güvenilmez olduğunun doğrudan göstergesidir.
+
+**9. Doğru cevap: b)** Wald testi tam ayrışma altında çöker ve p-değerleri genelde $1$'e yakın çıkar; bu, değişkenlerin **gerçekten etkisiz olduğu** anlamına gelmez — tam tersine model o kadar "mükemmel" uyuyor ki test istatistiği anlamsızlaşır.
+
+## Bölüm D — Kodlama Tuzakları
+
+**10. Doğru cevap: d)** `haven::read_dta()` ile okunan bir değişken (haven_labelled), bir faktöre açıkça çevrilmediği sürece R tarafından **sürekli sayısal** bir değişken olarak ele alınır.
+
+**11. Doğru cevap: a)** Ham kodlamada (1=Erkek, 2=Kadın) negatif bir katsayı, "kodu daha yüksek olan grubun (Kadın) olasılığının daha düşük olduğu" anlamına gelir — ki bu, Erkek'in olasılığının daha yüksek olduğunu söylemenin (kafa karıştırıcı) başka bir yoludur.
+
+**12. Doğru cevap: a)** Açık bir 0/1 dummy değişken oluşturup hangi kategorinin "1" olduğunu net biçimde belirtmek, bu tür yanlış yorumlamaları tamamen ortadan kaldırır.
+
+## Bölüm E — Eksik Veri ve Model Değerlendirme
+
+**13. Doğru cevap: a)** %42.5 eksiklik oranında medyanla doldurma, gözlemlerin yaklaşık yarısını yapay bir değerle değiştirir; bu değişkenle ilgili sonuçlar ihtiyatla yorumlanmalıdır.
+
+**14. Doğru cevap: d)** Null deviance'tan residual deviance'a büyük bir düşüş, açıklayıcı değişkenlerin bağımlı değişkeni açıklamada etkili olduğunu gösterir.
+
+**15. Doğru cevap: b)** `type = "response"`, ham log-odds değerini değil, doğrudan bir olasılık ($0$-$1$ arası) döndürür.
+
+## Bölüm F — Dönem Genel Tekrarı
+
+**16. Doğru cevap: d)** İki sürekli değişken arasındaki ilişkinin gücü ve yönü, 11. modülde korelasyon katsayısı ($r$) ve basit doğrusal regresyon ile ölçülmüştür.
+
+**17. Doğru cevap: c)** Birden fazla açıklayıcı değişkeni aynı anda modele koyup VIF ile çoklu doğrusallığı kontrol etmek, 12. modülün konusuydu.
+
+**18. Doğru cevap: a)** Lojistik regresyon, `lm()` yerine `glm(family = binomial)` kullanan ve katsayıları log-odds/odds oranı cinsinden yorumlayan bir çoklu regresyon uzantısıdır; katsayı yorumlama, VIF ve p-değeri mantığının büyük kısmı önceki modüllerle aynı kalır — yalnızca bağımlı değişkenin ölçeği ve dönüşüm katmanı değişir.

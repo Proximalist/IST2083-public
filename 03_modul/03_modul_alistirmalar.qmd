@@ -1,0 +1,260 @@
+---
+title: "Modül 03 — Alıştırmalar"
+subtitle: "Veri görselleştirme: ggplot2"
+author: "Prof. Dr. Hakan Mehmetcik"
+date: "`r Sys.Date()`"
+lang: tr
+format: pdf
+editor: visual
+execute:
+  echo: true
+  warning: true
+  message: false
+  cache: false
+df-print: kable
+---
+
+## Bu Alıştırmalar Hakkında
+
+Bu alıştırmalar **notlandırılmaz ve teslim edilmez.** Amacı, sınavdan
+önce kendi durumunuzu ölçebilmenizdir. Sınav soruları da bu biçimde
+(çoktan seçmeli, tek doğru cevap) kurgulanır.
+
+Her soru 4 şıklıdır ve yalnızca **bir tanesi** doğrudur. Soruların
+çoğunda bir kod parçası verilir ve sizden **çıktıyı** ya da **hatayı**
+tahmin etmeniz istenir. Önce kâğıt üzerinde düşünün; R'da çalıştırıp
+doğrulamayı sonraya bırakın — sınavda bilgisayar olmayacak.
+
+Cevaplarınızı not edin, sonra `03_modul_cevap_anahtari.qmd` dosyasıyla
+karşılaştırın.
+
+------------------------------------------------------------------------
+
+## Bölüm A — Katmanlar ve Sözdizimi
+
+**1.** Aşağıdaki kod çalıştırıldığında ne olur?
+
+```{r}
+#| eval: false
+ggplot(gapminder_2007, aes(x = gdpPercap, y = lifeExp))
+  + geom_point()
+```
+
+a\) Boş bir eksen çizilir, ikinci satır hata verir\
+b) Sözdizimi hatası: kod hiç çalışmaz\
+c) `geom_point()` yok sayılır, yalnızca eksenler çizilir\
+d) Beklenen dağılım grafiği çizilir
+
+**2.** Aşağıdaki kod hiçbir hata mesajı vermeden çalışıyor, ama beklenen
+grafiği üretmiyor. Sorun nedir?
+
+```{r}
+#| eval: false
+ggplot(gapminder_2007, aes(x = gdpPercap, y = lifeExp)) +
+  geom_point()
+  labs(title = "Gelir ve yaşam beklentisi")
+```
+
+a\) `aes()` içindeki argüman sırası yanlış\
+b) `geom_point()` satırının sonunda `+` eksik; başlık hiç eklenmez\
+c) `title` argümanı `labs()` içinde kullanılamaz\
+d) `labs()` yanlış paketten geliyor
+
+**3.** `ggplot(veri, aes(x = a, y = b)) + geom_col()` kodu hangi durumda
+hata verir?
+
+a\) `a` bir karakter değişkeniyse\
+b) `veri` içinde `a` ve `b` dışında sütun varsa\
+c) `b` sütunu zaten önceden hesaplanmış bir toplam veya ortalamaysa\
+d) `veri`'de her `a` değeri için birden fazla ham satır varsa ve siz
+onları önceden `count()` veya `summarise()` ile özetlemediyseniz
+
+------------------------------------------------------------------------
+
+## Bölüm B — Eşleme mi, Sabit Ayar mı?
+
+**4.** Aşağıdaki kodun sonucu nedir?
+
+```{r}
+#| eval: false
+ggplot(gapminder_2007, aes(x = gdpPercap, y = lifeExp, color = "red")) +
+  geom_point()
+```
+
+a\) Kod hata verir, çünkü renk `aes()` içinde metin olamaz\
+b) Bütün noktalar tek bir renkte çizilir (kırmızı değil) ve sağda
+"red" yazan bir lejant belirir\
+c) Her nokta rastgele bir renkte çizilir\
+d) Bütün noktalar kırmızı çizilir, lejant oluşmaz
+
+**5.** Bir öğrenci noktaların boyutunun sabit olarak 3 olmasını
+istiyor. Doğru kod hangisidir?
+
+a\) `scale_size_manual(value = 3)`\
+b) `geom_point(aes(size = 3))`\
+c) `geom_point(size = 3)`\
+d) `aes(size = "3")`
+
+**6.** `aes(shape = lifeExp)` yazan bir öğrenci render sırasında bir
+hata alıyor. Neden?
+
+a\) `shape`, yalnızca `geom_line()` ile kullanılabilir\
+b) `shape` estetiği yalnızca kategorik değişkenlerle kullanılabilir,
+`lifeExp` sayısaldır\
+c) `shape` estetiği `ggplot2`'de yoktur\
+d) `lifeExp` çok fazla benzersiz değer içerdiği için bellek hatası
+oluşur
+
+------------------------------------------------------------------------
+
+## Bölüm C — Tek Değişkenin Dağılımı
+
+**7.** Bir histogramda `binwidth` değerini çok küçük seçtiğinizde ne
+olur?
+
+a\) Histogram otomatik olarak yoğunluk grafiğine dönüşür\
+b) Dağılımın genel yapısı kaybolur, rastgele gürültü öne çıkar\
+c) Grafik render edilmez\
+d) Tüm çubuklar aynı yükseklikte görünür
+
+**8.** Aşağıdaki iki kod parçasından hangisi **hata verir**?
+
+```{r}
+#| eval: false
+# Kod 1
+sayilar <- gapminder_2007 |> count(continent)
+ggplot(sayilar, aes(x = continent, y = n)) + geom_bar()
+
+# Kod 2
+ggplot(gapminder_2007, aes(x = continent)) + geom_bar()
+```
+
+a\) Yalnızca Kod 2\
+b) İkisi de çalışır, ama farklı grafikler üretir\
+c) İkisi de hata verir\
+d) Yalnızca Kod 1
+
+**9.** Bir kutu grafiğinde bıyıkların (whiskers) ne gösterdiği doğru
+tanımlanmış hangisidir?
+
+a\) Q1 ve Q3'ün tam ortası\
+b) Veri setinin mutlak minimum ve maksimum değerleri\
+c) Kutunun 1,5 katı uzunluğu aşmayan en uç gözlemlere kadar uzanan
+aralık\
+d) Ortalamadan bir standart sapma uzaklık
+
+------------------------------------------------------------------------
+
+## Bölüm D — İki Sayısal Değişken
+
+**10.** Bir dağılım grafiğinde çok sayıda nokta birbirinin üzerine
+biniyor (aşırı çizim). Bunu azaltmak için **en az etkili** yöntem
+hangisidir?
+
+a\) `geom_jitter()`\
+b) `geom_point(alpha = 0.2)`\
+c) `geom_point(color = "red")`\
+d) Nokta boyutunu küçültmek (`size` değerini düşürmek)
+
+**11.** `data/gamson.csv` verisinde bir çizgiyi `geom_abline(intercept = 0, slope = 1)`
+ile eklemenin amacı nedir?
+
+a\) Verideki en iyi uyan doğrusal regresyon çizgisini göstermek\
+b) İki değişken arasındaki korelasyonu hesaplamak\
+c) Grafiğin eksen sınırlarını sabitlemek\
+d) Belirli bir teorik öngörüyü (burada: bakanlık payı = sandalye
+payı) referans olarak göstermek
+
+**12.** `coord_equal()` fonksiyonunun etkisi nedir?
+
+a\) İki ekseni de sıfırdan başlatır\
+b) `x` ve `y` değişkenlerinin yerini değiştirir\
+c) İki eksenin birimini eşit uzunlukta çizer\
+d) Grafiği kare şeklinde kırpar
+
+------------------------------------------------------------------------
+
+## Bölüm E — Kategorik Değişkenler ve Konum Ayarları
+
+**13.** İki kategorik değişkenin ilişkisini gösteren bir çubuk
+grafiğinde, "her grubun **içindeki** oranları karşılaştırmak"
+istiyorsanız hangi konum ayarını kullanmalısınız?
+
+a\) `position = "dodge"`\
+b) `position = "fill"`\
+c) `position = "identity"`\
+d) `position = "stack"`
+
+**14.** Bir öğrenci sıralı bir anket ölçeğini (`"Kesinlikle
+katılmıyorum"`'dan `"Kesinlikle katılıyorum"`'a) hiçbir işlem
+yapmadan `geom_bar()` ile çiziyor. Sonuç ne olur?
+
+a\) Yalnızca ilk ve son basamak gösterilir\
+b) Kod hata verir, çünkü metin verisi çizilemez\
+c) R otomatik olarak mantıksal sırayı tanır ve doğru dizer\
+d) Basamaklar alfabetik sıraya göre dizilir, mantıksal sıra kaybolur
+
+**15.** Doğal bir sırası olmayan bir kategorik değişkeni (örneğin
+kıtalar) bir değere göre sıralamak için hangi fonksiyon kullanılır?
+
+a\) `sort()`\
+b) `factor()`\
+c) `reorder(kategori, deger)`\
+d) `arrange()`
+
+------------------------------------------------------------------------
+
+## Bölüm F — Zaman, Ölçekler ve Üçüncü Değişken
+
+**16.** Aşağıdaki kod çalıştırıldığında elde edilen grafik neden
+anlamsız bir zikzak çizer?
+
+```{r}
+#| eval: false
+ggplot(gapminder, aes(x = year, y = lifeExp)) +
+  geom_line()
+```
+
+a\) `group` estetiği eksik; ggplot2 hangi noktaların aynı ülkeye ait
+olduğunu bilemiyor\
+b) Veri `gapminder_2007` yerine `gapminder` olarak yazılmış\
+c) `geom_line()` yalnızca tek bir ülke için kullanılabilir\
+d) `year` bir tarih sınıfında değil
+
+**17.** Bir değişkenin dağılımı aşırı sağa çarpık olduğunda (birkaç
+çok büyük değer, çoğunluk küçük değerler), hangi ölçek genellikle daha
+bilgilendiricidir?
+
+a\) `scale_x_log10()`\
+b) `scale_x_sqrt()` her zaman log'dan iyidir\
+c) `scale_x_reverse()`\
+d) Ölçek değişikliği hiçbir zaman gerekmez
+
+**18.** Kişi başı gelir (`x`) ile yaşam beklentisi (`y`) arasındaki
+ilişkiyi çizip `color = continent` eşlemesini **`ggplot()`** içine
+(genel düzeyde) yazan bir öğrenci, sonra `geom_smooth(method = "lm")`
+ekliyor. Sonuç kaç eğilim çizgisi üretir?
+
+a\) Kıta sayısı kadar ayrı çizgi\
+b) Yalnızca en kalabalık kıta için bir çizgi\
+c) Her zaman tek bir çizgi\
+d) Hiç çizgi üretilmez
+
+**19.** Guber (1999) verisinde (`SAT`), harcama ile SAT puanı arasında
+**bütün eyaletlerde** negatif bir ilişki görülüyor, ama eyaletler
+sınava giren öğrenci oranına göre gruplandığında **her grubun
+içinde** ilişki pozitife dönüyor. Bu olguya ne ad verilir?
+
+a\) Simpson paradoksu\
+b) Anscombe etkisi\
+c) Ekolojik hata\
+d) Aşırı uydurma (overfitting)
+
+**20.** `theme_minimal()` ile `theme(legend.position = "bottom")`
+birlikte kullanılacaksa, doğru sıralama hangisidir?
+
+a\) İkisi aynı katmanda, `+` olmadan yazılmalıdır\
+b) `theme(legend.position = "bottom")` daima önce yazılmalıdır\
+c) Sıra önemli değildir, ikisi de aynı sonucu verir\
+d) `theme_minimal()` önce, `theme(legend.position = "bottom")` sonra
+yazılmalıdır; aksi hâlde hazır tema özel ayarı sıfırlar

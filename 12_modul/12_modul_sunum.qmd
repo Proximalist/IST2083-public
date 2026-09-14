@@ -1,0 +1,180 @@
+---
+title: "Modül 12: Çoklu Doğrusal Regresyon"
+author: "Prof. Dr. Hakan Mehmetcik"
+date: "`r Sys.Date()`"
+lang: tr
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    toc: true
+    toc-depth: 2
+    incremental: true
+    code-overflow: scroll
+    code-line-numbers: false
+    transition: fade
+    math: mathjax
+editor: visual
+execute:
+  echo: true
+  warning: false
+  message: false
+  cache: false
+df-print: kable
+knitr:
+  opts_chunk:
+    fig.width: 8
+    fig.height: 4.2
+    dpi: 110
+    dev: "cairo_pdf"
+---
+
+## Öğrenme Hedefleri
+
+Bu oturumun sonunda:
+
+-   Birden fazla açıklayıcı değişkeni **aynı anda** modele koyabileceksiniz
+-   **Paralel eğimler modeli** ile sürekli + kategorik değişkeni birlikte yorumlayabileceksiniz
+-   Kategorik değişkenlerin **dummy kodlama** ile nasıl modele girdiğini açıklayabileceksiniz
+-   **Çoklu doğrusallık (multicollinearity)** kavramını ve `VIF`'i yorumlayabileceksiniz
+-   Tek-değişkenli ve çok-değişkenli modelleri $R^2$ ve katsayı üzerinden karşılaştırabileceksiniz
+
+## Hatırlatma: Basit Regresyon
+
+$$Y = \beta_0 + \beta_1 X + \epsilon$$
+
+-   $\beta_0$: kesme noktası
+-   $\beta_1$: eğim
+-   $\epsilon$: artık (residual) — modelin açıklayamadığı kısım
+
+11. modülde tek bir $X$ vardı. Bugün: **birden fazla** $X$.
+
+## Neden Çoklu Regresyon?
+
+Tayvan emlak verisinde iki ayrı model kurduk:
+
+-   `price_twd_msq ~ n_convenience` → $R^2 = 0.326$
+-   `price_twd_msq ~ house_age_years` → daha da düşük
+
+Her iki değişken de fiyatla ilişkili — peki **birlikte** kullanırsak?
+
+## Model 1: Paralel Eğimler
+
+```{r}
+#| echo: true
+library(dplyr); library(ggplot2); library(here); library(fst)
+taiwan_real_estate <- read_fst(here("data", "taiwan_real_estate.fst"))
+
+mdl_both <- lm(price_twd_msq ~ n_convenience + house_age_years + 0,
+               data = taiwan_real_estate)
+coef(mdl_both)
+```
+
+Her yaş grubu için **ayrı kesme noktası**, ama `n_convenience`'ın eğimi **tüm gruplarda aynı**.
+
+## Paralel Eğimler — Görsel
+
+```{r}
+#| echo: false
+ggplot(taiwan_real_estate, aes(n_convenience, price_twd_msq, color = house_age_years)) +
+  geom_point(alpha = 0.4) +
+  geom_smooth(method = "lm", se = FALSE, formula = y ~ x) +
+  labs(title = "Paralel Eğimler Modeli", x = "Market sayısı",
+       y = "Fiyat (TWD/m²)", color = "Yaş grubu") +
+  theme_minimal()
+```
+
+Üç doğru da **birbirine paralel** — çünkü eğim sabit tutuldu.
+
+## Yorum
+
+-   Yaş grubu sabitken, her ek market fiyatı ortalama **0.79 TWD/m$^2$** artırıyor
+-   `0-15 yaş` grubunun kesme noktası (9.41) tek-değişkenli modeldeki (12.64) değerden düşük — çünkü o gruptaki evler zaten ortalamada daha fazla markete sahip, bu paya artık `n_convenience` sahip çıkıyor
+-   Model $R^2 = 0.395$ — tek başına her iki değişkenden daha güçlü
+
+## Model 2: İki Sürekli Değişken
+
+```{r}
+mdl_2cont <- lm(price_twd_msq ~ n_convenience + dist_to_mrt_m,
+                data = taiwan_real_estate)
+coef(mdl_2cont)
+```
+
+`n_convenience` katsayısı **0.36**'ya düştü (Model 1'de 0.79 idi). Neden?
+
+## Çoklu Doğrusallık
+
+```{r}
+cor(taiwan_real_estate$n_convenience, taiwan_real_estate$dist_to_mrt_m)
+```
+
+$r \approx -0.60$: metroya yakın yerlerde daha çok market var. İki değişken **birbirinin bilgisini kısmen taşıyor**.
+
+## VIF ile Ölçmek
+
+```{r}
+library(car)
+vif(mdl_2cont)
+```
+
+-   VIF $> 5$: dikkat; VIF $> 10$: ciddi sorun
+-   Burada $\approx 1.57$ → **düşük**, birlikte kullanmak güvenli
+
+::: {.callout-tip}
+Korelasyon var diye otomatik sorun demek değildir — VIF asıl ölçüttür.
+:::
+
+## Kategorik Değişkenler: Dummy Kodlama
+
+`fish$Species` gibi bir kategorik değişken regresyona **doğrudan** giremez.
+
+```{r}
+#| eval: false
+model_no_intercept <- lm(Weight ~ Species + 0, data = fish)
+```
+
+`+ 0` ile her tür için ayrı bir katsayı (sıfır kesişimli); `+ 0` olmadan bir tür referans alınır ve diğerleri **ona göre fark** olarak raporlanır.
+
+## Paralel mi, Etkileşimli mi?
+
+```{r}
+mdl_int <- lm(price_twd_msq ~ n_convenience * house_age_years, data = taiwan_real_estate)
+anova(mdl_both, mdl_int)
+```
+
+$p \approx 0.36$ — etkileşim terimleri anlamlı bir iyileşme sağlamıyor. Paralel eğimler modeli bu veri için yeterli; her zaman en karmaşık modeli kurmak gerekmez.
+
+## Referans Kategori Yorumu
+
+```{r}
+mdl_ref <- lm(price_twd_msq ~ house_age_years, data = taiwan_real_estate)
+coef(mdl_ref)
+```
+
+`15-30 yaş` katsayısı $\approx -2.76$: referans (`0-15 yaş`) grubuna göre metrekarede **2.76 TWD daha ucuz**. Makalelerde göreceğiniz format budur — sıfır kesişimli model "yanlış" değildi, yalnızca farklı bir okunuş.
+
+## Hangi Değişken Daha Etkili?
+
+İki farklı ölçekteki değişkeni (market sayısı vs. metre) karşılaştırmak için **standartlaştırma** (9. modül, Z-skoru):
+
+```{r}
+taiwan_std <- taiwan_real_estate |> dplyr::mutate(z_conv = scale(n_convenience), z_dist = scale(dist_to_mrt_m))
+coef(lm(price_twd_msq ~ z_conv + z_dist, data = taiwan_std))
+```
+
+$\beta_{dist} \approx -2.13$, $\beta_{conv} \approx 1.07$ — standart sapma başına `dist_to_mrt_m` daha etkili.
+
+## Özet
+
+| Model | Açıklayıcı değişken(ler) | $R^2$ |
+|---|---|---|
+| Basit | `n_convenience` | 0.326 |
+| Basit | `dist_to_mrt_m` | 0.454 |
+| Paralel eğimler | `n_convenience` + `house_age_years` | 0.395 |
+| Çoklu (2 sürekli) | `n_convenience` + `dist_to_mrt_m` | **0.497** |
+
+Birden fazla açıklayıcı değişken, genellikle tek başınalarından daha fazla bilgi taşır — ama korelasyonlarını (VIF ile) kontrol etmeyi unutmayın.
+
+## Sıradaki Modül
+
+13. modülde: **lojistik regresyon** ve dönem geneli tekrar — bağımlı değişken kategorik (0/1) olduğunda doğrusal regresyon neden yetersiz kalır, `glm()` ile nasıl devam edilir?

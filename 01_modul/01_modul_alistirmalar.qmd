@@ -1,0 +1,150 @@
+---
+title: "Modül 01 — Alıştırmalar"
+subtitle: "İstatistiğin Anlamı; R, RStudio ve GitHub'a Giriş"
+author: "Prof. Dr. Hakan Mehmetcik"
+date: today
+lang: tr
+format: pdf
+editor: visual
+execute:
+  echo: true
+  warning: true
+  message: false
+  cache: false
+df-print: kable
+---
+
+## Bu Alıştırmalar Hakkında
+
+Bu alıştırmalar **notlandırılmaz ve teslim edilmez.** Amacı, sınavdan
+önce kendi durumunuzu ölçebilmenizdir. Sınav soruları da bu biçimde
+(çoktan seçmeli, tek doğru cevap) kurgulanır.
+
+Her soru 4 şıklıdır ve yalnızca **bir tanesi** doğrudur. Cevaplarınızı
+not edin, sonra `01_modul_cevap_anahtari.qmd` dosyasıyla karşılaştırın —
+her sorunun altında kısa bir gerekçe de bulacaksınız.
+
+------------------------------------------------------------------------
+
+## Bölüm A — İstatistik Okuryazarlığı
+
+**1.** İstatistik kelimesinin kökeni hangi alanla ilgilidir?
+
+a) Devlet işleri ve devlet yönetimi\
+b) Askerî stratejiler\
+c) Matematik ve geometri\
+d) Doğa bilimleri ve biyoloji
+
+**2.** Bir grafikte A Partisi'nin desteği %38, B Partisi'nin desteği
+%41 olarak gösteriliyor. Grafik 1'de dikey eksen 0–100 aralığında,
+Grafik 2'de ise 35–45 aralığında çiziliyor. Bu iki grafik hakkında
+hangisi doğrudur?
+
+a) Grafik 2 daha fazla bilgi içerdiği için daha güvenilirdir\
+b) Grafik 2, B Partisi'nin gerçekten çok daha fazla oy aldığını
+kanıtlar\
+c) İki grafik de aynı veriden üretilmiştir; Grafik 2 farkı olduğundan
+çok daha büyük gösterir\
+d) Grafik 1 yanlış hesaplanmıştır
+
+**3.** 1936'da yapılan ünlü bir ankette 2 milyondan fazla kişiye
+ulaşılmasına rağmen sonuç yanlış çıkmıştı. Bunun temel nedeni neydi?
+
+a) Katılımcılar yalan söyledi\
+b) Anket soruları yanlış hazırlanmıştı\
+c) Örneklem çok küçüktü\
+d) Ankete ulaşılan kişiler nüfusu temsil etmiyordu
+
+**4.** Dondurma satışları arttığında boğulma vakaları da artıyor. Bu
+durumdan hangi sonuç çıkarılabilir?
+
+a) İki değişken de sıcak hava gibi ortak bir üçüncü etkenden
+kaynaklanıyor olabilir\
+b) Boğulma vakaları dondurma satışını artırır\
+c) Bu ikisi arasında hiçbir ilişki yoktur\
+d) Dondurma yemek boğulma riskini artırır
+
+------------------------------------------------------------------------
+
+## Bölüm B — R Temelleri
+
+**5.** `5 %/% 3` ifadesinin sonucu nedir?
+
+a) 1\
+b) 2\
+c) 1.67\
+d) 0
+
+**6.** `c(5, 3, 8) > 4` ifadesinin sonucu nedir?
+
+a) `c(TRUE, FALSE, TRUE)`\
+b) Hata verir\
+c) `FALSE`\
+d) `TRUE`
+
+**7.** `TRUE && FALSE` ile `TRUE & FALSE` arasındaki temel fark
+nedir?
+
+a) `&&` sayılar için, `&` mantıksal değerler için kullanılır\
+b) `&&` yalnızca ilk elemanı karşılaştırır, `&` tüm vektörü
+karşılaştırır\
+c) İkisi de her zaman aynı sonucu verir, hiç fark yoktur\
+d) `&` daha yeni bir R fonksiyonudur
+
+**8.** Aşağıdaki satırlardan hangisi çalıştırıldığında hata verir?
+
+a) `sum(c(1, 2, 3))`\
+b) `c(1, 2, 3)`\
+c) `mean(c(1, 2, 3))`\
+d) `Mean(c(1, 2, 3))`
+
+**9.** `seq(1, 10, by = 3)` ifadesinin ürettiği dizinin son elemanı
+kaçtır?
+
+a) 7\
+b) 9\
+c) 10\
+d) 13
+
+**10.** `"A" %in% c("a", "b", "c")` ifadesinin sonucu nedir?
+
+a) Hata verir\
+b) `FALSE`\
+c) `NA`\
+d) `TRUE`
+
+**11.** Bir paketi (örneğin `gapminder`) R'da ilk kez kullanabilmek
+için doğru sıralama nedir?
+
+a) Yalnızca `library()` yeterlidir\
+b) Önce `install.packages()`, sonra `library()`\
+c) Yalnızca `install.packages()` yeterlidir\
+d) Önce `library()`, sonra `install.packages()`
+
+------------------------------------------------------------------------
+
+## Bölüm C — Versiyon Kontrolü
+
+**12.** Versiyon kontrolünün (Git gibi) temel amacı nedir?
+
+a) Kodu daha hızlı çalıştırmak\
+b) Grafikleri otomatik olarak güzelleştirmek\
+c) Dosyalardaki değişiklikleri zaman içinde kaydedip gerektiğinde
+önceki hâle dönebilmek\
+d) İnternete bağlanmadan R kullanabilmek
+
+**13.** Reinhart-Rogoff vakasında bir doktora öğrencisi analizi tekrar
+etmeye çalıştığında neyi keşfetti?
+
+a) Sonucun aslında doğru olduğunu, sadece yanlış anlaşıldığını\
+b) Yazarların istatistik bilmediğini\
+c) Verinin tamamen uydurma olduğunu\
+d) Excel tablosunda bazı ülkelerin formüle dahil edilmediğini
+
+**14.** Bu derste GitHub deposunu her hafta "pull" etmenizin temel
+amacı nedir?
+
+a) R paketlerini güncellemek\
+b) Kendi ödevlerinizi öğretim üyesine göndermek\
+c) Güncellenen ders materyallerini bilgisayarınıza almak\
+d) Notlarınızı sisteme kaydetmek

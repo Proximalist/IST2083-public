@@ -1,0 +1,68 @@
+# --- R / RStudio ---
+.Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
+
+# --- renv (kilit dosyasi takip edilir, kutuphane edilmez) ---
+renv/library/
+renv/local/
+renv/staging/
+renv/python/
+renv/sandbox/
+
+# --- Quarto ---
+/.quarto/
+_site/
+_book/
+_freeze/
+
+# PDF/LaTeX render icin uretilen ara figur klasorleri (nihai PDF'e
+# zaten gomulur, ayrica takip edilmesine gerek yok). Not: bu kural
+# revealjs/HTML sunumlar icin gereken *_files/libs/ klasorlerine
+# DOKUNMAZ, yalnizca figure-pdf ve figure-latex alt klasorlerini kapsar.
+**/*_files/figure-pdf/
+**/*_files/figure-latex/
+
+# --- LaTeX ara dosyalari ---
+*.aux
+*.fls
+*.out
+*.toc
+*.fdb_latexmk
+*.synctex.gz
+*.log
+*.tex
+
+# --- Isletim sistemi ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Ogrenci alistirmalarinin urettigi ciktilar ---
+output.csv
+/ciktilar/
+
+# --- Editor ---
+.vscode/
+.idea/
+
+# --- OGRENCIYE ACIK OLMAYAN MATERYAL ---
+# Bu depo herkese aciktir. Asagidaki klasorler yerelde tutulur,
+# asla takip edilmez ve push edilmez.
+# _calisma/ : ic degerlendirme, denetim notlari, gelistirme planlari
+# sinav/    : vize/final sorulari, cevaplari, olcme anahtarlari
+# notlar/   : ogrenci notlari, yoklama, kisisel kayitlar
+/_calisma/
+/sinav/
+/notlar/
+
+# --- Render ciktilari ---
+# Render edilmis PDF/HTML belgeler ve revealjs sunumlarin *_files/
+# klasorleri DEPODA TUTULUR: ogrenci kaynak dosyayi render edemedigi
+# durumda hazir belgeye erisebilmelidir. Bunun bedeli, her .qmd
+# duzenlemesinden sonra ilgili belgenin yeniden render edilip commit
+# edilmesi gerekmesidir; unutulursa icerikle PDF birbirini tutmaz.
+# (Yukaridaki figure-pdf / figure-latex kurallari gecerliligini korur:
+# o ara figurler nihai PDF'e zaten gomulur.)
+Rplots.pdf

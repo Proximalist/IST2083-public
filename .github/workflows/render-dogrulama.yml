@@ -1,0 +1,84 @@
+# IST2083 — render doğrulama
+#
+# Bu iş akışı belge YAYIMLAMAZ. Tek işi, denetimden geçmiş belgelerin
+# temiz bir Linux ortamında render edilebildiğini DOĞRULAMAKTIR.
+#
+# Neden: geliştirme macOS'ta yapılıyor, öğrenci ise Codespaces
+# (Linux) kullanacak. İki ortam arasında sessizce kırılan hatalar
+# yaşandı — Unicode normalize edilmiş dosya adları ve yalnızca bir
+# klasörde bulunan görseller gibi. Bunlar macOS'ta görünmez, Linux'ta
+# belgeyi bozar. Bu iş akışı onları push anında yakalar.
+#
+# Render edilen belgeler _quarto.yml içindeki render listesiyle
+# sınırlıdır; henüz denetlenmemiş modüller kasten dışarıdadır.
+#
+# Türkçe heceleme paketi CI'da KURULMAZ (bkz. _quarto-ci.yml). Günlükte
+# her belge için 'Possibly missing hyphenation file' uyarısı görürsünüz;
+# beklenen davranıştır, PDF üretimini engellemez. CI'ın ürettiği PDF'ler
+# geçici artefakttır; öğrenciye giden belgeler yerel makinede render
+# edilir ve orada heceleme kuruludur.
+
+name: Render doğrulama
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Depoyu al
+        uses: actions/checkout@v5
+
+      - name: Quarto kur
+        uses: quarto-dev/quarto-actions/setup@v2
+        with:
+          version: "1.6.40"
+          tinytex: true
+
+      - name: R kur
+        uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: "4.4"
+          use-public-rspm: true
+
+      - name: Sistem kütüphaneleri
+        # RSPM ikili paketleri derlenmiş gelir ama çalışma zamanında bu
+        # paylaşılan kütüphanelere ihtiyaç duyar (systemfonts/textshaping
+        # zinciri: gt, modelsummary, performance). Runner imajında hepsi
+        # bulunmayabilir; eksikse paket kurulur ama yüklenemez.
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            libcurl4-openssl-dev libssl-dev libxml2-dev \
+            libfontconfig1-dev libfreetype6-dev libharfbuzz-dev libfribidi-dev \
+            libpng-dev libtiff5-dev libjpeg-dev
+
+      - name: R paketlerini kur
+        # Paket listesi burada TEKRARLANMAZ. Tek kaynak scripts/paketler.R
+        # içindeki `temel` vektörüdür; 13 Eylül 2026 denetiminde elle tutulan
+        # bu listenin 11-14. modüllerin paketlerini (mdsr, broom, performance,
+        # fst, car, modelsummary, haven, forcats, nnet, MASS) hiç almadığı ve
+        # CI'ın bu yüzden düştüğü bulundu. Liste iki yerde tutulduğu sürece
+        # aynı hata tekrar eder (bkz. docs/belge-standardi.md §6).
+        run: Rscript scripts/paketler.R
+
+      - name: Render
+        env:
+          QUARTO_PROFILE: ci
+        run: quarto render
+
+      - name: Üretilen belgeleri artefakt olarak sakla
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: render-ciktilari
+          path: |
+            **/*.pdf
+            **/*.html
+          retention-days: 7
+          if-no-files-found: warn

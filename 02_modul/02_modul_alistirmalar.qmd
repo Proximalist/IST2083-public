@@ -1,0 +1,232 @@
+---
+title: "Modül 02 — Alıştırmalar"
+subtitle: "Veri türleri, faktörler, veri yapıları ve mantıksal indeksleme"
+author: "Prof. Dr. Hakan Mehmetcik"
+date: "`r Sys.Date()`"
+lang: tr
+format: pdf
+editor: visual
+execute:
+  echo: true
+  warning: true
+  message: false
+  cache: false
+df-print: kable
+---
+
+## Bu Alıştırmalar Hakkında
+
+Bu alıştırmalar **notlandırılmaz ve teslim edilmez.** Amacı, sınavdan
+önce kendi durumunuzu ölçebilmenizdir. Sınav soruları da bu biçimde
+(çoktan seçmeli, tek doğru cevap) kurgulanır.
+
+Her soru 4 şıklıdır ve yalnızca **bir tanesi** doğrudur. Soruların
+çoğunda bir kod parçası verilir ve sizden **çıktıyı tahmin etmeniz**
+istenir. Önce kâğıt üzerinde düşünün; R'da çalıştırıp doğrulamayı
+sonraya bırakın — sınavda bilgisayar olmayacak.
+
+Cevaplarınızı not edin, sonra `02_modul_cevap_anahtari.qmd` dosyasıyla
+karşılaştırın.
+
+------------------------------------------------------------------------
+
+## Bölüm A — Veri Türleri ve Tür Zorlaması
+
+**1.** Aşağıdaki kodun çıktısı nedir?
+
+```{r}
+#| eval: false
+class(c(1, 2, "üç"))
+```
+
+a) `"character"`\
+b) Kod hata verir, çünkü bir vektör farklı türleri barındıramaz\
+c) `"numeric"`\
+d) `"list"`
+
+**2.** Aşağıdaki kodun çıktısı nedir?
+
+```{r}
+#| eval: false
+class(c(1, 2, TRUE))
+```
+
+a) `"mixed"`\
+b) `"character"`\
+c) `"logical"`\
+d) `"numeric"`
+
+**3.** Bir veri setini içe aktardınız. `yas` sütununun sayısal olmasını
+bekliyorsunuz, ama `class(veri$yas)` size `"character"` döndürüyor ve
+`mean(veri$yas)` uyarı basıp `NA` döndürüyor. Bunun en olası nedeni
+hangisidir?
+
+a) Sütunda en az bir hücrede sayı olmayan bir değer var (örneğin `"yok"`
+veya `"-"`)\
+b) `read.csv()` tüm sütunları karakter olarak okur\
+c) Sütun adı Türkçe karakter içeriyor\
+d) Sütunda eksik değer (`NA`) bulunuyor
+
+**4.** `sayilar <- c(10, 20, NA, 40)` tanımlandıktan sonra `mean(sayilar)`
+komutunun çıktısı nedir?
+
+a) `70`\
+b) `NA`\
+c) `23.33333`\
+d) `17.5`
+
+------------------------------------------------------------------------
+
+## Bölüm B — Temel Fonksiyonlar
+
+**5.** `seq(1, 10, by = 3)` komutunun çıktısı nedir?
+
+a) `1 2 3 ... 10`\
+b) `3 6 9`\
+c) `1 3 5 7 9`\
+d) `1 4 7 10`
+
+**6.** `rep(c(1, 2), times = 3)` komutunun çıktısı nedir?
+
+a) `1 1 1 2 2 2`\
+b) `1 2 3`\
+c) `1 2 1 2 1 2`\
+d) `3 3 3`
+
+**7.** `length(seq(0, 100, by = 25))` komutunun çıktısı nedir?
+
+a) `4`\
+b) `5`\
+c) `25`\
+d) `100`
+
+**8.** Aşağıdaki fonksiyon tanımı için hangisi doğrudur?
+
+```{r}
+#| eval: false
+oran <- function(x) {
+  sd(x) / mean(x)
+}
+oran(c(10, 12, 14, 16))
+```
+
+a) Fonksiyon yalnızca `x` küresel ortamda tanımlıysa çalışır\
+b) Fonksiyon hata verir, çünkü `return()` yazılmamış\
+c) Fonksiyon çalışır ama `NULL` döndürür\
+d) Fonksiyon çalışır; gövdedeki son ifadenin değeri döndürülür
+
+------------------------------------------------------------------------
+
+## Bölüm C — Veri Yapıları
+
+**9.** `matris <- matrix(1:6, nrow = 2, ncol = 3)` tanımlandıktan sonra
+`matris[2, 3]` neyi döndürür?
+
+a) `4`\
+b) `6`\
+c) `5`\
+d) `3`
+
+**10.** Tek boyutlu olan ve farklı türde elemanları bir arada tutabilen
+veri yapısı hangisidir?
+
+a) Data frame\
+b) Matris\
+c) Vektör\
+d) Liste
+
+**11.** `df` bir data frame olmak üzere `df[, 2]` ifadesi neyi döndürür?
+
+a) Hata verir, çünkü virgülden önce bir değer yazılmamış\
+b) İkinci satırın ikinci sütunundaki hücreyi\
+c) İkinci sütunu\
+d) İkinci satırı
+
+**12.** Bir data frame'e `rbind()` ile yeni bir satır eklemek için
+eklenecek satırın hangi koşulu sağlaması gerekir?
+
+a) `rbind()` yerine `cbind()` kullanılmalıdır\
+b) Sütun adları mevcut data frame ile aynı olmalıdır\
+c) Tüm değerleri karakter türünde olmalıdır\
+d) Yalnızca eleman sayısı sütun sayısına eşit olmalıdır
+
+------------------------------------------------------------------------
+
+## Bölüm D — Mantıksal İndeksleme
+
+Bu bölümdeki soruların tamamında şu vektör tanımlıdır:
+
+```{r}
+#| eval: false
+v <- c(4, 7, 2, 9, 5)
+```
+
+**13.** `v > 5` ifadesinin çıktısı nedir?
+
+a) `FALSE TRUE FALSE TRUE FALSE` — beş elemanlı mantıksal vektör\
+b) `7 9` — koşulu sağlayan elemanlar\
+c) `2 4` — koşulu sağlayan elemanların konumları\
+d) `2` — koşulu sağlayan eleman sayısı
+
+**14.** `v[v > 5]` ifadesinin çıktısı nedir?
+
+a) `4 7 2 9 5`\
+b) `FALSE TRUE FALSE TRUE FALSE`\
+c) `7 9`\
+d) `2 4`
+
+**15.** `v[v > 3 & v < 9]` ifadesinin çıktısı nedir?
+
+a) `4 7 5`\
+b) `4 7 9 5`\
+c) `4 5`\
+d) `7 5`
+
+**16.** `df` bir data frame olmak üzere, `yas` sütunu 25'ten büyük olan
+**satırları** getirmek için hangi ifade doğrudur?
+
+a) `df$yas[df > 25]`\
+b) `df[df$yas > 25]`\
+c) `df[df$yas > 25, ]`\
+d) `df[, df$yas > 25]`
+
+------------------------------------------------------------------------
+
+## Bölüm E — Faktörler ve Eksik Veri
+
+**17.** Aşağıdaki kodun çıktısı nedir?
+
+```{r}
+#| eval: false
+puanlar <- factor(c("10", "25", "40"))
+as.numeric(puanlar)
+```
+
+a) Kod hata verir\
+b) `NA NA NA`\
+c) `10 25 40`\
+d) `1 2 3`
+
+**18.** Bir eğitim düzeyi değişkenini `factor(..., ordered = TRUE)` olarak
+tanımlamanın, aynı veriyi karakter vektörü olarak tutmaya göre sağladığı
+temel avantaj nedir?
+
+a) Kategoriler arasında büyüklük karşılaştırması yapılabilir\
+b) Daha az bellek kullanır\
+c) Eksik değerleri otomatik olarak siler\
+d) Yazım hatalarını otomatik düzeltir
+
+**19.** `rejim <- factor(c("Demokrasi", "Otokrasi", "Melez", "Demokrasi"))`
+tanımlandıktan sonra `levels(rejim)` neyi döndürür?
+
+a) `2 3 1 2` — seviye numaraları\
+b) `"Demokrasi" "Melez" "Otokrasi"` — kategorilerin kümesi\
+c) `4` — eleman sayısı\
+d) `"Demokrasi" "Otokrasi" "Melez" "Demokrasi"` — vektörün kendisi
+
+**20.** `NA == NA` ifadesinin çıktısı nedir?
+
+a) `FALSE`\
+b) Kod hata verir\
+c) `NA`\
+d) `TRUE`

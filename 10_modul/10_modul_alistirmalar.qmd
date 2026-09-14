@@ -1,0 +1,190 @@
+---
+title: "Modül 10 — Alıştırmalar"
+subtitle: "Hipotez Testi"
+author: "Prof. Dr. Hakan Mehmetcik"
+date: today
+lang: tr
+format: pdf
+editor: visual
+---
+
+## Bu Alıştırmalar Hakkında
+
+Bu alıştırmalar **notlandırılmaz ve teslim edilmez.** Amacı, sınavdan önce kendi durumunuzu ölçebilmenizdir. Sınav soruları da bu biçimde (çoktan seçmeli, tek doğru cevap) ve genellikle **hazır bir R çıktısının yorumlanmasını isteyen** biçimde kurgulanır.
+
+Her soru 4 şıklıdır ve yalnızca **bir tanesi** doğrudur.
+
+Cevaplarınızı not edin, sonra `10_modul_cevap_anahtari.qmd` dosyasıyla karşılaştırın.
+
+------------------------------------------------------------------------
+
+## Bölüm A — Temel Kavramlar
+
+**1.** Null hipotez ($H_0$) genellikle neyi ifade eder?
+
+a\) Araştırmacının kanıtlamak istediği iddiayı\
+b) "Fark yok" veya "etki yok" iddiasını\
+c) Örneklem büyüklüğünün yetersiz olduğunu\
+d) Beklenmedik, aşırı bir etkinin varlığını
+
+**2.** Bir mahkeme davasında, gerçekte masum bir sanığın yanlışlıkla suçlu bulunması hangi hataya karşılık gelir?
+
+a\) Ölçüm hatası\
+b) Örnekleme hatası\
+c) Tip II Hatası\
+d) Tip I Hatası
+
+**3.** Anlamlılık düzeyi ($\alpha$) %5 olarak seçildiğinde, bu neyi ifade eder?
+
+a\) Test sonucunun %95 doğru olacağının garantisini\
+b) Örneklem büyüklüğünün en az %5 olması gerektiğini\
+c) Null hipotez doğruyken onu yanlışlıkla reddetme riskini kabul ettiğimiz üst sınırı\
+d) Null hipotezin doğru olma olasılığının %5 olduğunu
+
+**4.** p-değeri neyi ifade eder?
+
+a\) Örneklem büyüklüğünün yeterliliğini\
+b) $H_0$ doğruyken, gözlemlenen kadar veya daha uç bir sonucun gözlenme olasılığını\
+c) $H_0$'ın doğru olma olasılığını\
+d) Testin doğru test olma olasılığını
+
+------------------------------------------------------------------------
+
+## Bölüm B — Doğru Testi Seçmek
+
+**5.** Bir araştırmacı, aynı 20 çalışanın eğitim öncesi ve eğitim sonrası sınav puanlarını karşılaştırmak istiyor. Hangi test uygundur?
+
+a\) Eşleştirilmiş örneklem t-testi\
+b) Ki-kare bağımsızlık testi\
+c) Bağımsız iki örneklem t-testi\
+d) Tek örneklem t-testi
+
+**6.** Bir şirket, dört farklı reklam stratejisinin ortalama satışlar üzerindeki etkisini karşılaştırmak istiyor. Hangi test uygundur?
+
+a\) Ki-kare bağımsızlık testi\
+b) Tek örneklem t-testi\
+c) Eşleştirilmiş t-testi\
+d) ANOVA
+
+**7.** Bir anket, katılımcıların cinsiyeti (kadın/erkek) ile tercih ettikleri haber kaynağı (TV/internet/gazete) arasında bir ilişki olup olmadığını sorguluyor. Hangi test uygundur?
+
+a\) Tek örneklem t-testi\
+b) İki örneklem t-testi\
+c) Ki-kare bağımsızlık testi\
+d) ANOVA
+
+**8.** Bir üretici, ürettiği pillerin ortalama ömrünün, kutuda yazan 500 saatten farklı olup olmadığını test etmek istiyor. Hangi test uygundur?
+
+a\) Eşleştirilmiş t-testi\
+b) ANOVA\
+c) Tek örneklem t-testi\
+d) İki örneklem t-testi
+
+------------------------------------------------------------------------
+
+## Bölüm C — R Çıktısını Yorumlamak
+
+**9.** Aşağıdaki `t.test()` çıktısı verilmiştir:
+
+```
+        One Sample t-test
+t = 3.21, df = 11, p-value = 0.0082
+alternative hypothesis: true mean is not equal to 150
+95 percent confidence interval:
+ 151.02 153.98
+sample estimates:
+mean of x
+   152.5
+```
+
+$\alpha = 0.05$ alındığında karar nedir?
+
+a\) $H_0$ reddedilmez; ortalama 150'den farklı değildir\
+b) $H_0$ reddedilir; ortalama 150'den anlamlı şekilde farklıdır\
+c) Karar veremeyiz, örneklem büyüklüğü bilinmiyor\
+d) Test geçersizdir çünkü güven aralığı 150'yi içermiyor
+
+**10.** Bir Welch iki örneklem t-testi çıktısında `p-value = 0.312` ve `%95 güven aralığı: -4.1 ile 1.8` verilmiştir. Aşağıdakilerden hangisi doğrudur?
+
+a\) p-değeri çok küçük olduğundan sonuç kesindir\
+b) Güven aralığı negatif olduğu için birinci grup her zaman daha küçüktür\
+c) İki grup ortalaması arasında anlamlı bir fark vardır\
+d) Güven aralığı 0'ı içerdiği için $H_0$ reddedilmez
+
+**11.** Bir ANOVA çıktısında `F = 0.85` ve `Pr(>F) = 0.44` verilmiştir. Bu sonuç ne anlama gelir?
+
+a\) Örneklem büyüklüğü artırılmadan sonuç yorumlanamaz\
+b) Gruplar arasında güçlü bir fark vardır\
+c) Gruplar arasında anlamlı bir fark bulunduğuna dair yeterli kanıt yoktur\
+d) Test yanlış uygulanmıştır çünkü F değeri düşüktür
+
+**12.** Bir ki-kare bağımsızlık testinde `X-squared = 0.5`, `df = 1`, `p-value = 0.48` bulunmuştur. Doğru yorum hangisidir?
+
+a\) Serbestlik derecesi 1 olduğu için test geçersizdir\
+b) İki kategorik değişken arasında istatistiksel olarak anlamlı bir ilişkiye dair yeterli kanıt yoktur\
+c) Değişkenlerden biri kategorik değildir, test hatalıdır\
+d) İki kategorik değişken arasında güçlü bir ilişki vardır
+
+**13.** Bir eşleştirilmiş t-testi çıktısında ortalama fark $-1.25$, `p-value = 0.028` bulunmuştur. $\alpha = 0.05$ ile karar nedir?
+
+a\) p-değeri anlamlılık düzeyine eşit olmadığı için sonuç yorumlanamaz\
+b) Ortalama fark negatif olduğu için test geçersizdir\
+c) $H_0$ reddedilmez; herhangi bir fark yoktur\
+d) $H_0$ reddedilir; öncesi-sonrası arasında anlamlı bir fark vardır
+
+------------------------------------------------------------------------
+
+## Bölüm D — Varsayımların Denetlenmesi
+
+**14.** `shapiro.test()` fonksiyonu hangi varsayımı denetler?
+
+a\) Örneklemler arasındaki bağımsızlığı\
+b) Varyans homojenliğini\
+c) Beklenen hücre frekanslarının yeterliliğini\
+d) Verinin normal dağılıp dağılmadığını
+
+**15.** Bir ANOVA öncesinde `bartlett.test()` çalıştırıldığında `p-value = 0.02` bulunuyor ($\alpha = 0.05$). Bu durumda en uygun adım nedir?
+
+a\) Örneklem büyüklüğünü hemen iki katına çıkarmak\
+b) Sonucu görmezden gelip standart `aov()` ile devam etmek\
+c) Varyans homojenliği varsayımı ihlal edildiği için `oneway.test(var.equal = FALSE)` (Welch ANOVA) değerlendirmek\
+d) Testi ki-kare testine çevirmek
+
+**16.** Bir ki-kare bağımsızlık testinde `chisq.test(tablo)$expected` çıktısında bazı hücrelerin beklenen frekansı 2 olarak bulunmuştur. Bu ne anlama gelir?
+
+a\) Test varsayımı büyük olasılıkla ihlal edilmiştir, sonuç temkinli yorumlanmalıdır\
+b) Test kesinlikle geçersizdir ve hiçbir şekilde kullanılamaz\
+c) Bu durum testin gücünü artırır\
+d) Beklenen frekans, gözlenen frekanstan büyük olmalıdır; bu bir hesaplama hatasıdır
+
+------------------------------------------------------------------------
+
+## Bölüm E — Etki Büyüklüğü ve Yorumlama Tuzakları
+
+**17.** $n = 8000$ kişilik bir ankette bir t-testi $p < 0.001$ vermiş, ancak Cohen's d $= 0.05$ bulunmuştur. Bu durumda en isabetli yorum hangisidir?
+
+a\) Fark istatistiksel olarak anlamlıdır, ancak etki büyüklüğü ihmal edilebilir düzeydedir — büyük örneklem küçük farkları bile "anlamlı" gösterebilir\
+b) Cohen's d küçük olduğu için test hatalıdır\
+c) $p<0.001$ olduğu için etki büyüklüğüne bakmaya gerek yoktur\
+d) Fark hem istatistiksel hem pratik açıdan çok büyüktür
+
+**18.** Bir ki-kare testinde $\chi^2$ çok yüksek çıkmış ve $p < .001$ bulunmuştur, ancak Cramér's $V = 0.08$'dir. Bu neyi gösterir?
+
+a\) İlişki istatistiksel olarak anlamlıdır ama pratikte çok zayıftır\
+b) Test yanlış uygulanmıştır\
+c) $\chi^2$ ile $V$ çelişemeyeceği için biri hesaplama hatasıdır\
+d) İki değişken arasında güçlü bir ilişki vardır
+
+**19.** Berkeley kabul davasında (`UCBAdmissions`), toplam veride kadınların kabul oranı erkeklerden düşükken, bölüm bazında ayrıştırıldığında bu fark büyük ölçüde ortadan kalkmıştır. Bu olguyu en iyi hangi kavram açıklar?
+
+a\) Simpson Paradoksu — bir karıştırıcı değişkenin (bölüm) toplam ilişkiyi değiştirmesi\
+b) P-hacking\
+c) Örnekleme hatası\
+d) Tip I Hatası
+
+**20.** Bir araştırmacı, elindeki 25 değişkeni birbiriyle tek tek test edip yalnızca $p<0.05$ çıkan ikisini makalesinde raporluyor. Bu uygulama en çok hangi kavramla ilişkilidir?
+
+a\) Welch düzeltmesi\
+b) P-hacking / seçici raporlama\
+c) Etki büyüklüğü hesaplama\
+d) Varsayım denetimi

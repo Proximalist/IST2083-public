@@ -1,0 +1,174 @@
+---
+title: "Modül 14 — Rehberli Laboratuvar"
+subtitle: "Çoklu ve Sıralı Lojistik Regresyon"
+author: "Prof. Dr. Hakan Mehmetcik"
+date: "`r Sys.Date()`"
+lang: tr
+format: pdf
+editor: visual
+execute:
+  echo: true
+  warning: true
+  message: false
+  cache: false
+df-print: kable
+knitr:
+  opts_chunk:
+    dev: "cairo_pdf"
+---
+
+## Bu Belge Nedir?
+
+Bu bir **sınav provası değildir**; ders saatinde birlikte, bilgisayar başında yapılacak bir uygulama defteridir. Notlandırılmaz.
+
+`____` gördüğünüz yerleri siz dolduracaksınız. Çözümler belgenin sonundadır.
+
+------------------------------------------------------------------------
+
+## Hazırlık — Veri
+
+```{r}
+library(haven); library(here); library(tidyverse); library(nnet); library(MASS); library(broom)
+
+scottish <- read_dta(here("data", "scottish.dta"))
+
+scottish <- scottish %>%
+  mutate(pid       = as_factor(Party_Labels, levels = "labels"),
+         trust     = as.numeric(fct_rev(as_factor(GovTrust_NoNa))),
+         age       = na_if(na_if(rage, 98), 99),
+         sex_erkek = if_else(as_factor(rsex) == "Male", 1, 0)) |>
+  mutate(pid1 = recode_factor(pid,
+          "1. Conservative" = "1. Conservative",
+          "2. Labour" = "2. Labour",
+          "4. SNP" = "3. SNP",
+          .default = NA_character_))
+
+scottish_clean <- scottish %>%
+  mutate(across(where(is.numeric), ~ ifelse(is.na(.), median(., na.rm = TRUE), .))) %>%
+  mutate(trust_ordfac = factor(trust, levels = sort(unique(trust)), ordered = TRUE))
+```
+
+------------------------------------------------------------------------
+
+## Bölüm A — Çoklu Lojistik Regresyon Kurmak
+
+`pid1`'i (Conservative/Labour/SNP) `ScotID_NoNa` ve `libauth` ile modelleyin.
+
+```{r}
+#| eval: false
+model_multi <- ____(pid1 ~ ScotID_NoNa + libauth,
+                     data = scottish_clean, trace = FALSE)
+summary(model_multi)
+```
+
+**Yorumunuz:** `summary()` çıktısında kaç satır katsayı görüyorsunuz? Bu sayı, kategorilerin sayısıyla (3) nasıl ilişkili?
+
+## Bölüm B — p-değeri Hesaplamak
+
+`multinom()` p-değerini otomatik vermez.
+
+```{r}
+#| eval: false
+z <- summary(model_multi)$coefficients / summary(model_multi)$____
+p <- (1 - pnorm(abs(z))) * ____
+round(p, 4)
+```
+
+**Yorumunuz:** Formüldeki `2` çarpanı neden var (ipucu: tek yönlü mü iki yönlü mü bir test yapıyoruz)?
+
+## Bölüm C — Göreli Risk Oranı ve Tahmin
+
+```{r}
+#| eval: false
+# Göreli risk oranları
+exp(coef(____))
+
+# Bir bireyin her kategoriye ait tahmini olasılıkları
+yeni_kisi <- data.frame(ScotID_NoNa = 4, libauth = 3)
+predict(model_multi, newdata = yeni_kisi, type = "____")
+```
+
+**Yorumunuz:** `type = "probs"` çıktısındaki üç sayının toplamı ne olmalı? Bu, `type = "class"` ile alacağınız çıktıdan nasıl farklı olurdu?
+
+------------------------------------------------------------------------
+
+## Bölüm D — Sıralı Lojistik Regresyon Kurmak
+
+`trust_ordfac`'ı `pid1` ve `age` ile modelleyin.
+
+```{r}
+#| eval: false
+model_ord <- polr(____ ~ pid1 + age, data = scottish_clean, Hess = ____)
+summary(model_ord)
+```
+
+**Yorumunuz:** `Hess = TRUE` unutulsaydı ne olurdu?
+
+## Bölüm E — Ordinal Modelde p-değeri ve Odds Oranı
+
+```{r}
+#| eval: false
+katsayi_ozet <- coef(summary(model_ord))
+p_deger <- (1 - pnorm(abs(katsayi_ozet[, "____"]))) * 2
+cbind(katsayi_ozet, "p değeri" = round(p_deger, 4))
+
+exp(coef(____))
+```
+
+**Yorumunuz:** `polr()`'un orantılı odds varsayımı ne anlama gelir? Bu varsayım neden **test edilmeden** kabul edilmiş oluyor?
+
+------------------------------------------------------------------------
+
+## Çözümler
+
+### A1
+
+```{r}
+model_multi <- multinom(pid1 ~ ScotID_NoNa + libauth,
+                         data = scottish_clean, trace = FALSE)
+summary(model_multi)
+```
+
+İki satır katsayı görülür ("2. Labour" ve "3. SNP"), çünkü çoklu lojistik regresyon $K-1$ (burada $3-1=2$) ayrı denklem kurar — her biri referans kategoriye ("1. Conservative") karşı.
+
+### B1
+
+```{r}
+z <- summary(model_multi)$coefficients / summary(model_multi)$standard.errors
+p <- (1 - pnorm(abs(z))) * 2
+round(p, 4)
+```
+
+`2` çarpanı, testin **iki yönlü (two-tailed)** olmasından gelir: katsayının sıfırdan hem pozitif hem negatif yönde sapabileceğini varsayarız, bu yüzden $z$'nin mutlak değerinin sağındaki alanı iki katına çıkarırız.
+
+### C1
+
+```{r}
+exp(coef(model_multi))
+
+yeni_kisi <- data.frame(ScotID_NoNa = 4, libauth = 3)
+predict(model_multi, newdata = yeni_kisi, type = "probs")
+```
+
+`type = "probs"` çıktısındaki üç olasılık toplamı **1** olmalıdır (birey mutlaka üç kategoriden birindedir). `type = "class"` ise bu üç olasılıktan en yükseğine karşılık gelen **tek bir kategori etiketi** döndürür — ayrıntıyı (olasılık dağılımını) kaybeder.
+
+### D1
+
+```{r}
+model_ord <- polr(trust_ordfac ~ pid1 + age, data = scottish_clean, Hess = TRUE)
+summary(model_ord)
+```
+
+`Hess = TRUE` unutulsaydı, `polr()` Hessian matrisini saklamazdı ve `summary()` standart hataları (dolayısıyla p-değerlerini) **hesaplayamazdı**.
+
+### E1
+
+```{r}
+katsayi_ozet <- coef(summary(model_ord))
+p_deger <- (1 - pnorm(abs(katsayi_ozet[, "t value"]))) * 2
+cbind(katsayi_ozet, "p değeri" = round(p_deger, 4))
+
+exp(coef(model_ord))
+```
+
+Orantılı odds varsayımı, her bağımsız değişkenin katsayısının **tüm eşikler için aynı** olduğunu varsayar (ör. "1'den 2'ye geçme" ile "3'ten 4'e geçme" odds'u üzerindeki etkisinin eşit olduğu). `polr()` bu varsayımı **doğrudan modele gömer**, sınamaz — sınamak için ayrı bir test (Brant testi) gerekir.

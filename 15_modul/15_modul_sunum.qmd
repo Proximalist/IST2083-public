@@ -1,0 +1,264 @@
+---
+title: "Modül 15: Quarto ile Raporlama"
+author: "Prof. Dr. Hakan Mehmetcik"
+date: "`r Sys.Date()`"
+lang: tr
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    toc: true
+    toc-depth: 2
+    incremental: true
+    code-overflow: scroll
+    code-line-numbers: false
+    transition: fade
+    math: mathjax
+editor: visual
+execute:
+  echo: true
+  warning: false
+  message: false
+  cache: false
+df-print: kable
+---
+
+```{r}
+#| include: false
+library(dplyr)
+library(gapminder)
+
+avrupa2007 <- gapminder |>
+  filter(year == 2007, continent == "Europe") |>
+  select(ulke = country, yasam = lifeExp, gsyih = gdpPercap)
+```
+
+## Öğrenme Hedefleri
+
+Bu oturumun sonunda:
+
+-   Bir Quarto belgesinin üç parçasını (YAML, kod öbeği, metin) ayırt edebileceksiniz
+-   Kod öbeği seçenekleriyle **neyin görüneceğini** kontrol edebileceksiniz
+-   Satır içi kodla sayıları metne gömebileceksiniz
+-   Şekil ve tablolara **otomatik numara** verip metinden atıf yapabileceksiniz
+-   Belgenizi PDF'e render edip hatalarını okuyabileceksiniz
+
+## Analiz bitti. Şimdi ne olacak?
+
+Beş oturumdur veriyi okuyor, temizliyor, çiziyoruz.
+
+Ama bir analiz, **anlatılmadığı sürece** kimseye bir şey söylemez.
+
+. . .
+
+Klasik yol: R'da grafiği üret → PNG olarak kaydet → Word'e yapıştır → sayıyı elle yaz.
+
+. . .
+
+Veri değişince bu zincirin **tamamı** yeniden yapılır. Genellikle de bir yeri unutulur.
+
+## Quarto'nun vaadi
+
+Kod, sonuç ve anlatı **tek dosyada**. Veri değişirse belge yeniden render edilir, hepsi güncellenir.
+
+Üç ayrı okuyucu için tasarlanmıştır:
+
+-   **Karar verici** — kodu değil sonucu görmek ister
+-   **Meslektaş** (ve gelecekteki siz) — sonuca nasıl varıldığını görmek ister
+-   **Laboratuvar defteri** — ne yaptığınızın kaydı
+
+## Bir Quarto belgesinin anatomisi
+
+Üç içerik türü:
+
+1.  `---` ile çevrili **YAML başlığı** — belgenin künyesi ve biçimi
+2.  ```` ``` ```` ile çevrili **kod öbekleri**
+3.  Aradaki **metin** — markdown ile biçimlendirilmiş
+
+. . .
+
+Bu üçünün sırası serbesttir; YAML hariç, o daima en başta olmalıdır.
+
+## YAML başlığı
+
+``` yaml
+---
+title: "Türkiye'de Seçmen Davranışı"
+author: "Adınız Soyadınız"
+date: today
+lang: tr
+format: pdf
+---
+```
+
+. . .
+
+`lang: tr` unutulursa Quarto "Figure 1" yazar, "Şekil 1" değil.
+
+## Markdown: bilmeniz gereken kadarı
+
+| Yazdığınız | Görünen |
+|------------------------------------|------------------------------------|
+| `*eğik*` | *eğik* |
+| `**kalın**` | **kalın** |
+| `` `kod` `` | `kod` |
+| `# Başlık` | 1. seviye başlık |
+| `- madde` | madde imli liste |
+| `[metin](adres)` | bağlantı |
+
+## Kod öbeği
+
+Üç yolla eklenir:
+
+-   Kısayol: **Ctrl+Alt+I** (macOS: **Cmd+Option+I**)
+-   Araç çubuğundaki *Ekle* simgesi
+-   Elle: ```` ```{r} ```` … ```` ``` ````
+
+. . .
+
+Kısayolu öğrenin. Dönem boyunca yüzlerce kez kullanacaksınız.
+
+## Öbek seçenekleri: neyi gösteriyoruz?
+
+Seçenekler öbeğin içine, `#|` ile başlayan satırlarda yazılır:
+
+``` r
+#| label: yasam-ozeti
+#| echo: false
+#| warning: false
+```
+
+. . .
+
+| Seçenek | Etkisi |
+|------------------------------------|------------------------------------|
+| `eval: false` | kodu **çalıştırmaz**, yalnızca gösterir |
+| `echo: false` | kodu gizler, sonucu gösterir |
+| `include: false` | çalıştırır, hiçbir şey göstermez |
+| `message`/`warning: false` | mesaj ve uyarıları gizler |
+
+## Hangi seçeneği ne zaman?
+
+-   **Karar vericiye** giden rapor: `echo: false` — kod görünmez
+-   **Paket yükleme** öbeği: `include: false` — çalışır ama görünmez
+-   **Hatalı kod örneği** göstermek: `error: true` — hata belgeyi düşürmez
+-   **Sözdizimi örneği**: `eval: false` — çalıştırmadan göster
+
+. . .
+
+Belge genelinde varsayılan vermek için YAML'daki `execute:` bloğunu kullanın.
+
+## Satır içi kod: sayıyı elle yazmayın
+
+Metnin içine doğrudan R kodu gömülür:
+
+``` markdown
+Örneklemde `r nrow(avrupa2007)` Avrupa ülkesi var.
+```
+
+. . .
+
+Çıktı: Örneklemde `r nrow(avrupa2007)` Avrupa ülkesi var.
+
+. . .
+
+**Neden önemli:** veri güncellenince bu sayı kendiliğinden değişir. Elle yazılmış bir sayı ise sessizce yanlış kalır — ve bunu kimse fark etmez.
+
+## Tablolar
+
+Ham çıktı:
+
+```{r}
+head(avrupa2007, 4)
+```
+
+## Tablolar: `kable()` ile
+
+```{r}
+knitr::kable(
+  head(avrupa2007, 4),
+  digits = 1,
+  col.names = c("Ülke", "Yaşam beklentisi", "Kişi başı GSYİH")
+)
+```
+
+. . .
+
+Sütun adlarını Türkçeleştirmek okuyucunun işidir değil, **sizin** işinizdir.
+
+## Şekil boyutu
+
+Beş seçenek: `fig-width`, `fig-height`, `fig-asp`, `out-width`, `out-height`.
+
+Pratik tavsiye:
+
+-   Tüm grafikleri **aynı genişlikte** tutun
+-   `out-width: "70%"` çoğu belge için iyi bir başlangıçtır
+
+. . .
+
+Doğru ayar deneme yanılmayla bulunur; bir kere bulun, belge boyunca aynısını kullanın.
+
+## Çapraz başvuru: "yukarıdaki tabloda" demeyin
+
+Akademik metinde **"Tablo 2'de görüldüğü gibi"** denir.
+
+Öbek etiketi `fig-` veya `tbl-` ile başlarsa Quarto numarayı kendisi verir:
+
+``` r
+#| label: fig-yasam-gsyih
+#| fig-cap: "Kişi başı gelir ile yaşam beklentisi ilişkisi, 2007"
+```
+
+Metinde: `@fig-yasam-gsyih` → **Şekil 4**
+
+. . .
+
+Araya yeni bir şekil eklerseniz numaralar **kendiliğinden** kayar. Elle numaralandırmanın en büyük riski böylece ortadan kalkar.
+
+## Atıflar ve Zotero
+
+Görsel Düzenleyici'de **Ekle \> Atıf**:
+
+-   DOI ile
+-   Zotero kütüphanenizden
+-   Crossref / PubMed araması ile
+-   Kendi `.bib` dosyanızdan
+
+. . .
+
+Görsel Düzenleyici'de `@` tuşuna basınca Zotero kütüphaneniz açılır; seçtiğiniz kaynak `bibliography.bib` dosyasına arka planda eklenir.
+
+## Önbellek: dikkatli kullanın
+
+`cache: true`, uzun süren bir öbeğin sonucunu saklar ve bir dahaki render'da yeniden hesaplamaz.
+
+. . .
+
+**Bedeli:** veri değiştiğinde eski sonucu sessizce göstermeye devam edebilir.
+
+Bu derste belgelerde `cache: false` kullanıyoruz — yeniden üretilebilirlik, hızdan önce gelir.
+
+## Render ederken en sık üç hata
+
+1.  **`object 'x' not found`** — Konsolda tanımladınız ama belgeye yazmadınız. Quarto belgeyi **boş bir oturumda** render eder; konsoldaki nesneleri görmez.
+2.  **`there is no package called …`** — Paket kurulu değil. `install.packages()` **konsolda** çalıştırılır, belgenin içinde değil.
+3.  **Dosya bulunamadı** — Mutlak yol yazmışsınız. `here("data", "dosya.csv")` kullanın.
+
+## Özet
+
+-   Quarto = kod + sonuç + anlatı, tek dosyada, yeniden üretilebilir
+-   Öbek seçenekleri **neyin görüneceğini** belirler
+-   Satır içi kod, metindeki sayıyı veriye bağlar
+-   `fig-`/`tbl-` etiketleri numaralandırmayı otomatikleştirir
+-   `cache: false`, `lang: tr`, `here()` — üç iyi alışkanlık
+
+## Sırada ne var?
+
+Bu oturumun ikinci yarısında `dplyr` ve `tidyr` ile veri işlemeyi bitirdik; Quarto ise bundan sonra **her modülde** kullanacağınız araç.
+
+. . .
+
+**6. oturum:** Çıkarımsal istatistiğe giriş, olasılık ve dağılımlar.
+
+Bu noktadan sonra veriyi yalnızca betimlemeyeceğiz — veriden **popülasyona** konuşmaya başlayacağız.

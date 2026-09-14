@@ -1,0 +1,167 @@
+---
+title: "Modül 13 — Alıştırmalar"
+subtitle: "Lojistik Regresyon"
+author: "Prof. Dr. Hakan Mehmetcik"
+date: today
+lang: tr
+format: pdf
+editor: visual
+---
+
+## Bu Alıştırmalar Hakkında
+
+Bu alıştırmalar **notlandırılmaz ve teslim edilmez.** Amacı, sınavdan önce kendi durumunuzu ölçebilmenizdir.
+
+Her soru 4 şıklıdır ve yalnızca **bir tanesi** doğrudur.
+
+Cevaplarınızı not edin, sonra `13_modul_cevap_anahtari.qmd` dosyasıyla karşılaştırın.
+
+------------------------------------------------------------------------
+
+## Bölüm A — Neden Lojistik Regresyon?
+
+**1.** Bağımlı değişken ikili (0/1) olduğunda `lm()` kullanmanın temel sorunu nedir?
+
+a\) `lm()` ikili değişkenlerle hiç çalışmaz, hata verir\
+b) $R^2$ hesaplanamaz\
+c) Tahmin edilen değerler 0'ın altına veya 1'in üstüne çıkabilir, ki bu bir olasılık için anlamsızdır\
+d) `lm()` yalnızca kategorik açıklayıcı değişkenlerle çalışır
+
+**2.** Lojistik regresyon, olasılığı doğrudan değil, hangi dönüşümünü doğrusal bir fonksiyon olarak modeller?
+
+a\) Olasılığın karesini\
+b) Standart sapmasını\
+c) Log-odds'unu (logit)\
+d) Olasılığın karekökünü
+
+------------------------------------------------------------------------
+
+## Bölüm B — Logit, Odds ve Odds Oranı
+
+**3.** $\text{Odds} = \dfrac{p}{1-p}$ formülünde $p = 0.8$ ise odds kaçtır?
+
+a\) $0.8$\
+b) $0.2$\
+c) $4$\
+d) $1.25$
+
+**4.** Bir lojistik regresyon modelinde bir değişkenin katsayısı $\beta = 0.693$ bulunmuştur. Bu değişkenin Odds Oranı ($e^\beta$) yaklaşık kaçtır?
+
+a\) $0.693$\
+b) $1$\
+c) $2$\
+d) $6.93$
+
+**5.** Odds Oranı $1$'den **küçük** çıkması ne anlama gelir?
+
+a\) Model hatalıdır\
+b) Değişken kategorik olmalıdır\
+c) Değişkenin hiçbir etkisi yoktur\
+d) Değişkendeki bir birimlik artış, olayın olma odds'unu **azaltır**
+
+**6.** `glm()` fonksiyonunu `lm()`'den ayıran temel sözdizimi farkı nedir?
+
+a\) `glm()`'de `~` operatörü kullanılmaz\
+b) `glm()`'de `family = binomial` (veya ilgili dağılım) belirtilir\
+c) `glm()` yalnızca tek bir açıklayıcı değişkenle çalışır\
+d) `glm()` `data =` argümanını kabul etmez
+
+------------------------------------------------------------------------
+
+## Bölüm C — Tam Ayrışma (Perfect Separation)
+
+**7.** `glm.fit: fitted probabilities numerically 0 or 1 occurred` uyarısı neyin işaretidir?
+
+a\) `family = binomial` yanlış yazılmış\
+b) Model mükemmel çalışıyor, endişelenecek bir şey yok\
+c) Açıklayıcı değişken(ler) bağımlı değişkeni kusursuz biçimde ayırıyor (tam ayrışma); katsayılar ve standart hatalar güvenilmez hâle geliyor\
+d) Veri setinde eksik değer var
+
+**8.** Tam ayrışma durumunda katsayıların standart hataları tipik olarak nasıl görünür?
+
+a\) Standart hata hiç hesaplanmaz\
+b) Katsayının kendisiyle aynı büyüklükte\
+c) Katsayının kendisinden **kat kat büyük** (bazen binlerce kat)\
+d) Sıfıra çok yakın
+
+**9.** Tam ayrışma durumunda `Pr(>|z|)` (Wald testi p-değeri) tipik olarak ne gösterir?
+
+a\) Değişkenlerin gerçekte etkisiz olduğunu kesin biçimde kanıtlar\
+b) Tüm değişkenler için anlamsız (genelde $1$'e yakın) p-değerleri — ama bu, değişkenlerin gerçekten etkisiz olduğu anlamına gelmez\
+c) p-değeri hesaplanamadığı için R hata verir\
+d) Her zaman anlamlı (küçük) p-değerleri
+
+------------------------------------------------------------------------
+
+## Bölüm D — Kodlama Tuzakları
+
+**10.** `haven::read_dta()` ile okunan bir değişken (ör. `rsex`, 1=Erkek, 2=Kadın) hiçbir dönüşüm yapılmadan doğrudan `glm()` formülüne yazılırsa, R bu değişkeni nasıl ele alır?
+
+a\) Otomatik olarak bir kategorik (faktör) değişken olarak\
+b) Değişken otomatik olarak 0/1'e dönüştürülür\
+c) R bu durumda hata verir\
+d) Sürekli, sayısal bir değişken olarak
+
+**11.** Yukarıdaki durumda elde edilen katsayı **negatif** çıkarsa, doğru yorum hangisidir?
+
+a\) "Kodu daha yüksek olan grubun (Kadın=2) olasılığı daha düşüktür" — ki bu, Erkek'in olasılığının daha yüksek olduğu anlamına gelir\
+b) Cinsiyetin hiçbir etkisi yoktur\
+c) Model geçersizdir, yeniden kurulmalıdır\
+d) "Erkeklerin olasılığı daha düşüktür" — çünkü Erkek=1'dir
+
+**12.** Bu tür bir yanlış yorumlamayı önlemenin en güvenli yolu nedir?
+
+a\) Açık bir 0/1 dummy değişken oluşturup (ör. `sex_erkek <- if_else(rsex == "Male", 1, 0)`), hangi kategorinin "1" olduğunu net biçimde belirtmek\
+b) `glm()` yerine `lm()` kullanmak\
+c) Değişkeni `factor()` olmadan bırakmak her zaman güvenlidir\
+d) Değişkeni hiç kullanmamak
+
+------------------------------------------------------------------------
+
+## Bölüm E — Eksik Veri ve Model Değerlendirme
+
+**13.** Bir değişkenin eksik değerleri o değişkenin **medyanıyla** dolduruluyor. Bu değişkenin eksiklik oranı %42.5 ise, en isabetli değerlendirme hangisidir?
+
+a\) Gözlemlerin yaklaşık yarısı gerçek veri değil, yapay bir değerdir; bu değişkenin model sonuçları ihtiyatla yorumlanmalıdır\
+b) Medyan doldurma, veri setini küçültür\
+c) Sorun yok, medyan doldurma her zaman güvenlidir\
+d) %42.5 eksiklik oranı çok düşüktür, endişeye gerek yoktur
+
+**14.** Null deviance ile residual deviance arasındaki farkın büyük olması neyi gösterir?
+
+a\) Örneklem çok küçüktür\
+b) Model hiçbir şeyi açıklamıyor\
+c) Veri setinde hata vardır\
+d) Açıklayıcı değişkenler, bağımlı değişkeni açıklamada etkili olmuştur
+
+**15.** `predict(model, newdata = ..., type = "response")` ne döndürür?
+
+a\) Model formülünü\
+b) Doğrudan bir olasılık ($0$-$1$ arası)\
+c) Ham log-odds değerini\
+d) Katsayıların kendisini
+
+------------------------------------------------------------------------
+
+## Bölüm F — Dönem Genel Tekrarı
+
+**16.** İki sürekli değişken arasındaki ilişkinin gücünü ve yönünü ölçmek için hangi modülde hangi araç öğrenildi?
+
+a\) 12. modül, VIF\
+b) 10. modül, ki-kare testi\
+c) 13. modül, odds oranı\
+d) 11. modül, korelasyon katsayısı ($r$) ve basit doğrusal regresyon
+
+**17.** Birden fazla açıklayıcı değişkeni aynı anda modele koyup çoklu doğrusallığı (VIF ile) kontrol etmeyi hangi modülde gördünüz?
+
+a\) 10. modül\
+b) 11. modül\
+c) 12. modül\
+d) 13. modül
+
+**18.** Lojistik regresyon ile çoklu doğrusal regresyon arasındaki temel benzerlik/fark nedir?
+
+a\) Lojistik regresyon, `lm()` yerine `glm(family = binomial)` kullanan ve katsayıları log-odds/odds oranı olarak yorumlayan bir uzantıdır; katsayı yorumlama, VIF, p-değeri mantığı byük ölçüde aynı kalır\
+b) İkisi de tamamen farklı, birbiriyle ilgisiz yöntemlerdir\
+c) Lojistik regresyonda katsayı yorumlama tamamen farklı bir mantığa dayanır, önceki modüllerle ilgisi yoktur\
+d) Lojistik regresyonda $R^2$ ve VIF hiç hesaplanamaz

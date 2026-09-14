@@ -1,0 +1,136 @@
+---
+title: "Modül 13: Lojistik Regresyon"
+author: "Prof. Dr. Hakan Mehmetcik"
+date: "`r Sys.Date()`"
+lang: tr
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    toc: true
+    toc-depth: 2
+    incremental: true
+    code-overflow: scroll
+    code-line-numbers: false
+    transition: fade
+    math: mathjax
+editor: visual
+execute:
+  echo: true
+  warning: false
+  message: false
+  cache: false
+df-print: kable
+knitr:
+  opts_chunk:
+    fig.width: 8
+    fig.height: 4.2
+    dpi: 110
+    dev: "cairo_pdf"
+---
+
+## Öğrenme Hedefleri
+
+Bu oturumun sonunda:
+
+-   Bağımlı değişken **ikili (0/1)** olduğunda `lm()`'in neden yetersiz kaldığını açıklayabileceksiniz
+-   **Logit, odds ve odds oranı** kavramlarını ayırt edip yorumlayabileceksiniz
+-   `glm(family = binomial)` ile bir model kurup katsayıları **odds oranına** çevirebileceksiniz
+-   **Tam ayrışma (perfect separation)** belirtilerini tanıyabileceksiniz
+-   Ham sayısal kodlanmış bir kategorik değişkeni (ör. cinsiyet) modele sokmanın **yorum tuzağını** fark edebileceksiniz
+-   Dönem boyunca öğrendiğiniz yöntemleri hangi soru tipine uygulayacağınızı hatırlayabileceksiniz
+
+## Neden `lm()` Yetmiyor?
+
+Bağımlı değişken 0/1 olduğunda doğrusal regresyon:
+
+-   Tahminleri **0'ın altına veya 1'in üstüne** taşıyabilir (olasılık olamaz)
+-   Hata terimlerinin sabit varyans varsayımını ihlal eder
+
+**Çözüm:** olasılığı doğrudan değil, **log-odds**'unu doğrusal bir fonksiyon olarak modelleyin.
+
+## Logit Fonksiyonu
+
+$$\text{log}\left(\frac{p}{1-p}\right) = \beta_0 + \beta_1 X_1 + \dots + \beta_n X_n$$
+
+-   $p$: "1" olma olasılığı
+-   $\text{Odds} = \dfrac{p}{1-p}$
+-   $\text{Odds Ratio} = e^{\beta}$ — bir birimlik $X$ artışının odds'u **kaç katına çıkardığı**
+
+## R'da Sözdizimi
+
+```r
+logit_model <- glm(y ~ x1 + x2 + x3, family = binomial, data = my_data)
+summary(logit_model)
+exp(coef(logit_model))   # odds oranları
+```
+
+Tek fark `lm()`'den: `family = binomial`.
+
+## Dikkat: Tam Ayrışma
+
+10 gözlemlik bir kredi-onay örneğinde:
+
+```
+Warning message:
+glm.fit: fitted probabilities numerically 0 or 1 occurred
+```
+
+Bu uyarı, açıklayıcı değişkenlerin bağımlı değişkeni **kusursuz ayırdığını** gösterir — katsayılar sonsuza kaçar, standart hatalar devasa büyür, `Pr(>|z|)` hepsi **1** çıkar. Çözüm: daha büyük örneklem veya düzenlileştirme (regularization, bu dersin kapsamı dışında).
+
+## Gerçek Veri: İskoçya Bağımsızlık Referandumu
+
+Scottish Social Attitudes (2019) anketiyle "Evet" oyu verme olasılığını modelliyoruz:
+
+```{r}
+#| eval: false
+logit_model <- glm(RefvoteDum ~ pid1 + edu1 + age + sex_erkek + libauth + employmentdum,
+                    data = scottish_clean, family = binomial)
+```
+
+## Sonuçlar: Parti Bağlılığı
+
+| Değişken | Katsayı | Odds Oranı | p |
+|---|---|---|---|
+| Labour (Conservative'e göre) | 1.932 | **6.90** | <0.001 |
+| SNP (Conservative'e göre) | 4.052 | **57.5** | <0.001 |
+
+SNP destekçilerinin "Evet" oyu verme olasılığı, Conservative destekçilerine göre **58 kat** daha fazla.
+
+## Dikkat: Cinsiyet Katsayısının Yönü
+
+`rsex` ham kodlaması: 1 = Erkek, 2 = Kadın. Doğrudan modele girerse:
+
+```{r}
+#| eval: false
+glm(RefvoteDum ~ ... + rsex + ..., family = binomial)  # katsayı ≈ -0.636
+```
+
+**Yanlış okuma:** "negatif katsayı → erkeklerin olasılığı düşük."\
+**Doğru okuma:** "kodu yüksek olan grubun (Kadın) olasılığı düşük" — yani **erkeklerin olasılığı yüksek**.
+
+Açık bir `sex_erkek` (0/1) dummy'si bu tuzağı ortadan kaldırır: katsayı **+0.636**, OR $\approx$ **1.89**.
+
+## Dikkat: Eksik Veri ve Medyan Doldurma
+
+`employmentdum`'un **%42.5'i** eksikti ve medyanla dolduruldu.
+
+::: {.callout-warning}
+Yarısına yakını gerçek veri değil, varsayılan bir değer. "Etkisiz" sonucunu ihtiyatla okuyun.
+:::
+
+## Özet Tablo: Hangi Soru, Hangi Modül?
+
+| Soru türü | Modül |
+|---|---|
+| İki grup arasındaki fark şans eseri mi? | 10 |
+| İki sürekli değişken nasıl ilişkili? | 11 |
+| Birden fazla değişkeni aynı anda nasıl kullanırım? | 12 |
+| Bağımlı değişken ikili (0/1) olduğunda? | **13** |
+| Bağımlı değişken ikiden fazla (nominal/sıralı) kategoride olduğunda? | **14** |
+
+Lojistik regresyon, çoklu regresyonun bir uzantısıdır — katsayı yorumlama mantığı aynı, yalnızca ölçek (log-odds) ve dönüşüm (`exp()`) farklıdır.
+
+## Sıradaki: 14. Modül, Sonra Final Sınavı
+
+Bugün aynı oturumda 14. modüle (çoklu ve sıralı lojistik regresyon) geçiyoruz. Final, dönemin tamamını kapsar (ağırlık 6. oturum ve sonrasında). En işe yarayan alışkanlık: bir `summary()`/`glm()` çıktısı gördüğünüzde önce **hangi modülün konusu olduğunu** belirleyin, sonra o modülün yorumlama kalıbını uygulayın.

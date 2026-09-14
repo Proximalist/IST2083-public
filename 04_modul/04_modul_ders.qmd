@@ -1,0 +1,496 @@
+---
+title: "Modül 04: Tanımlayıcı İstatistik"
+author: "Prof. Dr. Hakan Mehmetcik"
+date: "`r Sys.Date()`"
+lang: tr
+format: pdf
+editor: visual
+execute:
+  echo: true
+  warning: true
+  message: false
+  cache: false
+df-print: kable
+knitr:
+  opts_chunk:
+    dev: "cairo_pdf"
+    fig.width: 6
+    fig.height: 3.6
+    fig.align: "center"
+---
+
+```{r}
+#| label: setup
+#| include: false
+library(ggplot2)
+library(dplyr)
+library(gapminder)
+library(scales)
+library(here)
+```
+
+# Tanımlayıcı İstatistik Nedir?
+
+Bir veri setinde binlerce, hatta milyonlarca gözlem olabilir. 3. modülde
+`gapminder` veri setinin 1704 satırını tek tek okuyarak "dünya nasıl
+değişti?" sorusuna cevap veremezsiniz — göze çarpan bir grafiğe ya da
+birkaç sayıya ihtiyacınız vardır. **Tanımlayıcı (betimsel) istatistik**,
+tam olarak bunu yapar: bir değişkenin dağılımını, merkezini ve
+yayılımını az sayıda özet sayı veya tabloyla anlatılır kılar.
+
+Bunu iki ailede ele alacağız:
+
+1.  **Kategorik değişkenler** için: frekans tabloları ve oranlar.
+2.  **Sayısal değişkenler** için: merkezi eğilim (ortalama, medyan,
+    mod), yayılım (varyans, standart sapma, çeyrekler açıklığı) ve
+    dağılımın şekli (çarpıklık, basıklık).
+
+Sonda, iki sayısal değişken arasındaki ilişkiyi özetleyen bir ölçüye
+—korelasyona— de değineceğiz; ama bunun bir *nedensellik* iddiası
+olmadığını en baştan vurgulayalım.
+
+Bu modülde iki veri seti kullanacağız: `gapminder` (3. modülden tanıdık
+— ülke, yıl, yaşam beklentisi, GSYİH), ve **Titanic yolcu listesi**
+(1309 yolcunun sınıfı, cinsiyeti, yaşı, bileti ve hayatta kalıp
+kalmadığı) — `data/titanic.csv` içinde, projeye yerel olarak dahil
+edilmiştir.
+
+Titanic verisi bilgisayar bilimi çevrelerinde çoğunlukla bir "kim
+kurtulacak?" tahmin yarışması olarak bilinir; ama bir siyaset bilimci
+için asıl değeri başka yerdedir. Bu, **felaket anında toplumsal
+tabakalaşmanın ve toplumsal cinsiyet rollerinin** kaydedildiği tarihsel
+bir veri setidir: filikalara erişim kimin parasına, kiminle
+seyahat ettiğine ve cinsiyetine bağlıydı. Aşağıdaki tablolar ve
+grafikler, "1912'de sosyal statü hayatta kalma şansını nasıl
+belirledi?" sorusuna istatistiksel bir cevap arayacak.
+
+```{r}
+#| label: veri-yukleme
+titanic <- read.csv(here("data", "titanic.csv"))
+str(titanic[, c("pclass", "survived", "sex", "age", "fare", "embarked")])
+```
+
+# Kategorik Değişkenler: Frekans ve Oran
+
+Kategorik bir değişken için ilk soru her zaman aynıdır: **hangi
+kategoriden kaç tane var?** `dplyr::count()` bunu tek satırda verir.
+
+```{r}
+#| label: sinif-frekans
+titanic |>
+  count(pclass, name = "n") |>
+  mutate(oran = round(n / sum(n), 3))
+```
+
+Yolcuların yaklaşık %54'ü 3. sınıfta seyahat ediyordu — Titanic'in
+sosyal kompozisyonu hakkında tek bir sayı bile fikir veriyor. Ama asıl
+ilgi çekici soru şu: **hayatta kalma sınıfa göre değişiyor muydu?**
+Bunun için iki kategorik değişkeni birlikte özetleyen bir **çapraz
+tablo** (kontenjans tablosu) kurarız.
+
+```{r}
+#| label: capraz-tablo
+titanic |>
+  count(pclass, survived) |>
+  group_by(pclass) |>
+  mutate(oran = round(n / sum(n), 3)) |>
+  ungroup()
+```
+
+Sayılar tek başına ikna edici değildir; bir çubuk grafik örüntüyü göz
+kırpmadan gösterir.
+
+```{r}
+#| label: fig-sinif-hayatta-kalma
+#| fig-cap: "Yolcu sınıfına göre hayatta kalma oranı"
+titanic |>
+  mutate(
+    sinif = factor(pclass, labels = c("1. sınıf", "2. sınıf", "3. sınıf")),
+    durum = factor(survived, labels = c("Kaybedildi", "Hayatta kaldı"))
+  ) |>
+  ggplot(aes(x = sinif, fill = durum)) +
+  geom_bar(position = "fill") +
+  scale_y_continuous(labels = label_percent()) +
+  scale_fill_manual(values = c("Kaybedildi" = "#8C8C8C", "Hayatta kaldı" = "#4C3A80")) +
+  labs(x = NULL, y = "Yolcu oranı", fill = NULL,
+       title = "1. sınıf yolcunun hayatta kalma şansı 3. sınıftan çok daha yüksekti") +
+  theme_minimal(base_size = 11)
+```
+
+`position = "fill"` her çubuğu %100'e tamamlar; böylece mutlak yolcu
+sayısı değil, **oran** karşılaştırılır — 1. sınıfta çok daha az yolcu
+olmasına rağmen (216'ya karşı 709), grafik hâlâ adil bir karşılaştırma
+sunar. Aynı mantık cinsiyet için de geçerlidir:
+
+```{r}
+#| label: fig-cinsiyet-hayatta-kalma
+#| fig-cap: "Cinsiyete göre hayatta kalma oranı"
+titanic |>
+  mutate(durum = factor(survived, labels = c("Kaybedildi", "Hayatta kaldı"))) |>
+  ggplot(aes(x = sex, fill = durum)) +
+  geom_bar(position = "fill") +
+  scale_y_continuous(labels = label_percent()) +
+  scale_fill_manual(values = c("Kaybedildi" = "#8C8C8C", "Hayatta kaldı" = "#4C3A80")) +
+  labs(x = NULL, y = "Yolcu oranı", fill = NULL,
+       title = "\"Kadınlar ve çocuklar önce\" kuralının izi verilerde açıkça görünüyor") +
+  theme_minimal(base_size = 11)
+```
+
+Fark çarpıcıdır: kadın yolcuların çoğu hayatta kalırken erkek
+yolcuların çoğu kalamamıştır. Bu iki grafik, 5. oturumun ana fikrini
+şimdiden gösteriyor: **iyi seçilmiş bir oran tablosu veya çubuk grafik,
+yüzlerce satırlık ham veriden daha fazla bilgi taşıyabilir.**
+
+# Sayısal Değişkenler: Merkezi Eğilim
+
+Sayısal bir değişkenin "tipik" değerini tek bir sayıyla özetlemek
+istediğimizde üç aday vardır: **ortalama**, **medyan** ve **mod**.
+Hangisinin "doğru" olduğu, verinin şekline bağlıdır — bu yüzden önce
+üçünü de tanımlayıp sonra ne zaman birbirinden ayrıştıklarını
+göreceğiz.
+
+```{r}
+#| label: gapminder-2007
+gm2007 <- gapminder |> filter(year == 2007)
+nrow(gm2007)
+```
+
+**Ortalama (aritmetik ortalama):** tüm değerlerin toplamının gözlem
+sayısına bölümüdür.
+
+$$\bar{x} = \frac{1}{n}\sum_{i=1}^{n} x_i$$
+
+```{r}
+#| label: ortalama-yasam-beklentisi
+mean(gm2007$lifeExp)
+```
+
+**Medyan:** veriyi küçükten büyüğe sıraladığınızda tam ortada kalan
+değerdir (gözlem sayısı çiftse, ortadaki iki değerin ortalamasıdır).
+Ortalamadan farklı olarak medyan, **uç değerlerden (aşırı gözlemlerden)
+etkilenmez** — bu, medyanın en önemli özelliğidir.
+
+```{r}
+#| label: medyan-yasam-beklentisi
+median(gm2007$lifeExp)
+```
+
+Ortalama (`r round(mean(gm2007$lifeExp), 1)`) ile medyan
+(`r round(median(gm2007$lifeExp), 1)`) birbirine oldukça yakın —
+bu, yaşam beklentisi dağılımının aşırı uçlarda çok az ülke barındırdığı
+anlamına gelir. Bunu **GSYİH kişi başına** ile karşılaştıralım:
+
+```{r}
+#| label: ortalama-medyan-gdp
+gm2007 |>
+  summarise(ortalama = mean(gdpPercap), medyan = median(gdpPercap))
+```
+
+Burada fark çok daha büyük: ortalama, medyandan belirgin şekilde
+yüksek. Nedeni basit — birkaç zengin ülke (Norveç, Kuveyt, ABD gibi)
+ortalamayı yukarı çekiyor, ama medyan bu birkaç aşırı değerden
+etkilenmiyor. **Gelir gibi sağa çarpık dağılımlarda medyan, "tipik
+ülkeyi" ortalamadan daha iyi temsil eder.** Bir siyaset bilimci için bu
+ayrım teknik bir ayrıntı değildir: bir ülkenin "ortalama geliri"
+raporlanırken hangi ölçü kullanıldığı, eşitsizlik hakkındaki anlatıyı
+tamamen değiştirebilir.
+
+**Mod:** en sık tekrar eden değerdir. Sayısal, sürekli değişkenlerde
+(GSYİH gibi) genelde her değer bir kez görülür ve mod anlamsızlaşır;
+mod asıl kategorik ve ayrık değişkenlerde işe yarar. R'da hazır bir
+`mode()` fonksiyonu **yoktur** (o fonksiyon farklı bir işe yarar —
+değişkenin veri türünü döndürür); kendi fonksiyonumuzu yazarız:
+
+```{r}
+#| label: mod-fonksiyonu
+mod_bul <- function(x) {
+  tablo <- table(x)
+  names(tablo)[tablo == max(tablo)]
+}
+
+mod_bul(titanic$embarked)   # en çok hangi limandan bindiler?
+mod_bul(titanic$pclass)     # en kalabalık sınıf
+```
+
+::: callout-note
+## Hangi ölçü ne zaman kullanılır?
+
+-   **Simetrik, uç değeri az** sayısal veri → ortalama.
+-   **Çarpık veya uç değeri çok** sayısal veri (gelir, servet, ev
+    fiyatı) → medyan.
+-   **Kategorik veya ayrık** veri → mod.
+:::
+
+# Sayısal Değişkenler: Yayılım (Değişkenlik)
+
+İki ülkenin ortalama yaşam beklentisi aynı olabilir, ama biri bu
+ortalamanın etrafında çok tutarlıyken diğeri uçlarda çok
+farklılaşıyor olabilir. Merkezi eğilim tek başına bunu ayırt edemez —
+**yayılım (değişkenlik) ölçülerine** ihtiyacımız var.
+
+**Aralık (range):** en basit ölçü — en büyük değer eksi en küçük
+değer. Tek bir aşırı değerden kolayca etkilendiği için güvenilirliği
+düşüktür.
+
+```{r}
+#| label: aralik
+range(gm2007$lifeExp)
+diff(range(gm2007$lifeExp))
+```
+
+**Çeyrekler açıklığı (IQR):** veriyi dört eşit parçaya bölen
+çeyreklerden (Q1: %25, Q3: %75) hesaplanır; `IQR = Q3 - Q1`. Ortadaki
+%50'lik dilimin ne kadar geniş olduğunu gösterir ve uç değerlerden
+aralık kadar etkilenmez.
+
+```{r}
+#| label: ceyrekler
+quantile(gm2007$lifeExp, probs = c(0.25, 0.5, 0.75))
+IQR(gm2007$lifeExp)
+```
+
+**Varyans ve standart sapma:** her gözlemin ortalamadan ne kadar
+uzakta olduğunu, farkların karesini alıp ortalamasını hesaplayarak
+özetler.
+
+$$s^2 = \frac{1}{n-1}\sum_{i=1}^{n} (x_i - \bar{x})^2 \qquad s = \sqrt{s^2}$$
+
+Kareler alınmasının nedeni, negatif ve pozitif sapmaların birbirini
+götürmesini engellemektir (aksi hâlde toplam her zaman sıfıra yakın
+çıkardı). Standart sapma, varyansın kareköküdür ve **orijinal
+değişkenle aynı birimdedir** — bu yüzden yorumlaması varyanstan çok
+daha kolaydır.
+
+```{r}
+#| label: varyans-sd
+gm2007 |>
+  summarise(varyans = var(lifeExp), sd = sd(lifeExp))
+```
+
+Standart sapma `r round(sd(gm2007$lifeExp), 1)` yıl: yaşam beklentisi
+ülkeden ülkeye tipik olarak bu kadar farklılaşıyor demektir. Kıtalar
+arasında bu değişkenlik nasıl dağılıyor?
+
+```{r}
+#| label: fig-kita-yayilim
+#| fig-cap: "Kıtaya göre yaşam beklentisi dağılımı (2007)"
+ggplot(gm2007, aes(x = reorder(continent, lifeExp, median), y = lifeExp)) +
+  geom_boxplot(fill = "#EAF1F5", color = "#2E6E8E") +
+  geom_jitter(width = 0.08, alpha = 0.35, color = "#4C3A80", size = 1.6) +
+  labs(x = NULL, y = "Yaşam beklentisi (yıl)",
+       title = "Afrika hem en düşük medyana hem de en geniş yayılıma sahip") +
+  theme_minimal(base_size = 11)
+```
+
+Kutu grafiği (boxplot), medyan (kutunun ortasındaki çizgi), çeyrekler
+açıklığı (kutunun kendisi) ve uç değerleri (noktalar) tek bir görselde
+birleştirir — yayılım ölçülerinin hepsini aynı anda "görmenin" en
+hızlı yoludur.
+
+::: callout-note
+## Siyaset bilimci için bir yayılım ölçüsü daha: Gini katsayısı
+
+Standart sapma bir değişkenin *ortalamadan* ne kadar saptığını ölçer;
+ama siyaset biliminde çoğu zaman sorulan soru budur *değildir* — asıl
+soru genellikle bir kaynağın (gelir, servet, toprak) popülasyon
+içinde **ne kadar adaletsiz dağıldığıdır**. Bunun için geliştirilmiş,
+0 (tam eşitlik) ile 1 (tam eşitsizlik) arasında değişen özel bir ölçü
+vardır: **Gini katsayısı**. Demokrasiye geçiş ve iç çatışma
+yazınında, bir ülkenin gelir standardı sapmasından çok Gini katsayısı
+açıklayıcı değişken olarak kullanılır (`ineq` paketiyle
+hesaplanabilir — bu modülün kapsamı dışında, ama adını bilmekte fayda
+var).
+:::
+
+# Dağılımın Şekli: Çarpıklık ve Basıklık
+
+Ortalama, medyan ve standart sapma bir dağılımı özetler ama şeklini
+tam anlatmaz. İki dağılımın ortalaması ve standart sapması aynı
+olabilir, hâlbuki biri simetrik, diğeri çarpık olabilir.
+
+```{r}
+#| label: fig-carpiklik-basiklik
+#| fig-cap: "Çarpıklık ve basıklık tipolojisi"
+#| out-width: "95%"
+knitr::include_graphics(here("04_modul", "images", "carpiklik-basiklik.png"))
+```
+
+**Çarpıklık (skewness)**, dağılımın hangi yöne doğru "kuyruk"
+uzattığını ölçer:
+
+-   **Sağa çarpık (pozitif):** uzun kuyruk sağda, çoğu gözlem solda
+    yığılmış (gelir, servet, ev fiyatı — bir önceki bölümde GSYİH'de
+    gördüğümüz durum). Bu durumda **ortalama > medyan**.
+-   **Sola çarpık (negatif):** uzun kuyruk solda. Örnek: bir sınavda
+    çoğu öğrenci yüksek not alırken birkaç öğrencinin çok düşük not
+    alması. Bu durumda **ortalama < medyan**.
+-   **Simetrik (çarpıklık $\approx$ 0):** ortalama ve medyan birbirine yakın.
+
+Çarpıklığın yönünü, ortalama ile medyanı karşılaştırarak hesap
+yapmadan da kestirebilirsiniz — GSYİH örneğinde yaptığımız gibi.
+
+**Basıklık (kurtosis)**, dağılımın tepesinin ne kadar sivri, kuyruklarının
+ne kadar kalın olduğunu ölçer: **leptokurtik** dağılımlar sivri
+tepeli ve kalın kuyrukludur (aşırı değer riski yüksektir — finansal
+getiri serilerinde sık görülür), **platikurtik** dağılımlar yayvan ve
+ince kuyrukludur, **mezokurtik** (normal dağılım gibi) ikisinin
+ortasındadır. R'ın temel paketinde çarpıklık/basıklık fonksiyonu
+yoktur; ihtiyaç duyulduğunda `moments` veya `e1071` paketleri
+kullanılabilir — bu modülde kavramsal anlayış yeterlidir, hesaplama
+ayrıntısına girmiyoruz.
+
+# İki Değişken Arasındaki İlişki: Korelasyon
+
+Şimdiye kadar değişkenleri tek tek özetledik. Peki iki sayısal
+değişken **birlikte** nasıl hareket ediyor? **Korelasyon katsayısı
+(Pearson's r)**, doğrusal ilişkinin yönünü ve gücünü tek bir sayıyla
+verir; -1 ile +1 arasında değişir.
+
+```{r}
+#| label: fig-gdp-yasam
+#| fig-cap: "GSYİH (log ölçek) ile yaşam beklentisi ilişkisi (2007)"
+ggplot(gm2007, aes(x = gdpPercap, y = lifeExp)) +
+  geom_point(aes(color = continent), alpha = 0.7, size = 2) +
+  scale_x_log10(labels = label_dollar()) +
+  labs(x = "Kişi başı GSYİH (log ölçek)", y = "Yaşam beklentisi (yıl)",
+       color = NULL,
+       title = "Gelir arttıkça yaşam beklentisi de artıyor — ama ilişki doğrusal değil") +
+  theme_minimal(base_size = 11)
+```
+
+```{r}
+#| label: korelasyon-gdp-yasam
+cor(log(gm2007$gdpPercap), gm2007$lifeExp)
+```
+
+`r round(cor(log(gm2007$gdpPercap), gm2007$lifeExp), 2)` gibi güçlü bir
+pozitif korelasyon var (log GSYİH ile). Aynı mantıkla Titanic'te bilet
+ücreti ile yaş arasındaki ilişkiye bakalım:
+
+```{r}
+#| label: korelasyon-titanic
+cor(titanic$age, titanic$fare, use = "complete.obs")
+```
+
+`use = "complete.obs"` argümanına dikkat edin: `age` sütununda 263
+eksik değer (`NA`) var (bkz. Modül 02, mantıksal indeksleme) ve
+`cor()` varsayılan olarak eksik değerle karşılaşınca `NA` döndürür;
+bu argüman eksik gözlemleri dışlayıp geri kalanla hesaplamaya devam
+eder.
+
+::: callout-warning
+## Korelasyon nedensellik değildir
+
+Zengin ülkelerde yaşam beklentisi daha yüksek — ama bu, gelirin
+*tek başına* uzun yaşam *sağladığı* anlamına gelmez. Sağlık
+altyapısı, eğitim, beslenme gibi pek çok faktör hem gelirle hem yaşam
+beklentisiyle birlikte hareket eder (**karıştırıcı değişkenler**).
+Korelasyon size yalnızca "bu ikisi birlikte hareket ediyor" der; "biri
+diğerine sebep oluyor" demez. Nedensellik iddiaları çok daha sıkı bir
+araştırma tasarımı gerektirir — bu, dönem sonuna doğru regresyon
+modülünde tekrar karşımıza çıkacak bir tema.
+:::
+
+Yukarıdaki gelir–yaşam beklentisi örneğinde gerçek bir mekanizma
+(karıştırıcı değişken) vardı — sağlık altyapısı ikisini de etkiliyor.
+Ama bazen iki değişken arasında **hiçbir** mekanizma olmadan, salt
+tesadüfen yüksek bir korelasyon çıkabilir. Harvard'dan istatistikçi
+Tyler Vigen'in *Spurious Correlations* (Sahte Korelasyonlar)
+projesinden ünlü bir örnek: 1999–2009 arasında, **Nicolas Cage'in o yıl
+oynadığı film sayısı ile o yıl yüzme havuzuna düşerek boğulan kişi
+sayısı arasındaki korelasyon $r \approx 0{,}666$'dır** — güçlü bir ilişki,
+ama aralarında ne bir mekanizma ne de ortak bir karıştırıcı değişken
+vardır; yalnızca 11 yıllık kısa bir seride rastlanan bir tesadüftür. Bu
+ayrım önemlidir: düşük bir p-değeri veya yüksek bir korelasyon,
+ilişkinin *anlamlı* olduğunu garanti etmez — özellikle az sayıda
+gözlemle çalışırken.
+
+# Eksik Veri: Kendisi de Bir Bulgudur
+
+Modül 02'de `NA` (bilinmeyen değer) kavramını görmüştük. Tanımlayıcı
+istatistik hesaplarken `na.rm = TRUE` yazıp eksik gözlemleri sessizce
+dışarıda bırakmak cazip gelir — ama bu bir araştırma kararıdır, teknik
+bir ayrıntı değildir.
+
+```{r}
+#| label: eksik-yas-oran
+mean(is.na(titanic$age))
+```
+
+Yolcuların yaklaşık %20'sinin yaşı bilinmiyor. Sorulması gereken soru
+şudur: **bu eksiklik rastgele mi, yoksa bir örüntü mü izliyor?**
+
+```{r}
+#| label: eksik-yas-sinifa-gore
+titanic |>
+  group_by(pclass) |>
+  summarise(eksik_yas_orani = round(mean(is.na(age)), 3))
+```
+
+Rastgele değil: 3. sınıfta yaşı bilinmeyen yolcu oranı (%29), 1.
+sınıftakinden (%12) belirgin şekilde yüksek. Muhtemel açıklama, 3.
+sınıf yolcuların büyük kısmının kayıt tutulması daha zayıf olan göçmen
+yolcular olmasıdır. Bunun sonucu somuttur: `mean(age, na.rm = TRUE)`
+hesapladığınızda, örneklemden **orantısız biçimde daha fazla yoksul ve
+genç göçmen** düşmüş olur — bulacağınız "ortalama yaş" tüm gemiyi değil,
+kaydı daha iyi tutulan, görece daha varlıklı bir alt kümeyi temsil
+eder. Sosyal bilimlerde eksik veri nadiren tamamen rastgeledir (bkz.
+anket araştırmalarında hane geliri veya oy tercihi soruları); eksiklik
+oranının kendisi, raporlanması gereken bir tanımlayıcı istatistiktir.
+
+# Araştırmacının Alet Çantası: `gtsummary` ile "Tablo 1"
+
+Şimdiye kadar özet istatistikleri `dplyr` çıktısı olarak, konsol
+formatında gördük. Ama hemen hemen her ampirik makale, tez veya
+raporun ilk sayfasında bir **"Tablo 1: Betimsel İstatistikler"**
+bulunur — örneklemi grup grup (burada: hayatta kalma durumuna göre)
+özetleyen, yayına hazır bir tablo. Bunu Word'de elle kurmak saatler
+alır; `gtsummary` paketi tek bir çağrıda üretir.
+
+```{r}
+#| label: tbl-1-gtsummary
+library(gtsummary)
+
+titanic |>
+  mutate(durum = factor(survived, labels = c("Kaybedildi", "Hayatta kaldı"))) |>
+  select(pclass, sex, age, fare, durum) |>
+  tbl_summary(
+    by = durum,
+    statistic = list(all_continuous() ~ "{mean} ({sd})",
+                      all_categorical() ~ "{n} ({p}%)"),
+    missing_text = "Eksik veri",
+    label = list(pclass ~ "Yolcu sınıfı", sex ~ "Cinsiyet",
+                 age ~ "Yaş", fare ~ "Bilet ücreti")
+  ) |>
+  add_p() |>
+  modify_header(label = "**Değişken**", p.value = "**p-değeri**") |>
+  modify_spanning_header(all_stat_cols() ~ "**Hayatta kalma durumu**")
+```
+
+`add_p()`, her satır için grup farkının istatistiksel olarak anlamlı
+olup olmadığını otomatik test eder (kategorik değişkende ki-kare,
+sayısal değişkende Wilcoxon) — bu testlerin **kendisini** 9. oturumda
+göreceğiz; şimdilik yalnızca çıktının ne anlama geldiğini bilmeniz
+yeterli. Bu tek kod bloğu, R'ın Excel veya SPSS'e göre neden bu kadar
+zaman kazandırdığının somut bir örneğidir.
+
+# Özet
+
+-   **Merkezi eğilim:** ortalama (`mean()`), medyan (`median()`), mod
+    (elle yazılan fonksiyon). Çarpık veride medyan daha güvenilirdir.
+-   **Yayılım:** aralık (`range()`), çeyrekler açıklığı (`IQR()`),
+    varyans (`var()`), standart sapma (`sd()`).
+-   **Şekil:** çarpıklık (yön) ve basıklık (tepe/kuyruk kalınlığı) —
+    kavramsal düzeyde.
+-   **İlişki:** korelasyon (`cor()`) doğrusal ilişkinin yönünü ve
+    gücünü özetler; **nedensellik iddia etmez**.
+-   Kategorik değişkenler için: `count()`, çapraz tablolar,
+    `geom_bar(position = "fill")` ile oranların görselleştirilmesi.
+-   **Eksik veri** kendi başına bir bulgudur — eksiklik oranı ve
+    örüntüsü rapor edilmeden `na.rm = TRUE` ile geçilmemelidir.
+-   `gtsummary::tbl_summary()`, akademik yayınların standart "Tablo
+    1"ini tek çağrıda üretir.
+
+Bir sonraki modülde bu araçları rastgele değişkenler ve olasılık
+dağılımlarıyla birleştirerek, örneklemden popülasyona nasıl çıkarım
+yapılacağının temelini atacağız.

@@ -1,0 +1,643 @@
+---
+title: "Modül 05: Veri İşleme — dplyr ve tidyr"
+author: "Prof. Dr. Hakan Mehmetcik"
+date: "`r Sys.Date()`"
+lang: tr
+format: pdf
+editor: visual
+execute:
+  echo: true
+  warning: true
+  message: false
+  cache: false
+df-print: kable
+knitr:
+  opts_chunk:
+    dev: "cairo_pdf"
+    fig.width: 6
+    fig.height: 3.6
+    fig.align: "center"
+---
+
+```{r}
+#| label: setup
+#| include: false
+library(dplyr)
+library(tidyr)
+library(gapminder)
+library(readr)
+library(here)
+```
+
+# Veri İşleme İçin Bir Dilbilgisi
+
+Bir araştırmacının zamanının büyük kısmı, aslında "analiz" değil **veri
+hazırlama**dır: yanlış sütunu atmak, eksik gözlemi ayıklamak, iki
+tabloyu birleştirmek, yılları sütun yerine satıra çevirmek. Bu iş
+sıkıcı görünür ama örtük bir tehlike taşır: her elle yapılan düzenleme
+adımı, tekrarlanamaz ve hatalı olma riski taşır.
+
+`dplyr` paketi, tıpkı `ggplot2`'nin görselleştirme için bir dilbilgisi
+sunması gibi, veri manipülasyonu için bir dilbilgisi sunar: küçük
+sayıda **fiil** (verb), birbirine `|>` ile zincirlenerek karmaşık
+sorulara dönüşür.
+
+::: callout-note
+**💡 `dplyr`'ın beş temel fiili**
+
+-   `select()`: sütun seçer
+-   `filter()`: satır seçer (koşula göre)
+-   `mutate()`: yeni sütun türetir
+-   `arrange()`: satırları sıralar
+-   `summarize()`: verileri (genellikle gruplar hâlinde) özetler
+:::
+
+Bu modülde bu beş fiile, verileri "düzenli" (tidy) hâle getiren
+`tidyr` paketinin iki fonksiyonunu (`pivot_longer()`, `pivot_wider()`)
+ve birden çok tabloyu birleştiren `dplyr` join fonksiyonlarını
+ekliyoruz. Üçü birlikte, siyaset bilimi ve kamu yönetiminde
+karşılaşacağınız neredeyse her veri hazırlama görevini kapsar.
+
+# Bu Modülde Kullanacağımız Veri: `gapminder`
+
+Kursun ilk modülünden beri kullandığımız `gapminder` veri setine geri
+dönüyoruz — ama bu kez odak noktamız görselleştirmek değil, **doğru
+soruyu sormak için veriyi doğru forma getirmek**.
+
+```{r}
+#| label: gapminder-yapisi
+glimpse(gapminder)
+```
+
+Veri seti, **142 ülke** için **1952–2007** arasında 5 yılda bir ölçülen
+yaşam beklentisi (`lifeExp`), nüfus (`pop`) ve kişi başı GSYİH
+(`gdpPercap`) içerir. Bu bir **panel veri**dir: hem ülkeler arası
+(yatay kesit) hem de zaman içi (boylamsal) karşılaştırmaya izin verir
+— karşılaştırmalı siyasetin klasik veri yapısı.
+
+# `dplyr` Fiilleri
+
+## `select()` — Sütun Seçmek
+
+```{r}
+#| label: select-ornek
+gapminder |> select(country, year, lifeExp) |> head(6)
+```
+
+Belirli sütunları **çıkarmak** için `-` kullanılır: `select(gapminder,
+-continent)`. İsim aralığı seçmek için `:` kullanılabilir:
+`select(gapminder, country:year)`.
+
+::: callout-tip
+**💡 İleri düzey: adına göre sütun seçmek**
+
+Akademik veri setleri (V-Dem, World Values Survey gibi) genellikle
+yüzlerce sütun içerir ve bunları tek tek yazmak imkânsız hâle gelir.
+`select()`, bir örüntüye göre seçim yapan yardımcı fonksiyonları
+(tidyselect) kabul eder: `starts_with()`, `ends_with()`, `contains()`.
+Örneğin, V-Dem veri setinde demokrasi endeksleri hep `v2x_` ile başlar
+— bu durumda `select(country, year, starts_with("v2x_"))` yeterlidir.
+
+Elimizdeki `genis` tablosunda da aynı mantığı kullanabiliriz — yıl
+sütunlarından yalnızca 2000'li yılları almak için:
+
+```{r}
+#| label: starts-with-ornek
+genis <- read_csv(here("data", "gapminder_genis_yasam_beklentisi.csv"))
+genis |> select(country, starts_with("20")) |> head(4)
+```
+:::
+
+## `filter()` — Satır Seçmek
+
+`filter()`, bir veya birden çok mantıksal koşulu sağlayan satırları
+tutar. Birden çok koşul virgülle ayrıldığında **VE** (`&`) anlamına
+gelir.
+
+```{r}
+#| label: filter-ornek
+gapminder |>
+  filter(continent == "Europe", year == 1997, lifeExp > 75) |>
+  select(country, lifeExp) |>
+  arrange(desc(lifeExp))
+```
+
+Mantıksal operatörleri hatırlamak için:
+
+```{r}
+#| label: fig-boolean
+#| fig-cap: "Mantıksal operatörlerin Venn şeması"
+#| out-width: "80%"
+knitr::include_graphics(here("05_modul", "images", "boolean_operators.png"))
+```
+
+::: callout-tip
+**Sık yapılan hata:** `filter(continent == "Europe" | continent ==
+"Asia")` yazacağınıza yanlışlıkla `filter(continent == "Europe" &
+continent == "Asia")` yazmak — bir ülke aynı anda iki kıtada
+olamayacağı için ikinci ifade **sıfır satır** döndürür. "Ya biri ya
+diğeri" için `|` (VEYA), her ikisi birden için `&` (VE) kullanılır.
+:::
+
+## `arrange()` — Sıralamak
+
+```{r}
+#| label: arrange-ornek
+gapminder |>
+  filter(year == 2007) |>
+  arrange(gdpPercap) |>
+  select(country, gdpPercap) |>
+  head(5)
+```
+
+Azalan sırada sıralamak için `desc()`: `arrange(desc(gdpPercap))`.
+
+## `mutate()` — Yeni Sütun Türetmek
+
+`gdpPercap`, kişi başına GSYİH'dir; toplam GSYİH'yi elde etmek için
+nüfusla çarpmamız gerekir — bu tam olarak `mutate()`'in işidir.
+
+```{r}
+#| label: mutate-ornek
+gapminder |>
+  filter(year == 2007, country == "Turkey") |>
+  mutate(toplam_gsyih_milyar = gdpPercap * pop / 1e9) |>
+  select(country, gdpPercap, pop, toplam_gsyih_milyar)
+```
+
+Bir sütunun adını değiştirmek (değerini değil) için `rename()`
+kullanılır: `rename(gapminder, yasam_beklentisi = lifeExp)`.
+
+### `case_when()` ile Kategorik Kodlama
+
+Siyaset bilimi araştırmalarında `mutate()`'in en sık kullanım
+biçimlerinden biri matematiksel işlem değil, **kodlamadır** (recoding):
+sürekli bir değişkeni kategorilere ayırmak. Ülkeleri Dünya Bankası
+usulü gelir gruplarına ayıralım:
+
+```{r}
+#| label: case-when-ornek
+gapminder |>
+  filter(year == 2007) |>
+  mutate(
+    gelir_grubu = case_when(
+      gdpPercap < 2000 ~ "Düşük Gelir",
+      gdpPercap >= 2000 & gdpPercap < 10000 ~ "Orta Gelir",
+      gdpPercap >= 10000 ~ "Yüksek Gelir",
+      TRUE ~ "Bilinmiyor"
+    )
+  ) |>
+  count(gelir_grubu)
+```
+
+`case_when()`, koşulları yukarıdan aşağıya sırayla dener ve **ilk
+sağlanan** koşulun sonucunu atar. Son satırdaki `TRUE ~ "Bilinmiyor"`
+bir güvenlik ağıdır: hiçbir koşulu sağlamayan (ör. `gdpPercap` eksik
+olan) satırlar sessizce `NA` olarak kalmak yerine açıkça işaretlenir.
+İki kategoriden fazlası olduğunda (örneğin demokrasi/otokrasi/karma
+rejim ayrımı) da aynı mantık kullanılır; yalnızca ikili bir ayrım
+gerekiyorsa `if_else()` daha kısa bir alternatiftir.
+
+## `group_by()` ve `summarize()` — Gruplara Göre Özetlemek
+
+Tek başına `summarize()` tüm veriyi tek bir satıra indirger.
+`group_by()` ile birleştirildiğinde, özet **her grup için ayrı ayrı**
+hesaplanır — karşılaştırmalı analizin temel aracı.
+
+```{r}
+#| label: group-by-ornek
+gapminder |>
+  filter(year == 2007) |>
+  group_by(continent) |>
+  summarise(
+    ort_yasam = round(mean(lifeExp), 1),
+    n_ulke = n()
+  ) |>
+  arrange(desc(ort_yasam))
+```
+
+::: callout-tip
+`group_by()` sonrası zincire devam ederken grup yapısının hâlâ aktif
+olduğunu unutmayın; `summarise()`'den sonra çıktı otomatik olarak bir
+grup daha "açılır" (son gruba göre). Beklenmedik davranışlardan
+kaçınmak için karmaşık zincirlerin sonuna `ungroup()` eklemek iyi bir
+alışkanlıktır.
+:::
+
+::: callout-tip
+**💡 Kısayol: `count()`**
+
+Amacınız yalnızca "her grupta kaç satır var?" sorusuna cevap vermekse,
+`group_by(continent) |> summarise(n = n())` yazmanıza gerek yok —
+`count(continent)` aynı işi tek satırda yapar:
+
+```{r}
+#| label: count-kisayol
+gapminder |> filter(year == 2007) |> count(continent)
+```
+
+`count()`, gruplama ve sayma işlemini birleştiren bir `dplyr`
+sarmalayıcısıdır (wrapper); `group_by()` + `summarise(n = n())`'in
+kısaltmasıdır ve tam olarak aynı sonucu üretir.
+:::
+
+## Fiilleri `|>` ile Zincirlemek
+
+Gerçek analiz sorularının çoğu, tek bir fiille değil, birkaçının
+sırayla uygulanmasıyla cevaplanır. Örnek soru: **"2007'de, nüfusu 10
+milyonun üzerinde olan Asya ülkeleri arasında yaşam beklentisi en
+yüksek beşi hangisi?"**
+
+```{r}
+#| label: pipe-zincir-ornek
+gapminder |>
+  filter(year == 2007, continent == "Asia", pop > 10e6) |>
+  arrange(desc(lifeExp)) |>
+  select(country, lifeExp, pop) |>
+  head(5)
+```
+
+Beş satırlık bu zincir, tek bir SQL sorgusu veya iç içe geçmiş beş
+fonksiyon çağrısı yerine, yukarıdan aşağıya **okunabilir bir cümle**
+gibi çalışır: filtrele → sırala → seç → ilk beşi al.
+
+## Zaman İçinde Karşılaştırma: `lag()` ve `lead()`
+
+`gapminder` bir panel veri olduğu için sık sorulan bir soru şudur:
+"Bir ülkenin bu dönemki değeri, **bir önceki döneme** göre ne kadar
+değişti?" Bunun için `dplyr::lag()` kullanılır — bir sütunu bir satır
+geriye kaydırır (`lead()` ise bir satır ileriye kaydırır).
+
+Ama dikkat: `lag()`, veriyi **olduğu gibi**, satır satır kaydırır;
+hangi ülkeye ait olduğunu bilmez. Birden fazla ülkeyi aynı anda
+işlerken `group_by(country)` **eklemezseniz** ne olacağını görelim:
+
+```{r}
+#| label: lag-facia
+gapminder |>
+  filter(country %in% c("Turkey", "Greece"), year >= 1997) |>
+  select(country, year, gdpPercap) |>
+  arrange(country, year) |>
+  mutate(onceki_gelir = lag(gdpPercap))
+```
+
+Türkiye'nin 1997 satırındaki `onceki_gelir` değeri **27538** —
+Yunanistan'ın 2007 değeri! `lag()`, `country` değişse bile bir önceki
+satırı almaya devam eder. Doğrusu, önce `group_by(country)` ile veriyi
+ülke bazında ayırmaktır:
+
+```{r}
+#| label: lag-dogru
+gapminder |>
+  filter(country %in% c("Turkey", "Greece"), year >= 1997) |>
+  select(country, year, gdpPercap) |>
+  arrange(country, year) |>
+  group_by(country) |>
+  mutate(
+    onceki_gelir = lag(gdpPercap),
+    buyume_orani = round((gdpPercap - onceki_gelir) / onceki_gelir * 100, 1)
+  ) |>
+  ungroup()
+```
+
+Şimdi her ülkenin ilk gözlemindeki `onceki_gelir` doğru şekilde `NA`
+— çünkü o ülke için gerçekten bir önceki dönem verisi yok.
+
+::: callout-tip
+**Kural:** Panel veride `lag()`/`lead()` kullanırken neredeyse her
+zaman önce `arrange(ulke, yil)`, sonra `group_by(ulke)` gerekir.
+`group_by()`'ı atlamak, sessizce yanlış (ama çalışan!) bir sonuç
+üretir — bu, R'ın hata vermeden yanlış cevap ürettiği en tehlikeli
+durumlardan biridir.
+:::
+
+# Düzenli (Tidy) Veri
+
+Bir veri setinin "düzenli" (tidy) sayılması için üç kural sağlanmalıdır:
+
+1.  Her **değişken** kendi sütununu oluşturur.
+2.  Her **gözlem** kendi satırını oluşturur.
+3.  Her **değer** kendi hücresini oluşturur.
+
+`gapminder` zaten bu kurallara uyar: her satır bir ülke-yıl gözlemidir,
+her sütun bir değişkendir. Ama araştırmacılar veriyi genellikle bu
+biçimde **almazlar**. Gapminder Vakfı'nın kendi web sitesinden
+indirilen gösterge dosyaları, örneğin, her ülkeyi bir satıra, her
+**yılı ayrı bir sütuna** yerleştirir — insan gözüyle okumak için
+pratik, ama R'da filtrelemek veya gruplamak için elverişsizdir. Az
+önce `select()` bölümünde tanıştığımız `genis` tablosuna dönelim:
+
+```{r}
+#| label: genis-veri-yukle
+genis |> select(1:5) |> head(3)
+```
+
+Bu tablo düzenli değildir: "yıl" bir değişkendir ama burada 12 ayrı
+sütuna (`1952`, `1957`, ... `2007`) yayılmıştır. `filter(year ==
+1997)` gibi bir komut bu hâliyle **çalışmaz** — çünkü `year` diye bir
+sütun yok.
+
+## `pivot_longer()` — Genişten Uzuna
+
+```{r}
+#| label: pivot-longer-ornek
+uzun <- genis |>
+  pivot_longer(
+    cols = `1952`:`2007`,
+    names_to = "yil",
+    values_to = "yasam_beklentisi"
+  ) |>
+  mutate(yil = as.integer(yil))
+
+uzun |> head(4)
+```
+
+`142` satırlık geniş tablo, `r nrow(uzun)` satırlık uzun bir tabloya
+dönüştü (`142 × 12 yıl`). Artık `filter(yil == 1997)` veya
+`group_by(continent) |> summarise(...)` gibi tüm `dplyr` fiilleri
+sorunsuz çalışır.
+
+::: callout-note
+**💡 İsim ile değer arasındaki fark**
+
+`names_to` argümanı, eski **sütun adlarının** (`"1952"`, `"1957"`,
+...) hangi yeni sütuna gireceğini belirtir. `values_to` argümanı ise,
+o sütunlardaki **hücre değerlerinin** hangi yeni sütuna gireceğini
+belirtir. Karıştırmanın en yaygın belirtisi: `yil` sütununda yaşam
+beklentisi değerlerinin, `yasam_beklentisi` sütununda ise yılların
+görünmesidir.
+:::
+
+## `pivot_wider()` — Uzundan Genişe
+
+Tersi yön de gereklidir — özellikle bir **rapor** hazırlarken. Diyelim
+ki bir politika notu için kıtaların yıllara göre ortalama yaşam
+beklentisini tek bir tabloda göstermek istiyorsunuz:
+
+```{r}
+#| label: pivot-wider-ornek
+rapor_tablosu <- gapminder |>
+  filter(year %in% c(1987, 1997, 2007)) |>
+  group_by(continent, year) |>
+  summarise(ort_yasam = round(mean(lifeExp), 1), .groups = "drop") |>
+  pivot_wider(names_from = year, values_from = ort_yasam)
+
+rapor_tablosu
+```
+
+`pivot_wider()`, `names_from` argümanındaki sütunun **değerlerini**
+yeni sütun adlarına, `values_from` argümanındaki sütunun değerlerini
+de bu yeni sütunların içeriğine dönüştürür — `pivot_longer()`'ın tam
+tersi.
+
+::: callout-tip
+Genel kural: **analiz için uzun, sunum için geniş.** `dplyr`
+fiillerinin hepsi uzun formatta rahat çalışır; ama bir tabloyu Word'e
+veya bir slayta koyacaksanız, geniş format genellikle daha okunaklıdır.
+:::
+
+# İlişkisel Veri: Tabloları Birleştirmek
+
+`gapminder` tek başına bir soruya cevap veremez: **"Bir ülkenin
+bölgesel bir örgüte üye olması, ekonomik göstergeleriyle ilişkili mi?"**
+Bu soruyu cevaplamak için ikinci bir tabloya ihtiyacımız var — üye
+ülke-örgüt eşleşmesini tutan bir tablo.
+
+```{r}
+#| label: iliskisel-veri-yukle
+orgutler <- read_csv(here("data", "orgutler.csv"))
+uyelikler <- read_csv(here("data", "orgut_uyelikleri.csv"))
+
+orgutler
+uyelikler |> head(4)
+```
+
+İki tablo ortak bir sütunla bağlanır: `orgutler$orgut_kodu` ile
+`uyelikler$orgut_kodu`. `gapminder$country` ile `uyelikler$ulke` de
+aynı şekilde bağlanabilir — sütun adları farklı olsa bile.
+
+Birleştirme (join) fiillerinin nasıl davrandığını gösteren şema:
+
+```{r}
+#| label: fig-joins
+#| fig-cap: "Birleştirme (join) türleri"
+#| out-width: "75%"
+knitr::include_graphics(here("05_modul", "images", "joins.png"))
+```
+
+## `inner_join()` — Sadece Eşleşenler
+
+`inner_join()`, **her iki tabloda da** karşılığı olan satırları tutar.
+
+```{r}
+#| label: inner-join-ornek
+uyelikler |> inner_join(orgutler, by = "orgut_kodu") |> head(4)
+```
+
+`gapminder`'ı üyelik tablosuyla birleştirdiğimizde, yalnızca en az bir
+örgüte üye olan ülkeler kalır:
+
+```{r}
+#| label: inner-join-gapminder
+gm2007 <- gapminder |> filter(year == 2007)
+
+gm2007_orgut <- gm2007 |>
+  inner_join(uyelikler, by = c("country" = "ulke"))
+
+nrow(gm2007)
+nrow(gm2007_orgut)
+```
+
+`142` ülkeden `r nrow(gm2007_orgut)` satıra düştük — çünkü bazı ülkeler
+birden fazla örgüte üye olduğu için **birden fazla satırda** görünüyor
+(ör. Belçika hem AB hem NATO üyesi), bazıları da hiçbirine üye değil.
+
+## Dış Birleştirmeler: `left_join()`
+
+`inner_join()`'in aksine, `left_join(x, y)` **x'teki tüm satırları**
+korur; `y`'de eşleşme yoksa, o sütunlar `NA` ile doldurulur. Örgüt
+tablosundaki tam adı, üyelik tablosuna kaybetmeden eklemek için:
+
+```{r}
+#| label: left-join-ornek
+gm2007_orgut |>
+  left_join(orgutler, by = "orgut_kodu") |>
+  select(country, orgut_adi, gdpPercap) |>
+  head(4)
+```
+
+### Eksik Veri: `drop_na()` ve `replace_na()`
+
+Yukarıdaki örnek, zaten en az bir örgüte üye olan ülkelerle
+sınırlıydı; bu yüzden hiç `NA` üretmedi. Ama `gm2007`'in **tamamını**
+üyelik tablosuyla birleştirirsek durum değişir — üye olmayan
+ülkelerin `orgut_adi` sütunu `NA` kalır:
+
+```{r}
+#| label: left-join-na-uretir
+gm2007_tum <- gm2007 |>
+  left_join(uyelikler, by = c("country" = "ulke")) |>
+  left_join(orgutler, by = "orgut_kodu")
+
+gm2007_tum |> filter(continent == "Europe") |> select(country, orgut_adi) |> head(6)
+```
+
+Bu `NA`'larla iki farklı şekilde başa çıkabilirsiniz:
+
+```{r}
+#| label: drop-na-ornek
+# Yalnizca en az bir orgute uye olan satirlari tut
+gm2007_tum |> drop_na(orgut_adi) |> nrow()
+```
+
+```{r}
+#| label: replace-na-ornek
+# NA'lari acikca "uye degil" olarak isaretle (satirlari atmadan)
+gm2007_tum |>
+  mutate(orgut_adi = replace_na(orgut_adi, "Örgüt üyeliği yok")) |>
+  filter(continent == "Europe") |>
+  distinct(country, .keep_all = TRUE) |>
+  select(country, orgut_adi) |>
+  head(6)
+```
+
+::: callout-tip
+Hangisini seçeceğiniz **araştırma sorunuza** bağlıdır: yalnızca örgüt
+üyesi ülkeleri karşılaştıracaksanız `drop_na()` uygundur (bkz. bir
+önceki bölümdeki `inner_join()` yaklaşımı — aslında aynı sonuca
+götürür). Ama "örgüt üyeliğinin kendisi" bir değişkense (ör. "üye mi,
+değil mi?" sorusunu analiz edeceksiniz) `replace_na()` ile boşluğu
+açıkça etiketlemek, o gözlemi veri setinden **kaybetmeden** bilgi
+taşımanızı sağlar.
+:::
+
+## Filtreleme Birleştirmeleri: `semi_join()` ve `anti_join()`
+
+Bu ikisi diğerlerinden farklıdır: **yeni sütun eklemezler**, yalnızca
+`x`'in satırlarını `y`'ye göre süzerler.
+
+-   `semi_join(x, y)`: `y`'de eşleşmesi olan `x` satırlarını **tutar**.
+-   `anti_join(x, y)`: `y`'de eşleşmesi olan `x` satırlarını **atar**
+    (yani yalnızca eşleşmeyenler kalır).
+
+```{r}
+#| label: semi-join-ornek
+ab_uyeleri <- uyelikler |> filter(orgut_kodu == "AB")
+
+gm2007 |>
+  semi_join(ab_uyeleri, by = c("country" = "ulke")) |>
+  nrow()
+```
+
+`anti_join()`, veri kümenizin **kapsamındaki boşlukları** görmenin en
+hızlı yoludur. Örneğin, `gapminder`'daki Avrupa ülkelerinden hangileri
+bu dört örgütün (AB, NATO, ASEAN, MERCOSUR) hiçbirine üye değil?
+
+```{r}
+#| label: anti-join-ornek
+gm2007 |>
+  filter(continent == "Europe") |>
+  anti_join(uyelikler, by = c("country" = "ulke")) |>
+  select(country)
+```
+
+Sonuç mantıklı: İsviçre tarihsel tarafsızlığı nedeniyle her ikisinin de
+dışında, Bosna-Hersek ve Sırbistan ise ne AB ne NATO üyesi. Bu üçü
+dışındaki tüm Avrupa ülkeleri en az bir örgüte üye.
+
+::: callout-note
+**💡 Veri kapsamı her zaman tamdır varsayımı tehlikelidir**
+
+Dikkat: bu üyelik tablosu, AB'nin gerçek 27 üyesinin yalnızca 21'ini
+içeriyor — çünkü `gapminder`'ın 142 ülkelik paneli Kıbrıs, Estonya,
+Letonya, Litvanya, Lüksemburg ve Malta gibi küçük ülkeleri
+kapsamıyor. `anti_join()` size veri setiniz **içindeki** boşlukları
+gösterir; ama veri setinizin kendisinin dış dünyayı ne kadar eksiksiz
+temsil ettiğini göstermez. İkisini birbirine karıştırmayın.
+:::
+
+### `anti_join()`'in Bir Başka Kullanımı: "Olmayan Durumlar"
+
+`anti_join()`'i yalnızca eksik veri bulmak için değil, **"olmayan
+durumu" (non-event) modellemek** için de kullanabilirsiniz — nicel
+uluslararası ilişkiler araştırmalarının (ör. Correlates of War
+projesi) temel tekniklerinden biridir. Mantık: tüm olası ikili ülke
+çiftlerini (dyad) listeleyin, sonra bir yıl içinde **savaşan**
+çiftleri bu listeden `anti_join()` ile çıkarın — geriye kalan, o yıl
+**barış içinde olan** çiftlerdir.
+
+Küçük, kurgusal bir örnekle:
+
+```{r}
+#| label: anti-join-dyad-ornek
+ulkeler <- c("A Ülkesi", "B Ülkesi", "C Ülkesi", "D Ülkesi")
+ciftler <- combn(ulkeler, 2)
+tum_ciftler <- tibble(ulke1 = ciftler[1, ], ulke2 = ciftler[2, ])
+
+savasan_ciftler <- tibble(ulke1 = "A Ülkesi", ulke2 = "B Ülkesi")
+
+# Geriye kalan: o yil barisci ciftler
+tum_ciftler |> anti_join(savasan_ciftler, by = c("ulke1", "ulke2"))
+```
+
+Bu, çatışma çalışmalarında veri setinin **çoğunu** oluşturur: dünyada
+gerçekleşen savaş sayısı, gerçekleşebilecek tüm ikili ilişki
+sayısından çok daha azdır — ve "neden savaş çıkmadı" sorusu da
+"neden çıktı" sorusu kadar analiz değeri taşır.
+
+## Hepsini Bir Arada: Örgüt Üyeliğine Göre Karşılaştırma
+
+Şimdi `select()`, `filter()`, `mutate()`, `group_by()`,
+`summarize()` ve `left_join()`'i tek bir zincirde birleştirerek asıl
+soruyu cevaplayalım:
+
+```{r}
+#| label: buyuk-zincir
+gm2007 |>
+  inner_join(uyelikler, by = c("country" = "ulke")) |>
+  left_join(orgutler, by = "orgut_kodu") |>
+  group_by(orgut_adi) |>
+  summarise(
+    n_ulke = n(),
+    ort_gdp = round(mean(gdpPercap)),
+    ort_yasam = round(mean(lifeExp), 1),
+    .groups = "drop"
+  ) |>
+  arrange(desc(ort_gdp))
+```
+
+Tek bir zincirde: iki tabloyu birleştirdik, örgüt adlarını ekledik,
+örgüte göre gruplandık ve üç özet istatistik hesapladık. Sonuç,
+AB ve NATO üyesi ülkelerin (örtüşen üyelikleriyle) ortalama kişi başı
+GSYİH'sinin ASEAN ve MERCOSUR'a göre belirgin biçimde yüksek olduğunu
+gösteriyor — ama bunun **nedeni** hakkında bu tablo tek başına hiçbir
+şey söylemez; korelasyon ile nedensellik arasındaki farkı bir sonraki
+modülde tekrar hatırlayacağız.
+
+# Özet
+
+::: callout-note
+**Bu modülde öğrendikleriniz**
+
+-   `select()`, `filter()`, `mutate()`, `arrange()`,
+    `group_by()`+`summarize()` — `dplyr`'ın beş temel fiili
+-   `case_when()` ile kategorik kodlama; `count()` ile hızlı sayım
+-   `|>` ile fiilleri zincirlemek
+-   Panel veride `lag()`/`lead()` — ve `group_by()` olmadan ne ters
+    gidebileceği
+-   Düzenli (tidy) verinin üç kuralı
+-   `pivot_longer()` ve `pivot_wider()` ile geniş/uzun format arası
+    dönüşüm; `starts_with()` gibi adına göre sütun seçiciler
+-   `inner_join()`, `left_join()`, `semi_join()`, `anti_join()` ile
+    birden çok tabloyu birleştirmek
+-   `drop_na()`/`replace_na()` ile birleştirmenin ürettiği eksik
+    veriyi yönetmek; `anti_join()` ile "olmayan durumları" modellemek
+:::
+
+# Sırada Ne Var?
+
+Bir sonraki oturumda bu modülle birlikte işlenen **Quarto ile
+raporlama** konusuna bakacağız (`15_modul/15_modul_ders.qmd`) —
+bugün ürettiğiniz tabloları, kod ve düz metinle birlikte tek bir
+belgede nasıl yayınlanabilir hâle getireceğinizi öğreneceksiniz.
+Ardından olasılık ve dağılımlarla çıkarımsal istatistiğe geçeceğiz.

@@ -1,0 +1,625 @@
+---
+title: "Modül 11: Regresyon Analizi"
+author: "Prof. Dr. Hakan Mehmetcik"
+date: "`r Sys.Date()`"
+lang: tr
+format: pdf
+editor: visual
+execute:
+  echo: true
+  warning: true
+  message: false
+  cache: false
+df-print: kable
+knitr:
+  opts_chunk:
+    dev: "cairo_pdf"
+---
+
+# Regresyon Analizine Giriş
+
+## Fonksiyonlar ve Modeller
+
+Bir **fonksiyon**, belirli bir girdiyle belirli bir çıktıyı ilişkilendirir. Yani, her girdiye karşılık yalnızca bir çıktı elde edersiniz. Bu ilişkiyi daha somut hale getirmek için bir içecek otomatını örnek olarak düşünelim:
+
+-   Eğer "Kahve" tuşuna basarsanız, otomat her zaman kahve verir.
+
+-   Eğer "Çay" tuşuna basarsanız, otomat her zaman çay verir.
+
+-   Aynı tuşa bastığınızda farklı bir içecek çıkması mümkün değildir.
+
+💡 Bir fonksiyon genellikle $f(x)$ olarak gösterilir, burada x girdidir. Örneğin, $f(x) = x^2$ fonksiyonunda, $f(x)$ fonksiyonu x değerini alır ve onun karesini çıktı olarak verir!
+
+👋 İstatistik açısından **fonksiyonlar, bir modelin nasıl çalıştığını anlamak için bir çerçeve sağlar.**
+
+## Bir İstatiksel Modelleme Olarak Regresyon
+
+**İstatistiksel modelleme**, değişkenler arasındaki ilişkileri belirlemenin bir yolunu sunar. Bu, incelediğimiz sistemi daha iyi anlamamıza yardımcı olur. Regresyon, istatistikteki en basit modelleme yöntemidir.
+
+Regresyon analizi, tahmin ve hipotez testini tamamlayan temel bir çıkarımsal istatistik yöntemidir. Bu yöntem, değişkenler arasındaki ilişkileri incelemek üzere modeller geliştirmek için kullanılır.
+
+### Regresyon Türleri
+
+#### **1. Doğrusal Regresyon (Linear Regression)**
+
+Bu, bağımlı değişken ile bir veya daha fazla bağımsız değişken arasındaki ilişkinin doğrusal olduğu varsayımıyla oluşturulan en basit regresyon türüdür.
+
+Tek açıklayıcı değişkenli (basit) hâli aşağıdaki gibi ifade edilir:
+
+$$Y = \beta_0 + \beta_1 X_1 + \epsilon$$
+
+Burada:
+
+-   Y: Bağımlı değişken
+
+-   $X_1$: Bağımsız değişken
+
+-   $\beta_0$: Sabit terim (intercept)
+
+-   $\beta_1$: Katsayı (eğim)
+
+-   $\epsilon$: Hata terimi
+
+**2. Çoklu Regresyon (Multiple Regression)**
+
+Doğrusal regresyonun genişletilmiş bir halidir ve bağımlı değişkeni daha iyi tahmin edebilmek için birden fazla bağımsız değişken kullanılır.
+
+Aşağıdaki gibi ifade edilir:
+
+$$Y = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \ldots + \beta_n X_n + \epsilon$$
+
+Burada:
+
+-   Y: Bağımlı değişken
+
+-   $X_1, X_2, \ldots, X_n$: Bağımsız değişkenler
+
+-   $\beta_0, \beta_1, \beta_2, \ldots, \beta_n$: Katsayılar
+
+-   $\epsilon$: Hata terimi
+
+Çoklu regresyonu ve kategorik açıklayıcı değişkenleri Modül 12'de ayrıntılı olarak işleyeceğiz. Bu modülde **tek bir açıklayıcı değişkenli** (basit) regresyona odaklanıyoruz.
+
+**3. Lojistik Regresyon (Logistic Regression)**
+
+Bağımlı değişkenin kategorik olduğu durumlarda kullanılır. Genellikle ikili sonuçlar için bir olayın gerçekleşme olasılığını tahmin etmek amacıyla verileri lojistik bir eğriye uydurur.
+
+### Çıkarımsal İstatistikte Regresyon
+
+Çıkarımsal istatistikte regresyon analizi şu amaçlarla kullanılır:
+
+1.  **İlişkileri Tahmin Etme:** Değişkenler arasındaki ilişkinin gücünü ve anlamlılığını belirler.
+
+2.  **Sonuçları Tahmin Etme:** Regresyon modeli kullanılarak, bağımsız değişkenlerin belirli değerleri için bağımlı değişkenin değerleri tahmin edilir.
+
+3.  **Hipotezleri Test Etme:** Değişkenler arasındaki ilişkiler hakkında belirli hipotezleri test eder. Örneğin, bağımsız değişkenlerin etkisinin anlamlı olup olmadığını değerlendirir.
+
+------------------------------------------------------------------------
+
+## Korelasyon
+
+Regresyona geçmeden önce, iki sürekli değişken arasındaki **doğrusal ilişkinin gücünü ve yönünü** özetleyen daha basit bir araca bakalım: **korelasyon katsayısı** ($r$, Pearson korelasyonu).
+
+-   $r$, $-1$ ile $+1$ arasında değişir.
+-   $r > 0$: pozitif ilişki (biri artarken diğeri de artar).
+-   $r < 0$: negatif ilişki (biri artarken diğeri azalır).
+-   $r = 0$: doğrusal ilişki yok (ama doğrusal olmayan güçlü bir ilişki hâlâ olabilir — aşağıya bakın).
+
+| $|r|$ | Yorum |
+|----|----|
+| $\approx 0.1$ | Zayıf ilişki |
+| $\approx 0.3$ | Orta düzey ilişki |
+| $\approx 0.5$ ve üzeri | Güçlü ilişki |
+
+```{r}
+#| eval: false
+cor(x, y)                 # Pearson korelasyon katsayısı
+cor.test(x, y)             # korelasyonun anlamlılık testi (H0: rho = 0)
+```
+
+::: callout-warning
+⚠️ **Anscombe Dörtlüsü: Neden Her Zaman Grafiğe Bakmalısınız**
+
+Base R'da yer alan `anscombe` veri seti, istatistikte ünlü bir uyarı örneğidir: dört farklı $(x,y)$ çifti seti, **aynı** ortalama, aynı varyans, aynı korelasyon katsayısı ($r \approx 0.816$) ve **aynı** doğrusal regresyon denklemini verir — ama dağılım grafiklerine bakıldığında dördü de tamamen farklı görünür (biri gerçekten doğrusal, biri eğrisel, biri tek bir aykırı değerden kaynaklanıyor, biri ise dikey bir çizgi + bir aykırı değer).
+
+```{r}
+data(anscombe)
+
+# Her çift için korelasyon aynı mı, kontrol edelim
+cor(anscombe$x1, anscombe$y1)
+cor(anscombe$x2, anscombe$y2)
+cor(anscombe$x3, anscombe$y3)
+cor(anscombe$x4, anscombe$y4)
+```
+
+**Ders:** $r$ veya $R^2$ gibi tek bir sayı, veriyi asla tam özetleyemez. Regresyon kurmadan **önce** her zaman verinizin dağılım grafiğini çizin.
+:::
+
+::: callout-warning
+⚠️ **Korelasyon nedensellik değildir** — Modül 10'da gördüğümüz Simpson Paradoksu uyarısının doğal devamı budur. İki değişken güçlü bir korelasyona sahip olabilir çünkü (a) biri diğerini gerçekten etkiliyordur, (b) ilişki tam tersi yöndedir, ya da (c) üçüncü bir **karıştırıcı değişken** her ikisini de etkiliyordur. Bu modülün Örnek 3'ünde tam da bu üçüncü duruma bir örnek göreceğiz.
+:::
+
+------------------------------------------------------------------------
+
+## Basit Doğrusal Regresyon
+
+### **Örnek 1:**
+
+Bu alıştırmada, bir grup üniversite öğrencisine ait iki değişken içeren ikili (bivariate) veri bulunmaktadır:
+
+-   Üniversite boyunca ders kitaplarına harcanan toplam miktar (dolar cinsinden),
+
+-   Genel not ortalaması (GPA).
+
+Aşağıdaki doğrusal regresyon modeli, harcanan para miktarına (yüzlerce dolar cinsinden) göre GPA'yı tahmin etmek için kullanılmıştır:
+
+$$\text{Tahmin Edilen GPA} = 2.84 + 0.04 \times \text{Ders Kitaplarına Harcanan Para (Dolar)} $$
+
+### **Soru 1:**
+
+Bir öğrenci üniversite boyunca ders kitaplarına **hiç para harcamamışsa** (0 dolar), bu öğrencinin tahmin edilen GPA'sı nedir? (Bu, modelin kesişim noktasını — intercept'ini — sorar.)
+
+Harcanan para 0 dolar olduğunda:
+
+$$\text{Tahmin Edilen GPA} = 2.84 + 0.04 \times 0 = 2.84$$
+
+```{r}
+predictedgpa <- function(x) {
+  2.84 + 0.04*x/100
+}
+
+predictedgpa(0)
+```
+
+### **Soru 2:**
+
+Bir öğrenci üniversite boyunca ders kitaplarına toplam **970 dolar** harcamışsa, bu öğrencinin tahmin edilen GPA'sı nedir?
+
+```{r}
+predictedgpa(970)
+```
+
+### **Soru 3:**
+
+Bir öğrenci üniversitede ders kitaplarına **0 dolar** harcamış ve **3.71 GPA** ile mezun olmuşsa, bu öğrencinin **artık değeri** nedir?
+
+```{r}
+# Artık hesaplama: Artık = Gerçek Değer - Tahmin Edilen Değer
+
+gercek_gpa <- 3.71  # Gerçek GPA değeri
+tahmin_edilen_gpa <- 2.84  # Ders kitaplarına 0 dolar harcayan öğrencinin tahmin edilen GPA'sı
+
+residuel <- gercek_gpa - tahmin_edilen_gpa  # Artık hesaplama
+cat("Artık değer:", residuel)
+
+```
+
+::: callout-note
+💡 Artıklar, regresyon analizinin temel bir kavramıdır. Bir regresyon modelinde bağımlı değişkenin gözlemlenen değeri ile tahmin edilen değeri arasındaki farkı ölçerler. Artıklar, regresyon modelinin ne kadar iyi uyum sağladığını değerlendirmek ve modelin veriyi ne kadar iyi açıkladığını anlamak için kullanılır.
+
+Bir gözlem için **artık** (e) şu şekilde hesaplanır:
+
+$$
+e = y_{\text{gözlemlenen}} - y_{\text{tahmin edilen}}
+$$
+:::
+
+### **Soru 4:**
+
+Bir öğrenci ders kitaplarına **1,450 dolar** harcamış ve **2.91 GPA** ile mezun olmuşsa, bu öğrencinin artık değeri nedir? Artığın pozitif mi yoksa negatif mi olduğunu belirtin ve sonucu **virgülden sonra 2 basamak** olacak şekilde yuvarlayın.
+
+```{r}
+# Artığı hespalayalım
+residuel<- 2.91 - predictedgpa(1450)
+cat("Artık", residuel, "\n")
+
+# Artığın pozitif mi negatif mi olduğunu belirtelim
+if (residuel > 0) {
+  cat("Artık pozitif, model gerçek GPA'yı düşük tahmin etmiş.\n")
+} else if (residuel < 0) {
+  cat("Artık negatif, model gerçek GPA'yı yüksek tahmin etmiş.\n")
+} else {
+  cat("Artık sıfır, model GPA'yı doğru tahmin etmiş.\n")
+}
+```
+
+### **Soru 5:**
+
+Bir birinci sınıf öğrencisinin **4 GPA** almak için ne kadar para harcaması gerektiğini hesaplayın.
+
+```{r}
+# Regresyon modeli katsayıları
+beta_0 <- 2.84  # Sabit terim
+beta_1 <- 0.04  # Katsayı
+# Hedef GPA
+hedef_gpa <- 4
+
+# Harcanması gereken para (yüzlerce dolar cinsinden) için denklem çözümü
+harcanan_para <- (hedef_gpa - beta_0) / beta_1
+
+# Sonucu yazdır
+cat(sprintf("4 GPA almak için harcanması gereken miktar: %.2f dolar\n", harcanan_para*100))
+```
+
+::: callout-note
+😃 Bir birinci sınıf öğrencisi bu çalışmayı öğrendi ve 4.0 GPA almak için ders kitaplarına 2,900 dolar harcaması gerektiğini hesapladı. (Yukarıdaki denklemle bu hesabı az önce siz de doğruladınız). Bu öğrenci, GPA'sını artırmak için tüm ders kitaplarını ikinci el ve daha ucuz olanlar yerine sıfır olarak satın almaya karar verdi. Bu modeli istatistiksel olarak doğru bir şekilde mi kullanıyor?
+
+Cevap: Tabii ki hayır. Kesinlikle hayır!
+:::
+
+### R'da Regresyon
+
+👋 **lm() fonksiyonu ile doğrusal modelleri simüle etme:** R'da doğrusal modeller genellikle **lm()** fonksiyonu kullanılarak oluşturulur. Bu fonksiyon, modelin toplam hata miktarını minimize eden en iyi uyum çizgisini (line of best fit) veriye uydurur.
+
+```{r}
+# Örnek Veri
+set.seed(123)
+study_hours <- runif(100, 0, 10)  # 0 ile 10 arasında rastgele çalışma saatleri üret
+test_scores <- 50 + 5 * study_hours + rnorm(100, mean=0, sd=5)  # Test skorlarını üret
+
+# Doğrusal Regresyon Modeli Oluştur
+model <- lm(test_scores ~ study_hours)
+summary(model)
+
+```
+
+Bu kodda **lm(y \~ x)**, y değişkenini bağımlı değişken, x değişkenini ise bağımsız değişken olarak kullanarak doğrusal bir model oluşturur. **summary(model)** fonksiyonu ise modelin özetini verir; bu özet, katsayılar, artıklar ve diğer tanısal ölçümleri içerir.
+
+### ⚠️ **summary() Fonksiyonunun Sağladığı Bilgiler**
+
+1.  **Call:**
+
+    -   **lm(formula = test_scores \~ study_hours):** Kullanılan modeli gösterir. Burada test_scores, study_hours'un bir fonksiyonu olarak tahmin edilmektedir.
+
+2.  **Residuals (Artık/Artıklar):**
+
+    -   Artıklar, gözlemlenen değerler ile modelin tahmin ettiği değerler arasındaki farktır. Bu değerler (Min, 1Q (birinci çeyrek), Median, 3Q (üçüncü çeyrek) ve Max) artıkların dağılımını açıklar.
+
+    -   Daha küçük artıklar, modelin veriye daha iyi uyum sağladığını gösterir.
+
+3.  **Coefficients (Katsayılar):**
+
+    -   **(Intercept):** Çalışma saati 0 olduğunda beklenen test skorudur. Yaklaşık **49.9552**.
+
+    -   **study_hours:** Çalışma saatlerindeki her bir saatlik artış için test skorundaki artış tahmini. Yaklaşık **4.9551**.
+
+    -   **Std. Error:** Katsayı tahminlerinin doğruluğunu ölçer.
+
+    -   **t value:** Katsayının sıfırdan ne kadar uzak olduğunu gösterir (standart sapma cinsinden). Daha büyük mutlak değerler, daha anlamlı katsayılar olduğunu gösterir.
+
+    -   **Pr(\>\|t\|):** Katsayının sıfırdan farklı olup olmadığını test eden p-değeri. **0.05'ten küçük** değerler katsayının anlamlı olduğunu gösterir. Her iki katsayı da anlamlıdır (\<2e-16).
+
+4.  **Residual Standard Error:**
+
+    -   Yaklaşık **4.846**, yanıt değişkeninin gerçek regresyon doğrusundan ortalama sapmasını ölçer.
+
+5.  **Degrees of Freedom (Serbestlik Derecesi):**
+
+    -   Model **98 serbestlik derecesi** kullanmıştır (100 gözlem - 2 parametre).
+
+6.  **Multiple R-squared:**
+
+    -   **0.8956**, bağımsız değişkenin bağımlı değişkendeki varyansın ne kadarını açıkladığını gösterir. Burada çalışma saatleri, test skorlarındaki değişkenliğin yaklaşık %89.56'sını açıklamaktadır.
+
+7.  **Adjusted R-squared:**
+
+    -   **0.8945**, R-kare değerinin bağımsız değişken sayısına göre düzeltilmiş hali. Bu değer genellikle R-kare'den daha düşüktür ve farklı sayıda bağımsız değişken içeren modelleri karşılaştırırken daha iyi bir ölçüdür.
+
+8.  **F-statistic:**
+
+    -   **840.6 (1 ve 98 DF ile):** Modelin genel uyumunu ölçer. Çok düşük p-değeri (\<2.2e-16), modelin istatistiksel olarak anlamlı olduğunu gösterir.
+
+**Genel Değerlendirme**
+
+-   Model veriye iyi uyum sağlamaktadır.
+
+-   **study_hours** değişkeni, test_scores'un önemli bir açıklayıcısıdır.
+
+-   Hem sabit terim (intercept) hem de eğim (slope) istatistiksel olarak anlamlıdır.
+
+-   Artıklar iyi dağılmış görünmekte ve model, test skorlarındaki değişkenliğin önemli bir kısmını açıklamaktadır.
+
+### **Örnek 2: gapminder ile Korelasyon ve Basit Regresyon**
+
+Modül 10'da, `gapminder` verisiyle kıtalar arasında yaşam beklentisi farkını ANOVA ile test etmiştik. Şimdi aynı veri setiyle şu soruyu soralım: **Bir ülkenin kişi başına düşen GSYİH'si, yaşam beklentisini ne ölçüde açıklar?**
+
+```{r}
+library(gapminder)
+gapminder_2007 <- subset(gapminder, year == 2007)
+gapminder_2007$gdp_bin <- gapminder_2007$gdpPercap / 1000  # bin USD cinsinden
+
+# Once korelasyona bakalim
+cor.test(gapminder_2007$gdp_bin, gapminder_2007$lifeExp)
+```
+
+**Korelasyon sonucu:** $r \approx 0.68$, $p < .001$ — orta-güçlü, pozitif ve istatistiksel olarak anlamlı bir doğrusal ilişki.
+
+```{r}
+plot(lifeExp ~ gdp_bin, data = gapminder_2007,
+     xlab = "Kişi başı GSYİH (bin USD)", ylab = "Yaşam Beklentisi (yıl)",
+     main = "GSYİH ve Yaşam Beklentisi (2007)")
+```
+
+Grafikte, ilişkinin tam doğrusal olmadığı da görülüyor (düşük GSYİH aralığında eğri daha dik, yüksek GSYİH'de düzleşiyor) — Anscombe uyarısını burada hatırlamakta fayda var. Yine de basit doğrusal modeli kuralım:
+
+```{r}
+mod_gdp <- lm(lifeExp ~ gdp_bin, data = gapminder_2007)
+summary(mod_gdp)
+```
+
+### **Model Özeti**
+
+Model denklemi:
+
+$$\widehat{\text{Yaşam Beklentisi}} = 59.57 + 0.637 \times \text{Kişi Başı GSYİH (bin USD)}$$
+
+-   **Intercept (59.57):** Kişi başı GSYİH'si 0 olan (gerçekte var olmayan, teorik) bir ülke için tahmin edilen yaşam beklentisi.
+
+-   **gdp_bin katsayısı (0.637):** Kişi başı GSYİH her 1000 dolar arttığında, yaşam beklentisinin ortalama 0.637 yıl artması beklenir. %95 güven aralığı (0.52, 0.75) — 0'ı içermiyor.
+
+-   **t-değeri (10.93), p-değeri (\<0.001):** Katsayı son derece anlamlıdır.
+
+-   **R-Kare (0.461):** Kişi başı GSYİH tek başına, yaşam beklentisindeki varyansın **%46.1**'ini açıklıyor.
+
+::: callout-note
+👋 **$R^2$ regresyonun "etki büyüklüğüdür"** — Modül 10'da tanıttığımız Cohen's d ve Cramér's V'nin regresyondaki karşılığı $R^2$'dir: modelin ne kadar **açıkladığını**, p-değerinin ise yalnızca bu açıklamanın **şansa bağlı olma ihtimalinin düşük olduğunu** gösterdiğini unutmayın. $R^2=0.461$ gibi orta-yüksek bir değer, hem istatistiksel hem pratik açıdan önemli bir ilişkiye işaret ediyor — ama %54'lük kısmı hâlâ açıklanamıyor; sağlık altyapısı, eğitim, gelir dağılımı gibi başka etkenler devrede.
+:::
+
+### Öğretici Bir An: Doğru Fonksiyon Formu $R^2$'yi Nasıl Değiştirir?
+
+Modül 03'te aynı `gapminder` verisiyle Hans Rosling'in ünlü grafiğini çizmiş ve kişi başı geliri **log ölçekte** göstermiştik — hatırlayın: "2. bölümdeki eğri düz bir doğruya dönüştü" demiştik, çünkü gelirdeki her **iki katına çıkış**, yaşam beklentisinde kabaca aynı miktarda artışla gidiyordu. Yukarıdaki grafikte de tam olarak aynı eğriselliği gördük ("düşük GSYİH aralığında eğri daha dik, yüksek GSYİH'de düzleşiyor"). O zaman görselleştirmede yaptığımız düzeltmeyi şimdi modele de uygulayalım:
+
+```{r}
+mod_gdp_log <- lm(lifeExp ~ log(gdpPercap), data = gapminder_2007)
+summary(mod_gdp_log)
+```
+
+$R^2$, ham GSYİH ile kurulan modeldeki 0.461'den, **log-dönüştürülmüş** modelde $\approx 0.654$'e yükseliyor — aynı iki değişken, aynı gözlemler, yalnızca fonksiyon formu değişti. Ders: gelir, nüfus, savaş kaybı gibi büyük ölçüde çarpık (sağa yatık) dağılan sosyal bilim değişkenleri neredeyse her zaman **log-dönüşümü** ister. Modelin doğrusallık varsayımına doğru fonksiyon formuyla uymak, açıklayıcılığı önemli ölçüde artırabilir — bu, ek bir değişken eklemeden, yalnızca **var olan** değişkeni doğru ölçekte kullanarak elde edilen bir kazançtır.
+
+::: callout-note
+👋 **`broom` ile Düzenli (Tidy) Regresyon Çıktısı** — `summary()` çıktısını okumayı bilmek şarttır, ama bu karmaşık konsol metnini bir tabloya veya grafiğe dönüştürmek için `broom` paketi kullanılır. `dplyr`'a zaten aşinasınız (Modül 05); `broom`, aynı "düzenli veri" mantığını regresyon çıktısına taşır:
+
+```{r}
+library(broom)
+
+tidy(mod_gdp_log)     # katsayılar, standart hata, t, p -- bir data.frame olarak
+glance(mod_gdp_log)   # R^2, F-istatistiği, df gibi model-geneli özetler -- tek satır
+```
+
+`tidy()` çıktısı doğrudan `ggplot()`'a veya `kable()`'a verilebilir; `glance()` ise birden fazla modeli (örneğin ham GSYİH modeli ile log-GSYİH modelini) yan yana karşılaştırmak için idealdir.
+:::
+
+::: callout-note
+👋 **Varsayımların Görsel Denetimi: `performance` Paketi** — Modül 10'da `shapiro.test()` ve `bartlett.test()` ile sayısal varsayım denetimi yapmıştık. Regresyonda (normallik, varyans homojenliği, doğrusallık, aykırı/etkili gözlemler gibi) birden fazla varsayımı tek seferde, **görsel ve yorumlanabilir** biçimde denetlemek için `performance` paketi kullanılabilir:
+
+```{r}
+#| eval: false
+library(performance)
+check_model(mod_gdp_log)
+```
+
+Tek bu komut, her varsayım için ayrı bir grafik panelini ve "bu grafikte ne aramalısınız" diyen bir rehber çizgiyle birlikte üretir — `plot(model)`'ın taban R çıktısından çok daha kolay yorumlanır. Sınavda sizden bir `check_model()` çıktısını **çalıştırmanız değil**, verilen bir panelde bir noktanın referans çizgiden saptığını fark edip ne anlama geldiğini söylemeniz istenebilir.
+:::
+
+### Tahmin ve Artık: Türkiye Örneği
+
+```{r}
+turkiye <- subset(gapminder_2007, country == "Turkey")
+turkiye[, c("country", "gdpPercap", "lifeExp")]
+
+tahmin_turkiye <- predict(mod_gdp, newdata = data.frame(gdp_bin = turkiye$gdp_bin))
+residuel_turkiye <- turkiye$lifeExp - tahmin_turkiye
+c(tahmin = tahmin_turkiye, gercek = turkiye$lifeExp, residuel = residuel_turkiye)
+```
+
+Model, Türkiye'nin GSYİH'sine bakarak yaşam beklentisini yaklaşık **65 yıl** olarak tahmin ediyor; gerçek değer ise **71.8 yıl** — yani **pozitif bir artık** (model olduğundan düşük tahmin etmiş). Bu, Türkiye'nin gelir düzeyine göre beklenenden **daha iyi** bir sağlık/yaşam beklentisi performansı sergilediğini düşündürür; nedenini (sağlık politikaları, halk sağlığı yatırımları vb.) tek bir regresyon bize söylemez, ama araştırılması gereken bir soruyu işaret eder.
+
+::: callout-note
+👋 **Artık, kullanılan modele bağlıdır.** Aynı hesabı `mod_gdp_log` ile tekrarlarsanız tahmin $\approx 70.1$ yıla çıkar ve artık yalnızca $\approx +1.7$ yıla düşer — Türkiye artık o kadar da "beklenenin üstünde" görünmez. Yani "Türkiye ortalamanın üstünde performans gösteriyor" gibi bir yorum, hangi modeli seçtiğinize bağlı olarak güçlenebilir veya zayıflayabilir. Bu da neden doğru fonksiyon formunu seçmenin yalnızca $R^2$'yi değil, **tekil gözlemler hakkındaki yorumlarımızı** da etkilediğini gösterir.
+:::
+
+------------------------------------------------------------------------
+
+
+### Örnek 3:
+
+2010 yılına ait gözlemsel veriler kullanarak, eyaletler düzeyinde öğretmen maaşlarının (ortalama öğretmen maaşı) ve SAT (Scholastic Aptitude Test) toplam puanlarının ilişkisini inceleyelim. SAT, üniversiteye giriş için kullanılan önemli bir sınavdır. Öğretmen maaşlarının yüksek olması, daha iyi sınav sonuçları ile ilişkilendirilebilir mi? Eğer öyleyse, sınav performansını artırmak için maaşlar düzenlenmeli midir? Aşağıdaki grafik, bu verilerin bir dağılım grafiğini ve bir doğrusal regresyon modelini göstermektedir:
+
+```{r}
+library(mdsr)
+library(dplyr)
+library(ggplot2)
+
+SAT_2010 <- SAT_2010 |>
+  mutate(Salary = salary / 1000)
+
+SAT_plot <- ggplot(data = SAT_2010, aes(x = Salary, y = total)) + 
+  geom_point() + 
+  geom_smooth(method = "lm") + 
+  ylab("Ortalama SAT toplam puanı") + 
+  xlab("Ortalama öğretmen maaşı (bin USD)")
+SAT_plot
+
+```
+
+### İlk Model: Sadece Maaş
+
+Bir doğrusal regresyon modeli kullanarak, öğretmen maaşı ile SAT toplam puanları arasındaki ilişkiyi analiz edelim:
+
+```{r}
+SAT_mod1 <- lm(total ~ Salary, data = SAT_2010)
+summary(SAT_mod1)
+
+```
+
+Bu model, öğretmen maaşları (Salary) ile SAT toplam puanları (total) arasındaki ilişkiyi analiz etmek için basit bir doğrusal regresyon kullanmaktadır. Modeli şu şekilde açıklayabiliriz:
+
+$$ \text{Predicted Total SAT Score} = 1871.104 - 5.019 \times \text{Salary}$$
+
+Bu denklem, bağımsız değişken (Salary) kullanılarak bağımlı değişkenin (total) tahmin edilmesini sağlar.
+
+### Coefficients (Katsayılar):
+
+-   **Intercept (Sabit terim):** 1871.104
+
+    -   Maaşın 0 olduğu varsayıldığında (teorik olarak anlamlı olmasa da), SAT toplam puanının başlangıç tahmini.
+
+    -   Çok yüksek bir değere sahiptir çünkü maaşın sıfır olduğu bir durum pratikte mevcut değildir.
+
+-   **Salary:** -5.019
+
+    -   Maaş (bin USD cinsinden) her bir birim arttığında, SAT toplam puanında ortalama -5.019 birim azalma beklenir.
+
+    -   Negatif bir ilişki olduğunu gösterir; yani, daha yüksek öğretmen maaşları, daha düşük ortalama SAT puanları ile ilişkilidir.
+
+::: callout-note
+👋 **Araştırmacı İpucu: Merkezleme (Centering) ile Anlamlı Bir Sabit Terim** — Sabit terimin "maaş sıfırken" gibi gerçekte var olmayan bir durumu tahmin etmesi rahatsız ediciyse, açıklayıcı değişkeni **ortalamasına göre merkezleyebilirsiniz**: değişkenden kendi ortalamasını çıkarırsınız.
+
+```{r}
+#| eval: false
+SAT_2010$Salary_merkezli <- SAT_2010$Salary - mean(SAT_2010$Salary)
+SAT_mod1_merkezli <- lm(total ~ Salary_merkezli, data = SAT_2010)
+summary(SAT_mod1_merkezli)
+```
+
+Bu modelde **eğim katsayısı hiç değişmez** (-5.019 aynı kalır) — yalnızca **sabit terim** değişir ve artık "**ortalama maaş alan bir eyaletteki** beklenen SAT puanı" gibi gerçekten anlamlı bir değere dönüşür. Merkezleme, modelin tahminlerini veya anlamlılığını değiştirmez; yalnızca sabit terimi yorumlanabilir kılar.
+:::
+
+### İstatistiksel Önem ve Anlam:
+
+-   **Salary'nin p-değeri:** 0.01790
+
+    -   $p < 0.05$, bu nedenle maaş katsayısı istatistiksel olarak anlamlıdır. Bu, maaş ile SAT toplam puanları arasında anlamlı bir ilişki olduğunu gösterir.
+
+-   **Intercept'in p-değeri:** $< 2\times10^{-16}$
+
+    -   Bu, sabit terimin de istatistiksel olarak anlamlı olduğunu gösterir.
+
+### Artıklar (Residuals):
+
+-   Artıklar, gözlemlenen değerler ile model tarafından tahmin edilen değerler arasındaki farklardır. Artıkların medyanı -8.943 ve bu, modelin tahminlerinde hafif bir negatif sapma olduğunu gösterir.
+
+-   Minimum artığın -239.136, maksimum artığın ise 218.027 olması, modelin bazı durumlarda büyük tahmin hataları yaptığını gösterir.
+
+### Model Uygunluğu:
+
+-   **Residual Standard Error (Artıkların Standart Hatası):** 111.2
+
+    -   Bu, modelin tahminlerinin ne kadar değişken olduğunu gösterir. Ortalama olarak, modelin tahminleri gerçek değerlerden yaklaşık 111.2 puan sapar.
+
+-   **R-squared (R-Kare):** 0.1113
+
+    -   Maaş değişkeni, SAT toplam puanlarındaki değişimin yalnızca %11.13'ünü açıklamaktadır. Bu, modelin açıklayıcı gücünün oldukça düşük olduğunu gösterir.
+
+-   **Adjusted R-squared (Düzeltilmiş R-Kare):** 0.09273
+
+    -   Açıklayıcı gücü, modeldeki değişken sayısına göre düzeltilmiş bir ölçüdür. Bu da düşük kalmaktadır.
+
+### Genel Değerlendirme:
+
+Bu model, maaş ile SAT toplam puanları arasında anlamlı bir ilişki olduğunu gösterse de, ilişki negatif ve açıklayıcı gücü düşüktür ($R^2 \approx 0.11$).
+
+::: callout-warning
+⚠️ **Bu negatif ilişkiyi "öğretmenlere daha az maaş verirsek sınav sonuçları düzelir" diye okumayın.** Korelasyon bölümünde verdiğimiz uyarının tam bir örneğiyle karşı karşıyayız: burada devrede olan gerçek **karıştırıcı değişken**, SAT sınavına giren öğrenci **katılım oranıdır**. Bazı eyaletlerde SAT'a yalnızca üniversiteye başvuracak seçkin, küçük bir grup girer (ortalama puan yükselir); bazı eyaletlerde ise öğrencilerin büyük çoğunluğu girer (ortalama puan daha geniş bir yetenek dağılımını yansıttığı için düşer). Bu katılım oranı, hem öğretmen maaşlarıyla hem de ortalama puanla ayrı ayrı ilişkili olduğu için, maaş-puan ilişkisi kısmen **sahte (spurious)** görünmektedir. Katılım oranı modele eklendiğinde maaş katsayısının yönü ve anlamlılığı değişebilir — bu da tam olarak Modül 12'de göreceğimiz çoklu regresyonun neden gerekli olduğunun bir gerekçesidir.
+:::
+
+### Örnek 4:
+
+Bu alıştırmada, İsveç Motor Sigortası veri seti kullanılacaktır. Veri seti, İsveç'teki Motor Sigortasında Risk Primi Analizi Komitesi tarafından hazırlanmıştır ve 1977 yılına ait üçüncü taraf motor sigortası taleplerini içermektedir. İlgi çekici sonuçlar, taleplerin sayısı (frekans) ve ödemelerin toplamı (şiddet) olup, İsveç kronu (SEK) cinsindendir. Sonuçlar, bir aracın sürüş mesafesine göre 5 kategori, 7 coğrafi bölge, sürücünün son talep deneyimine göre 7 kategori ve 9 araç türü bazında sınıflandırılmıştır.
+
+```{r}
+# Gerekli kütüphaneler
+library(here)
+
+# Veriyi yükleyelim
+motor_insurance <- read.csv(here("data", "SwedishMotorInsurance.csv"))
+
+# Veriye göz atalım
+str(motor_insurance)
+# View(motor_insurance)
+
+```
+
+Bu verideki talepler (Claims) ve ödemeler (Payment) için uygun bir model kuralım
+
+```{r}
+reg <- lm(Payment ~ Claims, data = motor_insurance)
+plot(motor_insurance$Claims, motor_insurance$Payment)
+abline(reg = reg, col = "red")
+
+```
+
+```{r}
+summary(reg)
+```
+
+Regresyon denklemi şu şekildedir:
+
+$$ \text{Payment} = -3362.29 + 5020.08 \times \text{Claims} $$
+
+-   **Kesme Noktası (Intercept)**: -3362.29\
+    Bu, talepler (claims) sıfır olduğunda tahmin edilen ödemedir (payment). Bu negatif bir değer olduğu için gerçek dünyada anlamlı olmayabilir. Örneğin, sigorta şirketinin hiç talep almadığı bir durumda yine de belirli bir ödeme yükümlülüğü bulunmamalı.
+
+-   **Eğim (Slope)**: 5020.08\
+    Bu değer, her ek talebin ortalama 5020.08 SEK'lik bir ödemeyle ilişkilendirildiğini gösterir. Başka bir deyişle, bir talepteki artış, ödemelerde yaklaşık 5020 SEK'lik bir artışa yol açar.
+
+<!-- -->
+
+-   **Residuals (Artıklar)**:
+
+    -   Minimum: -1,744,858
+
+    -   Maksimum: 1,491,369\
+        Artıklar (residuals), gözlemlenen ve model tarafından tahmin edilen değerler arasındaki farktır. Büyük bir aralık olması, bazı gözlemlerde modelin iyi bir performans göstermediğini gösterebilir.
+
+-   **Std. Error (Standart Hata)**:
+
+    -   Kesme noktası için 2154.79, eğim için 10.35 olarak hesaplanmıştır. Standart hata, tahmin edilen katsayıların ne kadar kesin olduğunu gösterir. Daha küçük standart hata, tahminin daha güvenilir olduğunu ifade eder.
+
+-   **t Değeri ve p-Değeri**:
+
+    -   **Kesme Noktası (Intercept)**: t değeri -1.56 ve p-değeri 0.119. Bu, kesme noktasının anlamlı olmadığını gösterir (p \> 0.05).
+
+    -   **Eğim (Claims)**: t değeri 485.11 ve p-değeri \<2e-16. Bu, talep sayısının (claims) ödeme üzerindeki etkisinin son derece anlamlı olduğunu gösterir (p \< 0.001).
+
+    -   **Residual Standard Error (RSE)**: 97,480\
+        Bu, ödemelerdeki (payment) gözlemlenen ve model tarafından tahmin edilen değerler arasındaki tipik sapmadır. Büyük bir değer, modelin bazı verilerde iyi performans göstermediğini gösterebilir.
+
+    <!-- -->
+
+    -   **R-Squared ve Adjusted R-Squared**:
+
+        -   **R-Squared ($R^2$)**: 0.9908\
+            Bu, ödeme değişkenindeki varyansın %99.08'inin talepler (claims) ile açıklanabildiğini gösterir. Çok yüksek bir değer, modelin güçlü bir açıklayıcılığı olduğunu gösterir.
+
+        -   **Adjusted R-Squared**: 0.9908\
+            Bu değer, R-Squared'e çok yakın olduğu için modelin açıklayıcılığına eklenen değişken sayısından kaynaklanan bir yanlılık bulunmadığını gösterir.
+
+    -   **F-Statistic**: 2.353e+05 ve p-değeri \<2.2e-16\
+        Bu, modelin genel olarak anlamlı olduğunu ve claims değişkeninin payment üzerindeki etkisinin istatistiksel olarak önemli olduğunu gösterir.
+
+### **Sonuç**
+
+1.  **Talepler (Claims)** değişkeni, ödemeler (Payment) üzerinde güçlü ve anlamlı bir etkiye sahiptir.
+
+2.  **Kesme noktası (Intercept)** istatistiksel olarak anlamlı değildir, bu da talepler sıfır olduğunda modelin tahminlerinin gerçekçi olmayabileceğini gösterir.
+
+3.  Model, ödeme değişkenindeki varyansın büyük bir kısmını açıklayabiliyor (%99.08), bu da modelin genel olarak iyi bir performans sergilediğini gösterir.
+
+4.  Ancak, artıklar (residuals) arasında büyük bir aralık olduğu için, modelin bazı uç gözlemlerde kötü performans gösterebileceği göz önünde bulundurulmalıdır.
+
+**Öneri**: Kesme noktasının negatif bir değer olduğu düşünüldüğünde, modelin bu kısmı daha dikkatlice incelenmeli veya bağlama uygun bir alternatif model düşünülebilir.
+
+------------------------------------------------------------------------
+
+## Bu Modülün Üç Örneğinde $R^2$ Ne Kadar Değişti?
+
+Aynı modül içinde gördüğümüz üç gerçek-veri örneği, $R^2$'nin bağlama göre ne kadar farklılaşabileceğini gösteriyor:
+
+| Örnek | İlişki | $R^2$ |
+|----|----|----|
+| GSYİH $\to$ Yaşam Beklentisi (gapminder) | Orta-güçlü | $\approx 0.46$ |
+| Öğretmen Maaşı $\to$ SAT Puanı | Zayıf (ve muhtemelen karıştırıcı değişkenli) | $\approx 0.11$ |
+| Talep Sayısı $\to$ Ödeme (sigorta) | Neredeyse deterministik | $\approx 0.99$ |
+
+Tek bir "iyi $R^2$ nedir" eşiği yoktur — bu, incelenen olgunun doğasına bağlıdır. İnsan davranışı ve sosyal sonuçlar (SAT örneği gibi) genellikle çok sayıda ölçülemeyen etkenden etkilendiği için düşük $R^2$ değerleri **normaldir**; mekanik/muhasebesel bir ilişki (talep sayısı arttıkça toplam ödemenin neredeyse aritmetik olarak artması gibi) ise çok yüksek $R^2$ verir. Modül 10'da öğrendiğimiz dersi burada da tekrarlıyoruz: **tek bir sayıya (p-değeri ya da $R^2$) bakıp karar vermeyin — bağlamı, grafiği ve varsa karıştırıcı değişkenleri birlikte değerlendirin.**

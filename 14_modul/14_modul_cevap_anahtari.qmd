@@ -1,0 +1,53 @@
+---
+title: "Modül 14 — Cevap Anahtarı"
+subtitle: "Çoklu ve Sıralı Lojistik Regresyon"
+author: "Prof. Dr. Hakan Mehmetcik"
+date: today
+lang: tr
+format: pdf
+editor: visual
+---
+
+## Bölüm A — Neden Bu Genişleme?
+
+**1. Doğru cevap: d)** `pid1`'in üçten fazla kategorisi var (Conservative/Labour/SNP) ve bunlar arasında doğal bir sıralama yok; ikili lojistik regresyon yalnızca iki kategorili bağımlı değişkenlerle çalışır.
+
+**2. Doğru cevap: a)** `trust` sıralı (ordinal) bir ölçektir — kategoriler arasında bir sıra vardır (düşükten yükseğe güven). `pid1`'in kategorileri arasında böyle bir sıra yoktur (nominal).
+
+## Bölüm B — Çoklu Lojistik Regresyonun Mantığı
+
+**3. Doğru cevap: d)** $K$ kategori için $K-1$ denklem kurulur; $K=4$ olduğunda $4-1=3$ denklem gerekir.
+
+**4. Doğru cevap: c)** Her denklem, o kategorinin **referans kategoriye göre** log-odds'unu bağımsız değişkenlerle ilişkilendirir.
+
+**5. Doğru cevap: b)** Çoklu lojistik regresyonda $e^{\beta}$'ya **göreli risk oranı (relative risk ratio, RRR)** denir; ikili lojistik regresyondaki "odds oranı" ile aynı mantıkla yorumlanır, yalnızca ismi farklıdır.
+
+## Bölüm C — R Sözdizimi ve p-değeri
+
+**6. Doğru cevap: d)** `multinom()`, `nnet` paketinden gelen ayrı bir fonksiyondur ve `glm()`'in aksine bir `family` argümanı almaz.
+
+**7. Doğru cevap: a)** `summary(model_multi)` katsayıları ve standart hataları ayrı matrisler olarak verir, ama p-değerlerini **doğrudan hesaplamaz** — bunlar $z$ ve `pnorm()` ile elle hesaplanmalıdır.
+
+**8. Doğru cevap: c)** `* 2` çarpanı, testin **iki yönlü** olmasını sağlar: katsayının sıfırdan hem pozitif hem negatif yönde sapabileceği varsayılır.
+
+## Bölüm D — RRR ve Tahmin
+
+**9. Doğru cevap: b)** $RRR = 3$, o kategoride olmanın **referans kategoriye göre göreli odds'unun** üç kat olduğu anlamına gelir; doğrudan bir olasılık ifadesi değildir.
+
+**10. Doğru cevap: d)** `type = "probs"` çıktısındaki olasılıklar toplamı her zaman **1**'dir, çünkü birey mutlaka kategorilerden birine aittir.
+
+**11. Doğru cevap: a)** `probs`, her kategori için ayrı bir olasılık verirken `class` yalnızca en yüksek olasılıklı **tek** kategoriyi döndürür ve ayrıntıyı kaybeder.
+
+## Bölüm E — Sıralı Lojistik Regresyonun Mantığı
+
+**12. Doğru cevap: a)** Sıralı lojistik regresyon **kümülatif logit** kullanır: "$j$. kategori veya altında olma" olasılığının log-odds'unu modeller.
+
+**13. Doğru cevap: c)** Orantılı odds varsayımı, her bağımsız değişkenin katsayısının **tüm eşikler için aynı** olduğunu varsayar.
+
+**14. Doğru cevap: c)** `polr()` orantılı odds varsayımını doğrudan modele gömer; bu varsayımı **kendisi sınamaz** — sınamak için ayrı bir yöntem (ör. Brant testi) gerekir.
+
+## Bölüm F — `polr()` Sözdizimi ve Yorumlama
+
+**15. Doğru cevap: b)** `Hess = TRUE` unutulursa model yine de kurulur, ama Hessian matrisi saklanmadığı için `summary()` standart hataları (ve dolayısıyla p-değerlerini) hesaplayamaz.
+
+**16. Doğru cevap: b)** `exp(coef(model_ord))`, yalnızca açıklayıcı değişkenlerin katsayılarının üstelini alır ve bunlar odds oranı olarak yorumlanır; eşik (`zeta`) değerleri `coef()`'in döndürdüğü kümeye dahil değildir, ayrı tutulur.

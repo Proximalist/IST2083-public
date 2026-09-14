@@ -1,0 +1,169 @@
+---
+title: "Modül 13 — Rehberli Laboratuvar"
+subtitle: "Lojistik Regresyon"
+author: "Prof. Dr. Hakan Mehmetcik"
+date: "`r Sys.Date()`"
+lang: tr
+format: pdf
+editor: visual
+execute:
+  echo: true
+  warning: true
+  message: false
+  cache: false
+df-print: kable
+knitr:
+  opts_chunk:
+    dev: "cairo_pdf"
+---
+
+## Bu Belge Nedir?
+
+Bu bir **sınav provası değildir**; ders saatinde birlikte, bilgisayar başında yapılacak bir uygulama defteridir. Notlandırılmaz.
+
+`____` gördüğünüz yerleri siz dolduracaksınız. Çözümler belgenin sonundadır.
+
+------------------------------------------------------------------------
+
+## Bölüm A — Tam Ayrışmayı Tanımak
+
+Aşağıdaki küçük veri setiyle bir model kurun:
+
+```{r}
+#| eval: false
+data <- data.frame(
+  basvuru = c(0, 0, 0, 1, 1, 1),
+  puan    = c(400, 420, 450, 700, 750, 800)
+)
+
+model_ayrik <- glm(____ ~ ____, family = binomial, data = data)
+summary(model_ayrik)
+```
+
+**Yorumunuz:** Hangi uyarı mesajını görüyorsunuz? Katsayının standart hatasına bakınca ne fark ediyorsunuz? Bu verinin `puan` değişkeni açısından ne özelliği var (ipucu: 450'nin altı hep 0, 700'ün üstü hep 1)?
+
+------------------------------------------------------------------------
+
+## Bölüm B — Veriyi Temizlemek
+
+`data/scottish.dta` dosyasını kullanacağız.
+
+### Görev B1 — Yaşı temizleyin
+
+```{r}
+#| eval: false
+library(haven); library(dplyr)
+scottish <- read_dta(here::here("data", "scottish.dta"))
+
+scottish <- scottish %>%
+  mutate(age = na_if(na_if(____, 98), ____))
+
+summary(as.numeric(scottish$age))
+```
+
+**Yorumunuz:** Temizlemeden önce ve sonra `max(scottish$rage)` ile `max(scottish$age, na.rm=TRUE)` değerlerini karşılaştırın. Fark nereden geliyor?
+
+### Görev B2 — Cinsiyet dummy'si oluşturun
+
+```{r}
+#| eval: false
+scottish <- scottish %>%
+  mutate(sex_erkek = if_else(as_factor(____) == "____", 1, 0))
+
+table(scottish$rsex, scottish$sex_erkek)
+```
+
+**Yorumunuz:** `rsex`'i ham hâliyle (dummy'ye çevirmeden) doğrudan modele koysaydınız, katsayının işareti ne anlama gelirdi? Bu neden yanıltıcı olurdu?
+
+------------------------------------------------------------------------
+
+## Bölüm C — Model Kurmak ve Yorumlamak
+
+```{r}
+#| eval: false
+scottish_clean <- scottish %>%
+  mutate(across(where(is.numeric), ~ ifelse(is.na(.), median(., na.rm = TRUE), .)))
+
+model <- glm(RefvoteDum ~ libauth + sex_erkek, data = scottish_clean, family = binomial)
+summary(model)
+exp(coef(model))
+```
+
+**Yorumunuz:** `libauth` katsayısının işareti negatif mi pozitif mi? Odds oranı 1'den büyük mü küçük mü? Bu, "daha otoriter eğilimli biri Evet oyu verme olasılığı ..." cümlesini nasıl tamamlar?
+
+------------------------------------------------------------------------
+
+## Bölüm D — Tahmin Yapmak
+
+```{r}
+#| eval: false
+yeni_kisi <- data.frame(libauth = ____, sex_erkek = 1)
+predict(model, newdata = yeni_kisi, type = "____")
+```
+
+**Yorumunuz:** `type = "response"` ile `type = "link"` arasındaki fark nedir? Hangisi doğrudan bir olasılık verir?
+
+------------------------------------------------------------------------
+
+## Çözümler
+
+### A1
+
+```{r}
+data <- data.frame(
+  basvuru = c(0, 0, 0, 1, 1, 1),
+  puan    = c(400, 420, 450, 700, 750, 800)
+)
+
+model_ayrik <- glm(basvuru ~ puan, family = binomial, data = data)
+summary(model_ayrik)
+```
+
+`glm.fit: fitted probabilities numerically 0 or 1 occurred` uyarısı görülür; katsayının standart hatası kendi büyüklüğünden çok daha büyüktür. Veri, `puan = 450` ile `700` arasında bir eşikle **kusursuz ayrılmıştır** (tam ayrışma) — bu, küçük ve net ayrılmış veri setlerinde her zaman beklenen bir durumdur.
+
+### B1
+
+```{r}
+library(haven); library(dplyr)
+scottish <- read_dta(here::here("data", "scottish.dta"))
+
+scottish <- scottish %>%
+  mutate(age = na_if(na_if(rage, 98), 99))
+
+summary(as.numeric(scottish$age))
+```
+
+Temizlemeden önce `max(rage)` = 99 ("Cevap yok" kodu); temizledikten sonra gerçek maksimum yaş (92) ortaya çıkar. Fark, anket kodlamasındaki özel "bilmiyorum/cevap yok" kodlarından kaynaklanır.
+
+### B2
+
+```{r}
+scottish <- scottish %>%
+  mutate(sex_erkek = if_else(as_factor(rsex) == "Male", 1, 0))
+
+table(scottish$rsex, scottish$sex_erkek)
+```
+
+`rsex` ham hâliyle (1=Erkek, 2=Kadın) modele girseydi, katsayı "1 birimlik artışın" (Erkek'ten Kadın'a geçişin) etkisini gösterirdi; negatif bir katsayı "Kadın'ın olasılığı düşük" anlamına gelirdi — ki bu, "Erkek'in olasılığı yüksek" ile aynı sonucun kafa karıştırıcı bir ifadesidir. Açık bir 0/1 dummy bu belirsizliği ortadan kaldırır.
+
+### C1
+
+```{r}
+scottish_clean <- scottish %>%
+  mutate(across(where(is.numeric), ~ ifelse(is.na(.), median(., na.rm = TRUE), .)))
+
+model <- glm(RefvoteDum ~ libauth + sex_erkek, data = scottish_clean, family = binomial)
+summary(model)
+exp(coef(model))
+```
+
+`libauth` katsayısı negatiftir, odds oranı 1'in altındadır. "Daha otoriter eğilimli biri Evet oyu verme olasılığı **daha düşüktür**" cümlesini tamamlar.
+
+### D1
+
+```{r}
+yeni_kisi <- data.frame(libauth = 3, sex_erkek = 1)
+predict(model, newdata = yeni_kisi, type = "response")
+```
+
+`type = "response"` doğrudan bir **olasılık** ($0$-$1$ arası) verir; `type = "link"` ise ham **log-odds** değerini verir (yorumlamak için `exp()` ve odds formülü gerekir).

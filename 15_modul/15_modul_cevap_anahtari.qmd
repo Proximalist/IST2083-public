@@ -1,0 +1,113 @@
+---
+title: "Modül 15 — Cevap Anahtarı"
+subtitle: "Quarto ile Raporlama"
+author: "Prof. Dr. Hakan Mehmetcik"
+date: today
+lang: tr
+format: pdf
+editor: visual
+---
+
+Bu belge `15_modul_alistirmalar.qmd` dosyasındaki 20 sorunun doğru
+cevaplarını ve gerekçelerini içerir. Gerekçeler yalnızca "doğru cevap
+bu" demekle kalmaz — **neden** doğru olduğunu da açıklar, çünkü sınavda
+sizden istenen de budur.
+
+## Bölüm A — YAML ve Belge Yapısı
+
+**1. Doğru cevap: c)** `lang: tr`, Quarto'nun otomatik ürettiği metinleri
+(Şekil, Tablo, İçindekiler, Özet gibi) Türkçeleştirir. Karakter
+kodlamasıyla veya kod öbeklerinin diliyle ilgisi yoktur.
+
+**2. Doğru cevap: a)** YAML başlığı, `---` ile çevrili olarak belgenin
+**en başında** bulunmalıdır. Herhangi bir yerde bulunamaz; Pandoc onu
+yalnızca belgenin ilk satırlarında arar.
+
+**3. Doğru cevap: d)** Üç temel içerik türü YAML başlığı, kod öbekleri
+ve markdown metnidir. Harici bir `.docx` şablonu bazı çıktı biçimlerinde
+(Word'e render ederken) kullanılabilir ama belgenin **kendisinin**
+bir parçası değildir.
+
+**4. Doğru cevap: b)** `format` alanı çıktı türünü belirler; `revealjs`
+seçildiğinde aynı içerik, slaytlar hâlinde bir sunuma dönüşür. Kod
+öbekleri hâlâ çalışır, YAML hâlâ zorunludur.
+
+**5. Doğru cevap: a)** Ctrl+Alt+I (macOS'ta Cmd+Option+I). Bu kısayolu
+öğrenmek dönem boyunca zaman kazandırır.
+
+## Bölüm B — Kod Öbeği Seçenekleri
+
+**6. Doğru cevap: d)** `eval: false`, kodu **çalıştırmaz**; yalnızca
+sözdizimi vurgulamalı metin olarak gösterir. Bir komutu "böyle yazılır"
+diye örneklerken kullanılır.
+
+**7. Doğru cevap: b)** `include: false`, öbeği **çalıştırır** (paketler
+gerçekten yüklenir) ama ne kodunu ne çıktısını gösterir. `echo: false`
+kodu gizler ama çıktıyı (bu durumda paket yükleme mesajlarını) gösterir
+— istenen bu değildir.
+
+**8. Doğru cevap: c)** `error: true` olmadan, hata veren bir kod öbeği
+**tüm render işlemini durdurur**. Bu seçenek, kasıtlı olarak hatalı bir
+örnek gösterirken (ör. ders notunda "bu neden hata verir?") gereklidir.
+
+**9. Doğru cevap: d)** `echo: false` kodu gizler ama sonucu gösterir;
+`include: false` ikisini de gizler ama kodu yine de çalıştırır. İkisi
+de kodu **çalıştırır** — aralarındaki fark görünürlüktedir, yürütme
+değil.
+
+**10. Doğru cevap: a)** Belge düzeyinde varsayılan seçenek, YAML
+başlığındaki `execute:` bloğuna yazılır. `_quarto.yml`, tüm **projedeki**
+belgeler için varsayılan verir; tek bir belge için YAML başlığı
+yeterlidir.
+
+## Bölüm C — Satır İçi Kod ve Tablolar
+
+**11. Doğru cevap: c)** Satır içi kod tek ters tırnak içinde, `r` harfi
+ile başlar: `` `r ifade` ``. Çift ters tırnak veya süslü parantez kod
+öbeği içindir, satır içi değil.
+
+**12. Doğru cevap: b)** Satır içi kodla üretilen bir sayı, altındaki
+veri değiştiğinde **kendiliğinden** güncellenir. Elle yazılmış bir sayı
+ise veri güncellendiğinde sessizce yanlış kalır — bu, Modül 15 lab'ının
+C bölümünde doğrudan gösterilen bir davranıştır.
+
+**13. Doğru cevap: a)** `digits = 1`, tablodaki tüm sayısal sütunları
+bir ondalık basamağa yuvarlar. Bu argüman olmadan, örneğin GSYİH gibi
+uzun ondalıklı sütunlar okunaksız hâle gelir.
+
+**14. Doğru cevap: d)** `kable()`, R'ın ham konsol çıktısını
+biçimlendirilmiş, kenarlıklı bir tabloya dönüştürür. İkisi de aynı
+veriyi gösterir ama okunabilirlik farkı büyüktür; her ikisi de her iki
+çıktı biçiminde de çalışır (b şıkkı yanlıştır).
+
+## Bölüm D — Şekiller, Çapraz Başvuru ve Atıflar
+
+**15. Doğru cevap: c)** Etiket `fig-` ön ekiyle başlamalıdır (örn.
+`fig-yasam-gsyih`). Quarto yalnızca bu ön eki tanıdığı için otomatik
+numaralandırmayı buna göre yapar; `tbl-` tablolar içindir.
+
+**16. Doğru cevap: b)** `@fig-yasam-gsyih`, render sırasında ilgili
+şeklin güncel numarasına ("Şekil 3" gibi) dönüştürülür ve PDF'te
+tıklanabilir bir bağlantı oluşturur.
+
+**17. Doğru cevap: d)** Quarto'nun otomatik numaralandırmasının temel
+avantajı budur: araya yeni bir etiketli şekil eklendiğinde sonraki tüm
+numaralar ve bunlara yapılan metin atıfları **kendiliğinden** güncellenir.
+Elle numaralandırmanın en büyük riski (numara kaymasını unutmak) böylece
+ortadan kalkar.
+
+**18. Doğru cevap: a)** Görsel Düzenleyici'de eklenen bir Zotero kaynağı,
+arka planda otomatik olarak `bibliography.bib` dosyasına yazılır; ayrı
+bir `.bib` dosyasını elle güncellemeye gerek kalmaz.
+
+## Bölüm E — Sorun Giderme
+
+**19. Doğru cevap: c)** Quarto, belgeyi konsoldan tamamen bağımsız,
+temiz bir R oturumunda render eder. Konsolda tanımladığınız nesneler bu
+oturumda **yoktur** — bu bir hata değil, yeniden üretilebilirliği
+garanti eden bir tasarım kararıdır.
+
+**20. Doğru cevap: b)** Mutlak yol (`/Users/adiniz/...`), yalnızca o
+klasör yapısına sahip **tek bir bilgisayarda** çalışır. `here::here()`,
+yolu proje kökünden (`.Rproj` dosyasının bulunduğu klasörden) kurar; bu
+yüzden aynı proje kopyalandığında başka bir bilgisayarda da çalışır.

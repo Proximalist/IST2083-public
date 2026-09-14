@@ -1,0 +1,259 @@
+---
+title: "Modül 14: Çoklu ve Sıralı Lojistik Regresyon"
+author: "Prof. Dr. Hakan Mehmetcik"
+date: "`r Sys.Date()`"
+lang: tr
+format: pdf
+editor: visual
+execute:
+  echo: true
+  warning: true
+  message: false
+  cache: false
+df-print: kable
+knitr:
+  opts_chunk:
+    dev: "cairo_pdf"
+---
+
+::: {.callout-note}
+## Bu modül 11. oturumda, 13. modülle birlikte işlenir
+
+Bu modül, 13. modülde öğrendiğiniz ikili lojistik regresyonu iki yönde genişletir: bağımlı değişkenin ikiden fazla, sıralı olmayan (nominal) kategorisi varsa **çoklu lojistik regresyon**, sıralı kategorisi varsa **sıralı lojistik regresyon**. İzlencenin 11. oturumu (`13_modul/`, `14_modul/`) bu iki konuyu birlikte kapsar.
+:::
+
+# Neden Bu Genişleme Gerekli?
+
+13. modülde bağımlı değişkenimiz hep **ikili** (0/1, "Evet"/"Hayır" oyu) idi. Ama aynı veri setinde en az iki değişken bu kalıba sığmıyordu:
+
+- **`pid1`** (parti bağlılığı): üç kategorili — Conservative, Labour, SNP. 13. modülde bu değişkeni yalnızca **bağımsız** değişken olarak kullandık; hiç sormadık: "peki birinin hangi partiye bağlı olduğunu neyin belirlediği" sorusuna nasıl bir model kurarız? Bağımlı değişken burada ikiden fazla, aralarında doğal bir sıralama **olmayan** (nominal) kategoriler taşıyor.
+- **`trust`** (hükümete güven): dört kademeli bir ölçek. Bunu da 13. modülde sürekli bir sayısal değişken gibi kullandık. Ama aslında bu bir **sıralı (ordinal)** kategorik değişkendir — 1 ile 2 arasındaki "mesafe" ile 3 ile 4 arasındaki mesafenin eşit olduğunu varsaymak riskli olabilir.
+
+Bu iki durum, ikili lojistik regresyonun iki doğal uzantısını gerektirir: bağımlı değişken **nominal çok kategorili** ise **çoklu (multinomial) lojistik regresyon**; bağımlı değişken **sıralı çok kategorili** ise **sıralı (ordinal) lojistik regresyon**.
+
+## Veri Hazırlığı
+
+Aynı veri setini, 13. modüldeki aynı temizleme adımlarıyla yeniden kuruyoruz (ayrıntılı gerekçeler için 13. modüle bakınız); ek olarak `trust`'ı sıralı bir faktöre çeviriyoruz.
+
+```{r}
+library(haven)
+library(here)
+library(tidyverse)
+library(nnet)
+library(MASS)
+library(broom)
+
+scottish <- read_dta(here("data", "scottish.dta"))
+
+scottish <- scottish %>%
+  mutate(pid       = as_factor(Party_Labels, levels = "labels"),
+         trust     = as.numeric(fct_rev(as_factor(GovTrust_NoNa))),
+         age       = na_if(na_if(rage, 98), 99),
+         edu1      = na_if(HEdQual2_NoNa, 7),
+         sex_erkek = if_else(as_factor(rsex) == "Male", 1, 0)) |>
+  mutate(pid1 = recode_factor(pid,
+          "1. Conservative" = "1. Conservative",
+          "2. Labour" = "2. Labour",
+          "4. SNP" = "3. SNP",
+          .default = NA_character_))
+
+scottish_clean <- scottish %>%
+  mutate(across(where(is.numeric), ~ ifelse(is.na(.), median(., na.rm = TRUE), .))) %>%
+  mutate(trust_ordfac = factor(trust, levels = sort(unique(trust)), ordered = TRUE))
+
+levels(scottish_clean$trust_ordfac)
+```
+
+::: {.callout-note}
+## `trust_ordfac` neden ayrı bir değişken?
+
+`trust`'ı doğrudan `factor(trust, ordered = TRUE)` ile çevirmek yerine `sort(unique(trust))`'tan gelen seviyeleri açıkça veriyoruz; böylece medyanla doldurma sonrası ortaya çıkabilecek ondalıklı bir medyan değeri (ör. `2.5`) sessizce ayrı bir seviye olarak eklenmiş olsa bile seviyeler her zaman **veride gerçekten var olan** değerlerden, sıralı biçimde oluşur.
+:::
+
+# Çoklu Lojistik Regresyon (Multinomial Logistic Regression)
+
+## Mantık: Referans Kategoriye Karşı K-1 Denklem
+
+Bağımlı değişkenin $K$ kategorisi olduğunda (burada $K=3$: Conservative, Labour, SNP), çoklu lojistik regresyon **tek bir denklem değil**, referans kategoriye (varsayılan olarak ilk seviye, burada "1. Conservative") karşı $K-1$ log-odds denklemi kurar:
+
+$$\log\left(\frac{P(Y = \text{Labour})}{P(Y = \text{Conservative})}\right) = \beta_{0}^{(L)} + \beta_{1}^{(L)} X_1 + \dots$$
+
+$$\log\left(\frac{P(Y = \text{SNP})}{P(Y = \text{Conservative})}\right) = \beta_{0}^{(S)} + \beta_{1}^{(S)} X_1 + \dots$$
+
+Her katsayı grubu, o kategoriye ait bireyin **referans kategoriye kıyasla** log-odds'unu bağımsız değişkenlerle ilişkilendirir. $e^{\beta}$ burada **odds oranı** değil, **göreli risk oranı (relative risk ratio, RRR)** olarak adlandırılır — yorumu aynıdır (bir birimlik $X$ artışının, referansa kıyasla o kategoride olma odds'unu kaç katına çıkardığı), yalnızca ismi farklıdır.
+
+## R'da Sözdizimi
+
+```r
+library(nnet)
+model <- multinom(y ~ x1 + x2, data = veri, trace = FALSE)
+```
+
+`glm()`'den farkı: `family` argümanı yoktur; `nnet` paketinden gelen ayrı bir fonksiyondur. `trace = FALSE`, iterasyon çıktısının konsolu doldurmasını engeller.
+
+## Örnek: Parti Bağlılığını Ne Belirliyor?
+
+**Bağımlı değişken:** `pid1` (Conservative / Labour / SNP)\
+**Bağımsız değişkenler:** `ScotID_NoNa` (İskoç kimliği algısı, 1-7), `age`, `sex_erkek`, `libauth`
+
+```{r}
+model_multi <- multinom(pid1 ~ ScotID_NoNa + age + sex_erkek + libauth,
+                         data = scottish_clean, trace = FALSE)
+
+summary(model_multi)
+```
+
+`summary()` çıktısı iki matris verir: **Coefficients** (her satır bir karşılaştırma: "2. Labour" ve "3. SNP", her ikisi de "1. Conservative"ye karşı) ve **Std. Errors**. Dikkat: `glm()`'in aksine burada **p-değeri doğrudan verilmez** — kendimiz hesaplamamız gerekir:
+
+```{r}
+z_degerleri <- summary(model_multi)$coefficients / summary(model_multi)$standard.errors
+p_degerleri <- (1 - pnorm(abs(z_degerleri))) * 2
+round(p_degerleri, 4)
+```
+
+Daha okunaklı bir alternatif, `broom::tidy()`'nin göreli risk oranlarını ve güven aralıklarını tek bir tabloda vermesidir:
+
+```{r}
+tidy(model_multi, conf.int = TRUE, exponentiate = TRUE) %>%
+  dplyr::select(y.level, term, estimate, p.value, conf.low, conf.high)
+```
+
+### Yorum
+
+- **`ScotID_NoNa`, "3. SNP" satırında:** Katsayı pozitif ve anlamlıysa, İskoç kimliğini daha güçlü hisseden bireylerin, Conservative yerine SNP'ye bağlı olma göreli riski (RRR $= e^{\beta}$) artar. Bu, İskoç milliyetçiliği ile SNP bağlılığı arasındaki beklenen ilişkiyle **tutarlıdır** — modelin yüzeysel bir "mantık kontrolü" olarak okunabilir.
+- **`age`, `sex_erkek`, `libauth`:** Her biri aynı mantıkla, **yalnızca kendi satırındaki referans karşılaştırması için** yorumlanır. "3. SNP" satırındaki `age` katsayısı, "2. Labour" satırındaki `age` katsayısıyla **karıştırılmamalıdır** — ikisi farklı karşılaştırmalardır (SNP-vs-Conservative, Labour-vs-Conservative), ortak bir "yaşın etkisi" diye tek bir sayı yoktur.
+
+::: {.callout-warning}
+## En sık yapılan hata: RRR'yi olasılık sanmak
+
+$RRR = 3$ demek, "o kategoride olma **olasılığı** üç kat" demek **değildir**. Demek istediği: o kategoride olmanın **referans kategoriye göre göreli odds'u** üç kattır. Üç kategoriden fazlası olduğunda mutlak olasılıklar için `predict(model, type = "probs")` kullanılmalıdır.
+:::
+
+```{r}
+# Örnek bir bireyin her kategoriye ait tahmini olasılıkları
+yeni_kisi <- data.frame(ScotID_NoNa = 6, age = 35, sex_erkek = 1, libauth = 2)
+predict(model_multi, newdata = yeni_kisi, type = "probs")
+```
+
+## İleri Düzey: Marjinal Etkileri Görselleştirmek
+
+Tek bir bireyin olasılıklarını hesaplamak faydalıdır, ama araştırma pratiğinde asıl aranan genellikle şudur: bir değişken (ör. `age`) **tüm değer aralığında** değişirken, her kategorinin olasılığı nasıl değişiyor? Bunu RRR tablosundan zihinsel olarak çıkarmak, kategoriler üçten fazla olduğunda pratikte imkansızlaşır. `ggeffects` paketi bu tahmini bir çizgi grafiğine döker:
+
+```r
+# install.packages("ggeffects")
+library(ggeffects)
+
+# Yaşın parti tercihi (Conservative/Labour/SNP) üzerindeki
+# tahmini olasılıklara etkisini görselleştirme
+etki_grafigi <- ggpredict(model_multi, terms = "age")
+plot(etki_grafigi) +
+  labs(title = "Yaşın Parti Tercihi Üzerindeki Tahmini Olasılıkları",
+       x = "Yaş", y = "Tahmini Olasılık") +
+  theme_minimal()
+```
+
+Bu grafik, yaş arttıkça Conservative olma olasılığının nasıl yükseldiğini, SNP olasılığının nasıl düştüğünü aynı anda üç renkli çizgiyle gösterir — RRR tablosunun sayısal soyutluğundan çok daha sezgiseldir. `ggeffects`, temel paket kurulumunun bir parçası değildir; kullanmak isterseniz `install.packages("ggeffects")` ile ayrıca kurmanız gerekir.
+
+# Sıralı Lojistik Regresyon (Ordinal / Orantılı Odds Modeli)
+
+## Mantık: Kümülatif Logit
+
+Bağımlı değişkenin kategorileri **sıralı** ise (burada `trust_ordfac`: düşükten yükseğe güven), kategorileri gelişigüzel bir referansa karşı değil, **kümülatif** olarak modelleriz: "$j$. kategori veya altında olma" olasılığının log-odds'u.
+
+$$\log\left(\frac{P(Y \le j)}{P(Y > j)}\right) = \zeta_j - (\beta_1 X_1 + \beta_2 X_2 + \dots), \quad j = 1, \dots, K-1$$
+
+Burada $\zeta_j$ her eşik (cutpoint) için ayrı bir sabittir, ama $\beta$ katsayıları **tüm eşikler için aynıdır** — buna **orantılı odds varsayımı (proportional odds assumption)** denir: bir bağımsız değişkenin etkisinin, ölçeğin neresinde olursanız olun aynı olduğu varsayılır.
+
+## R'da Sözdizimi
+
+```r
+library(MASS)
+model <- polr(y ~ x1 + x2, data = veri, Hess = TRUE)
+```
+
+`Hess = TRUE`, standart hataların hesaplanabilmesi için Hessian matrisinin saklanmasını sağlar; unutulursa `summary()` standart hata veremez.
+
+## Örnek: Güveni Ne Belirliyor?
+
+**Bağımlı değişken:** `trust_ordfac` (düşükten yükseğe sıralı güven)\
+**Bağımsız değişkenler:** `pid1` (parti bağlılığı), `age`, `sex_erkek`
+
+```{r}
+model_ord <- polr(trust_ordfac ~ pid1 + age + sex_erkek,
+                   data = scottish_clean, Hess = TRUE)
+
+summary(model_ord)
+```
+
+`glm()`'de olduğu gibi burada da **p-değeri doğrudan verilmez**; `t value` sütunundan kendimiz hesaplarız (büyük örneklemde $t$ dağılımı standart normale yaklaşır):
+
+```{r}
+katsayi_ozet <- coef(summary(model_ord))
+p_deger <- (1 - pnorm(abs(katsayi_ozet[, "t value"]))) * 2
+cbind(katsayi_ozet, "p değeri" = round(p_deger, 4))
+```
+
+Odds oranları (yalnızca eşik/`zeta` değerleri değil, açıklayıcı değişken katsayıları için):
+
+```{r}
+exp(coef(model_ord))
+```
+
+### Yorum
+
+- **`pid1` (Labour ve SNP, Conservative'e göre):** Odds oranı $1$'den büyükse, o partiye bağlı bireylerin güven ölçeğinde **daha yüksek bir kademede** olma odds'u, Conservative'e bağlı bireylere göre daha fazladır (ya da tam tersi, işarete bağlı olarak).
+- **Yorum yönü, 13. modüldeki ikili lojistik regresyondan farklıdır:** burada "1 kademe daha yükseğe geçme odds'u" yorumlanır, "Evet/Hayır" gibi tek bir olay değil.
+
+::: {.callout-warning}
+## Dikkat: `polr()`'un işaret kuralı diğer yazılımlarla ters düşebilir
+
+Yukarıdaki formülde $\eta = \beta_1 X_1 + \dots$ **çıkarılıyor** ($\zeta_j - \eta$). Bunun sonucu: `polr()`'da bir katsayı **pozitif** çıktığında, o değişkendeki artış bireyi sıralı ölçekte **DAHA YUKARIYA** (burada: daha yüksek güvene) iter; **negatif** çıktığında **DAHA AŞAĞIYA** çeker. Bu, yukarıdaki `pid1` yorumuyla tutarlıdır.
+
+Bunu özellikle vurguluyoruz çünkü Stata'nın `ologit`'i ve R'ın `ordinal::clm()` paketi modeli **toplama** ($\zeta_j + \eta$) ile kurar — o yazılımlarda pozitif bir katsayı **ters yönde** okunur. Bu ders notu içinde tutarlı kalmak yeterlidir, ama Stata'dan gelen ya da `ordinal` paketiyle karşılaştırma yapan biri `polr()` çıktısını gördüğünde işaretin ters olduğunu düşünüp yanlışlıkla "düzeltmeye" kalkışabilir — kalkışmamalıdır, ikisi de doğrudur, yalnızca kuruluş kuralı farklıdır.
+:::
+
+::: {.callout-note}
+## Orantılı odds varsayımı her zaman kontrol edilmelidir
+
+`polr()` bu varsayımı **test etmez**, yalnızca **kabul eder**. Varsayımın gerçekten tutup tutmadığını sınamak için `brant` paketi kullanılır:
+
+```r
+# install.packages("brant")
+library(brant)
+brant(model_ord)
+# Yorum: p-değerleri 0.05'ten büyükse varsayım sağlanmıştır
+# (katsayılar tüm eşikler için sabittir); küçükse model güvenilirliği tartışmalıdır.
+```
+
+Bu paket temel kurulumun bir parçası değildir. Sıralı lojistik regresyon hakemli bir dergide raporlanmadan önce bu testin çalıştırılması **beklenen bir adımdır** — aksi hâlde katsayıların "tüm eşikler için sabit" yorumunun geçerliliği belirsiz kalır.
+:::
+
+## Modern Araştırma Pratiği: `gtsummary` ile Otomatik Tablo
+
+Yukarıda p-değerini elle ($z$ veya $t$ istatistiğinden `pnorm()` ile) hesapladık — bu hesabın **mantığını** kavramak önemlidir. Ama gerçek araştırma pratiğinde kimse bu tabloyu elle kurmaz; 4. modülde tanıdığınız `gtsummary` paketi, hem `multinom` hem `polr` nesnelerini doğrudan okuyup yayına hazır bir tablo üretir:
+
+```{r}
+library(gtsummary)
+
+tbl_regression(model_multi, exponentiate = TRUE)
+```
+
+```{r}
+tbl_regression(model_ord, exponentiate = TRUE)
+```
+
+Bu tablolar odds oranlarını (ya da RRR'yi), güven aralıklarını ve yıldızlanmış p-değerlerini tek seferde, APA formatına yakın bir biçimde verir. **Elle hesabı öğrenmeniz gerekiyordu** — mantığı görmeden bir aracı kör kullanmak riskli olur — **ama sahada bu aracı kullanacaksınız.**
+
+# Üç Modelin Karşılaştırması
+
+| Bağımlı değişkenin türü | Yöntem | R fonksiyonu | Katsayının anlamı |
+|---|---|---|---|
+| İkili (0/1) | Lojistik regresyon | `glm(family = binomial)` | Odds oranı |
+| Nominal, 3+ kategori | Çoklu lojistik regresyon | `nnet::multinom()` | Göreli risk oranı (referansa karşı) |
+| Sıralı, 3+ kategori | Sıralı lojistik regresyon | `MASS::polr()` | Odds oranı (tüm eşikler için sabit varsayılır) |
+
+Üçü de aynı ailenin (genelleştirilmiş doğrusal model) üyesidir; fark, bağımlı değişkenin ölçek türüne göre olasılığın nasıl parçalandığıdır.
+
+# Dönem Notu
+
+Bu modül, dönemin **son yeni konusudur** (bkz. 13. modül) — 11. oturumda ikili lojistik regresyonla birlikte işlenir ve final sınavının kapsamına girer. Sınava hazırlanırken 13. modüldeki alışkanlığı burada da uygulayın: karşınıza bir model çıktısı geldiğinde önce bağımlı değişkenin türüne (ikili / nominal çok kategorili / sıralı çok kategorili) bakın, sonra o türün yorumlama kalıbını uygulayın.

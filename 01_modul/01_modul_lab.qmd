@@ -1,0 +1,380 @@
+---
+title: "Modül 01 — Rehberli Laboratuvar"
+subtitle: "R ve RStudio'ya İlk Adımlar"
+author: "Prof. Dr. Hakan Mehmetcik"
+date: "`r Sys.Date()`"
+lang: tr
+format: pdf
+editor: visual
+execute:
+  echo: true
+  warning: true
+  message: false
+  cache: false
+df-print: kable
+---
+
+## Bu Belge Nedir?
+
+Bu bir **sınav provası değildir**; ders saatinde birlikte, bilgisayar
+başında yapılacak bir uygulama defteridir. Notlandırılmaz.
+
+Bu, R ile ilk temasınız. Amaç kusursuz kod yazmak değil, **hata almaya
+alışmaktır** — deneyimli kullanıcılar da her gün hata alır.
+
+Belge iki bölümden oluşur:
+
+-   **Görevler** (Bölüm A–E): her görevde ne yapmanız gerektiği yazılıdır
+    ve altında **eksik bırakılmış** bir kod iskeleti vardır. Bu kodlar
+    render sırasında çalıştırılmaz — sizin RStudio'da elle tamamlamanız
+    içindir.
+-   **Çözümler** (belgenin sonu): tüm görevlerin çalışan hâli. Önce
+    kendiniz deneyin, tıkandığınızda bakın.
+
+::: callout-tip
+## Nasıl çalışılır
+
+Kod öbeğinin sağ üstündeki yeşil ▶ düğmesi o öbeği çalıştırır. Sonucu
+**Console** panelinde değil, öbeğin hemen altında göreceksiniz. Hata
+aldığınızda paniklemeyin: R'ın mesajını okuyun, çoğu zaman hangi
+satırda ne beklediğini açıkça söyler.
+:::
+
+------------------------------------------------------------------------
+
+# Bölüm A — RStudio'da İlk Adımlar
+
+## Görev A1 — Dört paneli bulun
+
+RStudio'yu açın ve şu dört paneli ekranda bulun: **Source**,
+**Console**, **Environment**, **Plots/Files/Help**. Her birine bir
+kez tıklayın.
+
+Konsola şunu yazıp Enter'a basın (script'e değil, doğrudan konsola):
+
+``` r
+2 + 2
+```
+
+**Soru:** Bu satır Environment panelinde bir nesne oluşturdu mu? Neden?
+
+## Görev A2 — Konsol mu, script mi?
+
+Aşağıdaki öbeği çalıştırın:
+
+```{r}
+il_adi <- c("İstanbul", "Ankara", "İzmir")
+nufus  <- c(15840900, 5747325, 4462056)
+names(nufus) <- il_adi
+nufus
+```
+
+Şimdi **Environment** paneline bakın. `il_adi` ve `nufus` nesnelerini
+görüyor musunuz?
+
+::: callout-important
+Konsola yazdığınız kod da çalışır, ama **kalıcı değildir** — RStudio
+kapandığında kaybolur. Script (`.R`) veya Quarto (`.qmd`) dosyasına
+yazdığınız kod ise saklanır ve tekrar çalıştırılabilir. Bu ders boyunca
+hep script mantığıyla çalışacağız.
+:::
+
+------------------------------------------------------------------------
+
+# Bölüm B — Aritmetik Operatörler
+
+## Görev B1 — Dört işlem
+
+Aşağıdaki beş boşluğu, sırasıyla toplama, çıkarma, çarpma, bölme ve üs
+alma işlemleriyle doldurun.
+
+```{r}
+#| eval: false
+a <- 17
+b <- 4
+
+a ____ b   # toplama, sonuç 21 olmalı
+a ____ b   # çıkarma, sonuç 13 olmalı
+a ____ b   # çarpma, sonuç 68 olmalı
+a ____ b   # bölme, sonuç 4.25 olmalı
+a ____ 2   # üs alma, sonuç 289 olmalı
+```
+
+## Görev B2 — Modülüs ve tam bölme
+
+`17 %% 4` ile `17 %/% 4` arasındaki farkı önce tahmin edin, sonra
+çalıştırıp doğrulayın.
+
+```{r}
+#| eval: false
+17 %% 4    # tahmininiz: ____
+17 %/% 4   # tahmininiz: ____
+```
+
+::: callout-tip
+`%%` kalanı, `%/%` bölümün tam sayı kısmını verir. `17 = 4 * 4 + 1`
+olduğuna göre ikisinin de sonucunu tahmin edebilirsiniz.
+:::
+
+------------------------------------------------------------------------
+
+# Bölüm C — Karşılaştırma ve Mantıksal Operatörler
+
+## Görev C1 — Karşılaştırma operatörleri
+
+Her satırın sonucunu **çalıştırmadan önce** tahmin edin, sonra
+çalıştırıp kontrol edin.
+
+```{r}
+#| eval: false
+10 == 10    # tahmin: ____
+10 != 10    # tahmin: ____
+7 > 12      # tahmin: ____
+7 <= 7      # tahmin: ____
+```
+
+## Görev C2 — `&` ile `&&` farkı
+
+Aşağıdaki iki satırı çalıştırın. Sonuçların **uzunluğu** farklıdır.
+Neden?
+
+```{r}
+#| eval: false
+c(TRUE, FALSE) & c(TRUE, TRUE)
+c(TRUE, FALSE) && c(TRUE, TRUE)
+```
+
+::: callout-note
+`&` her elemanı tek tek karşılaştırır (vektör verir); `&&` yalnızca
+**ilk** elemanları karşılaştırır (tek bir değer verir). İkinci sürüm
+R'ın yeni sürümlerinde birden fazla elemanlı bir vektörle
+kullanıldığında hata verir.
+:::
+
+## Görev C3 — Kendi koşulunuzu yazın
+
+`yas` adlı bir değişken tanımlayın ve bu değişkenin 18'den büyük veya
+eşit olup olmadığını kontrol eden bir karşılaştırma yazın.
+
+```{r}
+#| eval: false
+yas <- ____
+yas ____ 18
+```
+
+------------------------------------------------------------------------
+
+# Bölüm D — Diziler ve Üyelik
+
+## Görev D1 — Kolon ve `seq()`
+
+Aşağıdaki iki satırın **aynı sonucu** üretip üretmediğini kontrol edin.
+
+```{r}
+#| eval: false
+1:10
+seq(1, 10, by = ____)
+```
+
+Şimdi 0'dan 20'ye, ikişer ikişer artan bir dizi üretin.
+
+```{r}
+#| eval: false
+seq(____, ____, by = ____)
+```
+
+## Görev D2 — `rep()` ile tekrar
+
+`c(1, 2, 3)` vektörünü üç kez art arda tekrarlayan bir kod yazın.
+Sonra aynı vektörün her elemanını üç kez tekrarlayan (1 1 1 2 2 2 3 3
+3) bir kod yazın. İkinci görev için `?rep` yardım sayfasına bakın.
+
+```{r}
+#| eval: false
+rep(c(1, 2, 3), times = ____)
+rep(c(1, 2, 3), each  = ____)
+```
+
+## Görev D3 — `%in%` ile üyelik sorgusu
+
+Aşağıdaki vektörde `7` ve `15` sayılarının bulunup bulunmadığını
+`%in%` operatörüyle sorgulayın.
+
+```{r}
+#| eval: false
+sayilar <- c(2, 4, 7, 9, 11, 13)
+7  ____ sayilar
+15 ____ sayilar
+```
+
+------------------------------------------------------------------------
+
+# Bölüm E — Hata Mesajlarını Okumak ve Yardım Almak
+
+## Görev E1 — Kasıtlı hata
+
+Aşağıdaki satırı **olduğu gibi**, `#` işaretini kaldırarak çalıştırın.
+Aldığınız hata mesajını tam olarak okuyun.
+
+```{r}
+#| eval: false
+# 3 x 5
+```
+
+**Soru:** Hata mesajı size hangi kelimeyle "bir şey beklenmiyordu"
+diyor? Doğrusu ne olmalıydı?
+
+## Görev E2 — Büyük/küçük harf duyarlılığı
+
+Aşağıdaki öbek kasıtlı olarak hata verecek şekilde bırakılmıştır
+(`error: true` sayesinde render işlemi düşmeyecek). Hatayı okuyun,
+sonra altındaki doğru satırı tamamlayın.
+
+```{r}
+#| error: true
+Mean(c(4, 8, 15, 16, 23))
+```
+
+```{r}
+#| eval: false
+____(c(4, 8, 15, 16, 23))
+```
+
+## Görev E3 — Yardım sayfası okumak
+
+`?median` yazıp yardım sayfasını açın. Sayfadaki **Arguments**
+bölümüne bakarak `na.rm` argümanının ne işe yaradığını bir cümleyle
+yazın.
+
+```{r}
+#| eval: false
+?median
+```
+
+**Cevabınız:** ****\_\_\_\_****
+
+------------------------------------------------------------------------
+
+# Çözümler
+
+Aşağıdaki kod çalıştırılır; çıktıları görmek için render edilmiş PDF'e
+bakabilir ya da satırları RStudio'da kendiniz çalıştırabilirsiniz.
+
+### B1 — Dört işlem
+
+```{r}
+#| label: b1
+a <- 17
+b <- 4
+
+a + b   # 21
+a - b   # 13
+a * b   # 68
+a / b   # 4.25
+a ^ 2   # 289
+```
+
+### B2 — Modülüs ve tam bölme
+
+```{r}
+#| label: b2
+17 %% 4    # 1  — kalan
+17 %/% 4   # 4  — bölümün tam sayı kısmı
+```
+
+`17 = 4 × 4 + 1` olduğundan tam bölüm 4, kalan 1'dir.
+
+### C1 — Karşılaştırma operatörleri
+
+```{r}
+#| label: c1
+10 == 10    # TRUE
+10 != 10    # FALSE
+7 > 12      # FALSE
+7 <= 7      # TRUE  — eşitlik de kabul edilir
+```
+
+### C2 — `&` ile `&&`
+
+```{r}
+#| label: c2
+c(TRUE, FALSE) & c(TRUE, TRUE)    # TRUE FALSE — elemanları tek tek karşılaştırır
+c(TRUE, FALSE) && c(TRUE, TRUE)   # TRUE — yalnızca ilk elemanları karşılaştırır
+```
+
+`&&` çok elemanlı vektörlerle kullanıldığında R'ın güncel sürümlerinde
+hata verir; koşullu ifadelerde (`if` içinde) tek bir mantıksal değer
+beklendiğinde tercih edilir.
+
+### C3 — Kendi koşulunuz
+
+```{r}
+#| label: c3
+yas <- 21
+yas >= 18   # TRUE
+```
+
+### D1 — Kolon ve `seq()`
+
+```{r}
+#| label: d1
+1:10
+seq(1, 10, by = 1)          # 1:10 ile aynı sonucu üretir
+
+seq(0, 20, by = 2)
+```
+
+### D2 — `rep()`
+
+```{r}
+#| label: d2
+rep(c(1, 2, 3), times = 3)   # 1 2 3 1 2 3 1 2 3
+rep(c(1, 2, 3), each  = 3)   # 1 1 1 2 2 2 3 3 3
+```
+
+`times`, tüm vektörü tekrarlar; `each`, her elemanı kendi içinde
+tekrarlar.
+
+### D3 — `%in%`
+
+```{r}
+#| label: d3
+sayilar <- c(2, 4, 7, 9, 11, 13)
+7  %in% sayilar    # TRUE
+15 %in% sayilar    # FALSE
+```
+
+### E1 — Kasıtlı hata
+
+```{r}
+#| error: true
+3 x 5
+```
+
+Hata mesajı `unexpected symbol` der — R, `3` ile `x` arasında geçerli
+bir işlem bulamaz çünkü çarpma işareti `x` değil `*`'dır. Doğrusu:
+
+```{r}
+3 * 5
+```
+
+### E2 — Büyük/küçük harf duyarlılığı
+
+Hata: `could not find function "Mean"`. R'da fonksiyon adları
+**büyük/küçük harfe duyarlıdır**; `mean()` vardır, `Mean()` yoktur.
+
+```{r}
+mean(c(4, 8, 15, 16, 23))
+```
+
+### E3 — Yardım sayfası
+
+```{r}
+#| eval: false
+?median
+```
+
+`na.rm`, veri içindeki eksik (`NA`) değerlerin hesaplamadan **çıkarılıp
+çıkarılmayacağını** kontrol eder; varsayılan `FALSE`'dur, yani eksik
+değer varsa sonuç `NA` olur. Bu argümanı `mean()` fonksiyonunda da
+göreceksiniz — bu derste sık karşılaşacağınız bir kalıptır.
