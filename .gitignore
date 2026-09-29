@@ -57,6 +57,28 @@ output.csv
 /sinav/
 /notlar/
 
+# Öğrenci çalışma klasörü (klasör kalır, içeriği izlenmez)
+my_work/*
+!my_work/.gitkeep
+
+# R / RStudio
+.Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
+.Rapp.history
+
+# Quarto / R Markdown çıktıları
+.quarto/
+_site/
+_book/
+*_files/
+*_cache/
+
+# İşletim sistemi
+.DS_Store
+Thumbs.db
+
 # --- Render ciktilari ---
 # Render edilmis PDF/HTML belgeler ve revealjs sunumlarin *_files/
 # klasorleri DEPODA TUTULUR: ogrenci kaynak dosyayi render edemedigi
