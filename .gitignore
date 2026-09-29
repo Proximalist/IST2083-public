@@ -3,6 +3,7 @@
 .Rhistory
 .RData
 .Ruserdata
+.Rapp.history
 
 # --- renv (kilit dosyasi takip edilir, kutuphane edilmez) ---
 renv/library/
@@ -16,6 +17,7 @@ renv/sandbox/
 _site/
 _book/
 _freeze/
+*_cache/
 
 # PDF/LaTeX render icin uretilen ara figur klasorleri (nihai PDF'e
 # zaten gomulur, ayrica takip edilmesine gerek yok). Not: bu kural
@@ -60,24 +62,6 @@ output.csv
 # Öğrenci çalışma klasörü (klasör kalır, içeriği izlenmez)
 my_work/*
 !my_work/.gitkeep
-
-# R / RStudio
-.Rproj.user/
-.Rhistory
-.RData
-.Ruserdata
-.Rapp.history
-
-# Quarto / R Markdown çıktıları
-.quarto/
-_site/
-_book/
-*_files/
-*_cache/
-
-# İşletim sistemi
-.DS_Store
-Thumbs.db
 
 # --- Render ciktilari ---
 # Render edilmis PDF/HTML belgeler ve revealjs sunumlarin *_files/
