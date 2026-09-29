@@ -92,7 +92,7 @@ Yanlışlıkla orijinal bir dosyayı düzenlerseniz endişelenmeyin: güncelleme
 ### `update.R` hata verirse
 
 | Mesaj | Ne yapmalı |
-|----|----|
+|------------------------------------|------------------------------------|
 | `Bu dosya proje klasöründe çalıştırılmalı` | RStudio'da *File → Open Project* ile `IST2083.Rproj` dosyasını açın ve tekrar deneyin. |
 | `Güncellemeler indirilemedi` | İnternet bağlantınızı kontrol edin; okul ağında sorun sürerse telefon hotspotu ile deneyin. |
 | `cannot open file 'update.R'` | Yanlış klasördesiniz veya depoyu ZIP ile indirdiniz. Bölüm 5'e bakın. |
@@ -153,6 +153,6 @@ Git ile uğraşmak istemiyorsanız:
 - Hata mesajının tamamı (ekran görüntüsü değil, metin olarak)
 - İşletim sisteminiz
 
-**Hesabınız yoksa:** aynı bilgileri e-posta ile gönderin: \[ders e-posta adresi\]
+**Hesabınız yoksa:** aynı bilgileri e-posta ile gönderin: hakan.mehmetcik\@marmara.edu.tr
 
 İyi çalışmalar!
