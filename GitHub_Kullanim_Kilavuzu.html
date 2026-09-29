@@ -86,6 +86,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#alternatif-github-codespaces-kurulum-istemeyenler-için" id="toc-alternatif-github-codespaces-kurulum-istemeyenler-için" class="nav-link" data-scroll-target="#alternatif-github-codespaces-kurulum-istemeyenler-için">4. Alternatif: GitHub Codespaces (kurulum istemeyenler için)</a></li>
   <li><a href="#depoyu-indirmenin-en-basit-yolu-git-olmadan" id="toc-depoyu-indirmenin-en-basit-yolu-git-olmadan" class="nav-link" data-scroll-target="#depoyu-indirmenin-en-basit-yolu-git-olmadan">5. Depoyu indirmenin en basit yolu (Git olmadan)</a></li>
   <li><a href="#kontrol-listesi-2-dakikalık-özet" id="toc-kontrol-listesi-2-dakikalık-özet" class="nav-link" data-scroll-target="#kontrol-listesi-2-dakikalık-özet">Kontrol listesi (2 dakikalık özet)</a></li>
+  <li><a href="#birkaç-ek-hata-senaryosu" id="toc-birkaç-ek-hata-senaryosu" class="nav-link" data-scroll-target="#birkaç-ek-hata-senaryosu">Birkaç ek hata senaryosu</a></li>
   <li><a href="#sorun-mu-var" id="toc-sorun-mu-var" class="nav-link" data-scroll-target="#sorun-mu-var">Sorun mu var?</a></li>
   </ul>
 <div class="quarto-alternate-formats"><h2>Diğer Formatlar</h2><ul><li><a href="GitHub_Kullanim_Kilavuzu.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
@@ -112,7 +113,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Yayınlanma Tarihi</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">Invalid Date</p>
+      <p class="date">29 Eylül 2026</p>
     </div>
   </div>
   
@@ -124,11 +125,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>Bu kılavuz üç şeyi anlatır: GitHub hesabı açmayı, ders deposunu bilgisayarınıza indirmeyi ve <strong>her hafta yeni materyali almayı.</strong></p>
-<p>Üçüncüsü en önemlisi. Depoyu bir kez indirip bırakırsanız 3. haftadan sonra elinizdeki materyal eskir.</p>
-<hr>
+<p>Bu kılavuz dört şeyi anlatır: GitHub hesabı açmayı, ders deposunu bilgisayarınıza indirmeyi, her hafta yeni materyali almayı ve kurulum yapamayanlar için alternatifleri.</p>
+<p><strong>En önemlisi üçüncüsüdür.</strong> Depoyu bir kez indirip bırakırsanız 3. haftadan sonra elinizdeki materyal eskir.</p>
 <section id="github-hesabı-açma" class="level2">
 <h2 class="anchored" data-anchor-id="github-hesabı-açma">1. GitHub hesabı açma</h2>
+<p>Depo herkese açıktır; depoyu indirmek için GitHub hesabı <strong>gerekmez</strong>. Hesap yalnızca Codespaces (Bölüm 4) ve depoda <em>Issue</em> açmak (en sondaki bölüm) için gerekir. Hesap açmak istemezseniz doğrudan Bölüm 2’ye geçebilirsiniz.</p>
 <ol type="1">
 <li><a href="https://github.com/" class="uri">https://github.com/</a> adresine gidin, sağ üstten <strong>Sign up</strong>’a tıklayın.</li>
 <li>E-posta, kullanıcı adı ve şifre girin.</li>
@@ -136,7 +137,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ol>
 <p><strong>Hangi e-posta?</strong> Herhangi bir e-posta adresiyle kayıt olabilirsiniz; <code>.edu.tr</code> zorunlu değildir. Ancak öğrenci e-postanızı hesabınıza eklerseniz <strong>GitHub Student Developer Pack</strong> başvurusu yapabilir, Codespaces için ek ücretsiz kullanım hakkı ve başka araçlara erişim kazanabilirsiniz: <a href="https://education.github.com/pack" class="uri">https://education.github.com/pack</a></p>
 <p>Öğrenci e-postanızı sonradan da ekleyebilirsiniz: <em>Settings → Emails → Add email address.</em></p>
-<hr>
 </section>
 <section id="depoyu-bilgisayarınıza-indirme" class="level2">
 <h2 class="anchored" data-anchor-id="depoyu-bilgisayarınıza-indirme">2. Depoyu bilgisayarınıza indirme</h2>
@@ -148,9 +148,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><em>Version Control seçeneğini göremiyorsanız</em> Git kurulu değildir veya RStudio Git’i bulamamıştır. Kurulum rehberindeki Git bölümüne dönün.</p>
 </blockquote></li>
 <li><p><strong>Repository URL</strong> alanına şunu yapıştırın:</p>
-<pre><code>https://github.com/Proximalist/IST2083.git</code></pre></li>
+<pre><code>https://github.com/Proximalist/IST2083-public.git</code></pre></li>
 <li><p><strong>Project directory name</strong>: <code>IST2083</code> olarak bırakın.</p></li>
-<li><p><strong>Create project as subdirectory of</strong>: derslerinizi tuttuğunuz klasörü seçin. Türkçe karakter ve boşluk içermeyen bir yol tercih edin (<code>Belgeler/Dersler</code> gibi).</p></li>
+<li><p><strong>Create project as subdirectory of</strong>: derslerinizi tuttuğunuz klasörü seçin. Türkçe karakter ve boşluk içermeyen, kısa bir yol tercih edin (örneğin <code>C:\Dersler</code>). OneDrive, Google Drive veya Masaüstü gibi senkronize klasörleri seçmeyin; Git ile çakışıp hata verebilir.</p></li>
 <li><p><strong>Create Project</strong>’e tıklayın.</p></li>
 </ol>
 <p>İndirme bitince RStudio projeyi açar. Sağ altta dosya listesini, sağ üstte <strong>Git</strong> sekmesini görmelisiniz.</p>
@@ -161,57 +161,80 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">here</span>()</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">file.exists</span>(<span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"example_data.csv"</span>))</span></code><button title="Panoya Kopyala" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p><code>TRUE</code> görüyorsanız her şey yolundadır.</p>
-<hr>
 </section>
 </section>
 <section id="her-hafta-güncel-materyali-alma" class="level2">
 <h2 class="anchored" data-anchor-id="her-hafta-güncel-materyali-alma">3. Her hafta güncel materyali alma</h2>
-<p>Ders materyali her hafta güncellenir. Yeni materyali almak için:</p>
-<p><strong>RStudio’da:</strong> Git sekmesi → mavi aşağı ok (<strong>Pull</strong>) düğmesi.</p>
-<p><strong>Veya Console’da (Terminal sekmesi):</strong></p>
-<pre><code>git pull</code></pre>
-<p>Bunu <strong>her dersten önce</strong> yapın. Yeni haftanın klasörü, düzeltilmiş kodlar ve cevap anahtarları bu şekilde gelir.</p>
-<section id="pull-çalışmıyor-hata-veriyor" class="level3">
-<h3 class="anchored" data-anchor-id="pull-çalışmıyor-hata-veriyor">“Pull çalışmıyor, hata veriyor”</h3>
-<p>En sık karşılaşılan iki durum:</p>
-<p><strong>Durum A — ders dosyalarını değiştirdiniz ve pull reddedildi.</strong> Hata şuna benzer: <em>“Your local changes would be overwritten by merge.”</em></p>
-<p>Ders dosyalarının üzerine yazmak yerine <strong>kopyasını alıp</strong> çalışın. Değişiklikleri atmak isterseniz:</p>
-<pre><code>git stash
-git pull</code></pre>
-<p><code>git stash</code>, değişikliklerinizi kenara koyar; geri almak isterseniz <code>git stash pop</code> yazın.</p>
-<p><strong>Durum B — kendi dosyalarınız var ama takip edilmiyor.</strong> Alıştırma çözümlerinizi <code>benim_calismalarim/</code> gibi kendi klasörünüzde tutarsanız pull hiç sorun çıkarmaz. Bu klasörü depoya göndermeniz gerekmez.</p>
-<blockquote class="blockquote">
-<p><strong>Önemli:</strong> Bu depoya <code>push</code> yapmanız beklenmiyor ve yetkiniz yok. Depo tek yönlü çalışır: biz yayımlarız, siz <code>pull</code> ile alırsınız.</p>
-</blockquote>
-<hr>
+<p>Ders materyali her hafta güncellenir. Depo sizin için <strong>salt okunur bir ders kaynağıdır</strong>: depoya dosya yükleyemezsiniz (push yapamazsınız) ve <strong>Commit, Push, Pull düğmelerini kullanmanız gerekmez.</strong></p>
+<p><strong>Ders dosyalarını doğrudan düzenlemeyin.</strong> Üzerinde çalışmak istediğiniz dosyayı önce proje içindeki <code>my_work</code> klasörüne kopyalayın ve orada çalışın. Bu klasördeki dosyalarınıza güncellemeler asla dokunmaz.</p>
+<p><strong>Her dersten önce</strong> RStudio’da projeyi açıp Console’a şunu yazın:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"update.R"</span>)</span></code><button title="Panoya Kopyala" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><code>Materyaller güncellendi. Başarılı.</code> mesajını görmelisiniz.</p>
+<p>Yanlışlıkla orijinal bir dosyayı düzenlerseniz endişelenmeyin: güncelleme sırasında değişiklikleriniz <code>my_work/yedek_...</code> klasörüne otomatik yedeklenir ve ekranda hangi dosyaların yedeklendiği yazar. Güncellemeden sonra ders dosyası orijinal haline döner.</p>
+<section id="update.r-hata-verirse" class="level3">
+<h3 class="anchored" data-anchor-id="update.r-hata-verirse"><code>update.R</code> hata verirse</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Mesaj</th>
+<th>Ne yapmalı</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Bu dosya proje klasöründe çalıştırılmalı</code></td>
+<td>RStudio’da <em>File → Open Project</em> ile <code>IST2083.Rproj</code> dosyasını açın ve tekrar deneyin.</td>
+</tr>
+<tr class="even">
+<td><code>Güncellemeler indirilemedi</code></td>
+<td>İnternet bağlantınızı kontrol edin; okul ağında sorun sürerse telefon hotspotu ile deneyin.</td>
+</tr>
+<tr class="odd">
+<td><code>cannot open file 'update.R'</code></td>
+<td>Yanlış klasördesiniz veya depoyu ZIP ile indirdiniz. Bölüm 5’e bakın.</td>
+</tr>
+<tr class="even">
+<td>Başka bir hata</td>
+<td>Hata mesajının tamamını kopyalayıp Bölüm “Sorun mu var?” altındaki yoldan bildirin.</td>
+</tr>
+</tbody>
+</table>
 </section>
 </section>
 <section id="alternatif-github-codespaces-kurulum-istemeyenler-için" class="level2">
 <h2 class="anchored" data-anchor-id="alternatif-github-codespaces-kurulum-istemeyenler-için">4. Alternatif: GitHub Codespaces (kurulum istemeyenler için)</h2>
-<p>Bilgisayarınıza hiçbir şey kurmadan, tarayıcıda çalışabilirsiniz.</p>
+<p>Bilgisayarınıza hiçbir şey kurmadan tarayıcıda çalışabilirsiniz. <strong>Bir GitHub hesabı gerekir</strong> (Bölüm 1).</p>
 <ol type="1">
-<li><a href="https://github.com/Proximalist/IST2083" class="uri">https://github.com/Proximalist/IST2083</a> adresine gidin.</li>
+<li><a href="https://github.com/Proximalist/IST2083-public" class="uri">https://github.com/Proximalist/IST2083-public</a> adresine gidin.</li>
 <li>Yeşil <strong>Code</strong> düğmesi → <strong>Codespaces</strong> sekmesi → <strong>Create codespace on main</strong>.</li>
-<li>Tarayıcıda bir editör açılır; R ve gerekli paketler hazır gelir.</li>
+<li>Tarayıcıda bir editör açılır; R ve gerekli paketler hazır gelir (ilk açılışta birkaç dakika sürebilir).</li>
 </ol>
-<p><strong>Bilmeniz gerekenler:</strong></p>
+<p>Bilmeniz gerekenler:</p>
 <ul>
 <li>Codespaces ücretsiz kotayla çalışır (hesap türüne göre aylık belirli bir süre). Kullanmadığınızda <strong>Stop codespace</strong> ile durdurun, kota tükenmesin.</li>
 <li>Ders anlatımı RStudio arayüzü üzerinden yapılacaktır; Codespaces’te ekran farklı görünür.</li>
 <li>Codespaces içinde yaptığınız değişiklikler o codespace’te kalır, bilgisayarınıza inmez.</li>
+<li>Bir codespace eski halinde kalır; yeni materyal için R konsolunda <code>source("update.R")</code> çalıştırın.</li>
+<li>Uzun vadede yerel RStudio kurulumu tavsiye edilir; Codespaces kurulum sorununu çözemediğiniz haftalarda iyi bir yedektir.</li>
 </ul>
-<p>Uzun vadede yerel RStudio kurulumu tavsiye edilir; Codespaces kurulum sorununu çözemediğiniz haftalarda iyi bir yedektir.</p>
-<hr>
 </section>
 <section id="depoyu-indirmenin-en-basit-yolu-git-olmadan" class="level2">
 <h2 class="anchored" data-anchor-id="depoyu-indirmenin-en-basit-yolu-git-olmadan">5. Depoyu indirmenin en basit yolu (Git olmadan)</h2>
 <p>Git ile uğraşmak istemiyorsanız:</p>
 <ol type="1">
-<li><a href="https://github.com/Proximalist/IST2083" class="uri">https://github.com/Proximalist/IST2083</a> → yeşil <strong>Code</strong> düğmesi → <strong>Download ZIP</strong>.</li>
+<li><a href="https://github.com/Proximalist/IST2083-public" class="uri">https://github.com/Proximalist/IST2083-public</a> adresine gidin → yeşil <strong>Code</strong> düğmesi → <strong>Download ZIP</strong>.</li>
 <li>ZIP’i açın, içindeki <code>IST2083.Rproj</code> dosyasına çift tıklayın.</li>
 </ol>
-<p><strong>Dezavantajı:</strong> Her hafta yeniden indirmeniz gerekir ve eski klasörle karıştırma riski vardır. Git yolunu öğrenmek ilk hafta biraz zaman alır ama dönem boyunca zaman kazandırır.</p>
-<hr>
+<p><strong>Dezavantajları:</strong></p>
+<ul>
+<li>Bu yolla <code>update.R</code> <strong>çalışmaz</strong> (klasörde Git kaydı bulunmaz). Her hafta ZIP’i yeniden indirmeniz gerekir.</li>
+<li>Yeni ZIP’i <strong>eski klasörün üzerine değil, yeni bir klasöre</strong> açın. Kendi çalışmalarınızı <code>my_work</code> klasöründen yeni klasörün <code>my_work</code> klasörüne kopyalayın.</li>
+<li>Git yolunu öğrenmek ilk hafta biraz zaman alır ama dönem boyunca zaman kazandırır.</li>
+</ul>
 </section>
 <section id="kontrol-listesi-2-dakikalık-özet" class="level2">
 <h2 class="anchored" data-anchor-id="kontrol-listesi-2-dakikalık-özet">Kontrol listesi (2 dakikalık özet)</h2>
@@ -219,26 +242,27 @@ git pull</code></pre>
 <li><label><input type="checkbox">Git yüklü, <code>git --version</code> bir sürüm numarası döndürüyor</label></li>
 <li><label><input type="checkbox">R ve RStudio yüklü</label></li>
 <li><label><input type="checkbox">RStudio, <em>Tools → Global Options → Git/SVN</em> altında Git’i görüyor</label></li>
-<li><label><input type="checkbox"><strong>File → New Project → Version Control → Git</strong> ile depo klonlandı</label></li>
+<li><label><input type="checkbox"><em>File → New Project → Version Control → Git</em> ile depo klonlandı</label></li>
 <li><label><input type="checkbox"><code>here("data", "example_data.csv")</code> <code>TRUE</code> dönüyor (Kurulum Rehberi’ndeki doğrulama)</label></li>
-<li><label><input type="checkbox">Güncelleme için: <strong>Pull</strong></label></li>
+<li><label><input type="checkbox"><code>source("update.R")</code> çalıştırıldığında <code>Materyaller güncellendi. Başarılı.</code> yazıyor</label></li>
+<li><label><input type="checkbox">Çalışacağım dosyaları <code>my_work</code> klasörüne kopyalıyorum</label></li>
 </ul>
-<section id="birkaç-ek-hata-senaryosu" class="level3">
-<h3 class="anchored" data-anchor-id="birkaç-ek-hata-senaryosu">Birkaç ek hata senaryosu</h3>
-<p><strong>“Permission denied (publickey)”</strong> SSH adresi yerine bu kılavuzdaki <strong>HTTPS</strong> URL’ini kullandığınızdan emin olun: <code>https://github.com/Proximalist/IST2083.git</code></p>
-<p><strong>“fatal: not a git repository”</strong> Komutu proje klasörünün <strong>içinde</strong> çalıştırın. <code>pwd</code> (macOS/Linux) veya <code>cd</code> (Windows, argümansız) ile hangi klasörde olduğunuzu kontrol edin.</p>
-<p><strong>“already exists and is not an empty directory”</strong> Aynı isimli bir klasör zaten var. Klonlarken farklı bir <strong>Project directory name</strong> seçin veya eski klasörü silin/taşıyın.</p>
 </section>
+<section id="birkaç-ek-hata-senaryosu" class="level2">
+<h2 class="anchored" data-anchor-id="birkaç-ek-hata-senaryosu">Birkaç ek hata senaryosu</h2>
+<p><strong>“Permission denied (publickey)”</strong> SSH adresi yerine bu kılavuzdaki HTTPS URL’ini kullandığınızdan emin olun: <code>https://github.com/Proximalist/IST2083-public.git</code></p>
+<p><strong>“fatal: not a git repository”</strong> Komutu proje klasörünün içinde çalıştırın. <code>pwd</code> (macOS/Linux) veya <code>cd</code> (Windows, argümansız) ile hangi klasörde olduğunuzu kontrol edin.</p>
+<p><strong>“already exists and is not an empty directory”</strong> Aynı isimli bir klasör zaten var. Klonlarken farklı bir <em>Project directory name</em> seçin veya eski klasörü silin/taşıyın.</p>
 </section>
 <section id="sorun-mu-var" class="level2">
 <h2 class="anchored" data-anchor-id="sorun-mu-var">Sorun mu var?</h2>
-<p>Depoda <strong>Issues</strong> sekmesini açıp yeni bir issue oluşturun. Şunları yazın:</p>
+<p><strong>GitHub hesabınız varsa:</strong> depoda <strong>Issues</strong> sekmesini açıp yeni bir issue oluşturun. Issue herkese açıktır; aynı sorunu yaşayan arkadaşlarınız da cevabı görecektir. Şunları yazın:</p>
 <ul>
 <li>Ne yapmaya çalıştığınız</li>
-<li>Hata mesajının <strong>tamamı</strong> (ekran görüntüsü değil, metin olarak)</li>
+<li>Hata mesajının tamamı (ekran görüntüsü değil, metin olarak)</li>
 <li>İşletim sisteminiz</li>
 </ul>
-<p>Aynı sorunu yaşayan arkadaşlarınız da cevabı görecektir.</p>
+<p><strong>Hesabınız yoksa:</strong> aynı bilgileri e-posta ile gönderin: [ders e-posta adresi]</p>
 <p>İyi çalışmalar!</p>
 </section>
 
