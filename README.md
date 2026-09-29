@@ -1,6 +1,7 @@
 # IST2083 — Temel İstatistik ve R ile Veri Analizi
 
-**Marmara Üniversitesi, Siyasal Bilgiler Fakültesi · 2026–2027 Güz** Prof. Dr. Hakan Mehmetcik · Perşembe 08:30–11:30 · RTE.S1.138
+**Marmara Üniversitesi, Siyasal Bilgiler Fakültesi · 2026–2027 Güz**  
+Prof. Dr. Hakan Mehmetcik · Perşembe 09:30–12:30 · RTE.S1.138
 
 Bu depo dersin tüm materyallerini barındırır: ders notları, sunumlar, alıştırmalar, cevap anahtarları ve veri setleri.
 
@@ -10,10 +11,10 @@ Bu depo dersin tüm materyallerini barındırır: ders notları, sunumlar, alı�
 
 Derse hiç R kurmadan başlıyorsanız sırayla:
 
-1.  [**R ve RStudio Kurulum Rehberi**](R_RStudio_Kurulum_Rehberi.qmd) — R, RStudio, Git ve gerekli paketlerin kurulumu.
-2.  [**GitHub Kullanım Kılavuzu**](GitHub_Kullanim_Kilavuzu.qmd) — bu deponun bilgisayarınıza indirilmesi ve **her hafta güncellenmesi.**
-3.  [**Ders İzlencesi**](izlence/IST2083-izlence-2026-2027-guz.qmd) — konular, tarihler, değerlendirme ve kaynaklar.
-4.  [**R Hızlı Referans**](R-Hizli-Referans.qmd) — dönem boyunca öğrenilen R sözdizimini tek yerde toplayan, her hafta büyüyen başvuru belgesi. Bir sözdizimini unuttuğunuzda önce buraya bakın.
+1.  [**R ve RStudio Kurulum Rehberi**](R_RStudio_Kurulum_Rehberi.pdf) — R, RStudio, Git ve gerekli paketlerin kurulumu.
+2.  [**GitHub Kullanım Kılavuzu**](GitHub_Kullanim_Kilavuzu.pdf) — bu deponun bilgisayarınıza indirilmesi ve **her hafta güncellenmesi.**
+3.  [**Ders İzlencesi**](izlence/IST2083-izlence-2026-2027-guz.pdf) — konular, tarihler, değerlendirme ve kaynaklar.
+4.  [**R Hızlı Referans**](R-Hizli-Referans.pdf) — dönem boyunca öğrenilen R sözdizimini tek yerde toplayan, her hafta büyüyen başvuru belgesi. Bir sözdizimini unuttuğunuzda önce buraya bakın.
 
 Bilgisayarınıza hiçbir şey kurmak istemiyorsanız GitHub Codespaces seçeneği de vardır; kılavuzda anlatılmıştır.
 
@@ -23,7 +24,7 @@ Bilgisayarınıza hiçbir şey kurmak istemiyorsanız GitHub Codespaces seçene�
 
 Bilgisayarınıza R ve RStudio kurmak istemiyorsanız, bu depoyu tarayıcıda çalıştırabilirsiniz: yukarıdaki yeşil **Code** düğmesi → **Codespaces** → **Create codespace on main**. R, Quarto ve dersin tüm paketleri hazır gelir. Ayrıntı: `.devcontainer/README.md`.
 
-Kendi bilgisayarınıza kurmayı tercih ederseniz `R_RStudio_Kurulum_Rehberi.qmd` belgesini izleyin.
+Kendi bilgisayarınıza kurmayı tercih ederseniz `R_RStudio_Kurulum_Rehberi.pdf` belgesini izleyin.
 
 ## Ders programı
 
@@ -69,9 +70,14 @@ Proje, ödev, kısa sınav ve katılım notu **yoktur.** Her oturumun ardından 
 IST2083/
 ├── izlence/         Ders izlencesi
 ├── 01_modul/ …      Modül klasörleri: ders notu, sunum, lab, alıştırma,
-│                 cevap anahtarı (01–15; numara sırası oturum sırası değildir)
+│                    cevap anahtarı (01–15; numara sırası oturum sırası değildir)
 ├── data/            Tüm veri setleri (tek merkez)
 ├── images/          Görseller
+├── my_work/         SİZİN çalışma klasörünüz: güncellemeler buraya dokunmaz
+├── update.R         Materyalleri güncelleyen betik: source("update.R")
+├── scripts/         Şekil ve veri üretim betikleri (derse katılmak için gerekmez)
+├── docs/            Materyal yazım standardı (yazar notu)
+├── GitHub_Kullanim_Kilavuzu.pdf, R_RStudio_Kurulum_Rehberi.pdf, R-Hizli-Referans.pdf
 ├── IST2083.Rproj    RStudio proje dosyası — çalışmaya bunu açarak başlayın
 └── README.md
 ```
@@ -91,21 +97,37 @@ veri <- read.csv(here("data", "example_data.csv"))
 
 ## Ders materyallerini alma ve güncelleme
 
-**İlk kez (bir defa):** Repository URL: https://github.com/Proximalist/IST2083-public.git
+**İlk kez (bir defa):** RStudio → *File → New Project → Version Control → Git* → Repository URL:
 
-**Çalışma kuralı:** Dosyaları doğrudan düzenlemeyin.
+```         
+https://github.com/Proximalist/IST2083-public.git
+```
 
-**Her derste, başlamadan önce (güncelleme):** Console'a şunu yazın: source("update.R")
+**Çalışma kuralı:** Ders dosyalarını doğrudan düzenlemeyin. Üzerinde çalışmak istediğiniz dosyayı önce `my_work/` klasörüne kopyalayın ve orada çalışın.
 
-Notlar: - "Push", "Commit" ve "Pull" düğmelerini kullanmanıza gerek yok. - Bu depoya yükleme (push) yapamazsınız; bu normaldir. update.R değişikliklerinizi `my_work/yedek_...` klasörüne yedekler. - Yanlışlıkla orijinal dosyayı düzenlerseniz endişelenmeyin:
+**Her derste, başlamadan önce (güncelleme):** RStudio'da projeyi açıp Console'a şunu yazın:
+
+``` r
+source("update.R")
+```
+
+Notlar:
+
+-   "Commit", "Push" ve "Pull" düğmelerini kullanmanıza gerek yoktur.
+-   Bu depoya yükleme (push) yapamazsınız; bu normaldir.
+-   Yanlışlıkla orijinal bir dosyayı düzenlerseniz endişelenmeyin: `update.R` değişikliklerinizi `my_work/yedek_...` klasörüne yedekler ve dosyayı orijinal haline getirir.
+-   Adım adım anlatım ve hata çözümleri için **GitHub Kullanım Kılavuzu**'na bakınız.
 
 ## Ders ortamı
 
-İki seçenekten birini kullanabilirsiniz: - **RStudio (yerel)** — dersin ana anlatım ortamı. Kurulum rehberine bakınız. - **GitHub Codespaces (bulut)** — tarayıcıda çalışır, kurulum gerektirmez. Kılavuzda anlatılmıştır.
+İki seçenekten birini kullanabilirsiniz:
+
+-   **RStudio (yerel)** — dersin ana anlatım ortamı. Kurulum için Kurulum Rehberi'ne bakınız.
+-   **GitHub Codespaces (bulut)** — tarayıcıda çalışır, kurulum gerektirmez; bir GitHub hesabı gerekir. Kılavuzda anlatılmıştır.
 
 ## Soru ve sorun bildirme
 
 - **Ders içeriğiyle ilgili sorular:** hakan.mehmetcik\@marmara.edu.tr
-- **Teknik sorunlar** (kurulum, paket hatası, çalışmayan kod): bu deponun **Issues** sekmesini kullanın. Böylece aynı sorunu yaşayan arkadaşlarınız da cevabı görür.
+- **Teknik sorunlar** (kurulum, paket hatası, çalışmayan kod): GitHub hesabınız varsa bu deponun **Issues** sekmesini kullanın; böylece aynı sorunu yaşayan arkadaşlarınız da cevabı görür. Hesabınız yoksa aynı bilgileri yukarıdaki e-posta adresine gönderin.
 
 Issue açarken hatayı üreten **en kısa kod parçasını** ve **hata mesajının tamamını** yapıştırın; ekran görüntüsü yerine metin tercih edilir.
