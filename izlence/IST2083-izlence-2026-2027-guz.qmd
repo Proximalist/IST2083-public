@@ -32,7 +32,7 @@ editor:
 | **E-posta** | hakan.mehmetcik\@marmara.edu.tr |
 | **Ofis** | Siyasal Bilgiler Fakültesi, Maltepe RTE Yerleşkesi, Oda 131 |
 | **Ofis Saatleri** | Perşembe, 12:30–14:30 |
-| **Ders Deposu** | <https://github.com/Proximalist/IST2083> |
+| **Ders Deposu** | <https://github.com/Proximalist/IST2083-public> |
 
 ------------------------------------------------------------------------
 
