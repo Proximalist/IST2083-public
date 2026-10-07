@@ -35,7 +35,7 @@ Bu oturumun sonunda:
 
 "İstatistik" kelimesi, Almanca *Statistik*'ten gelir; bu terimi 1740'ların sonunda Gottfried Achenwall türetmiştir. Kaynağı ise Yeni Latince *statisticus* ("devlet işlerine dair") ve İtalyanca *statista* ("devlet adamı, siyasetçi") kelimeleridir. Yani istatistik, en baştan beri **devletleri, toplumları ve nüfusları anlama** ihtiyacından doğmuş bir bilimdir — mühendislik veya doğa bilimlerinden ödünç alınmış değil. Bir siyaset bilimi, kamu yönetimi veya işletme öğrencisi olarak siz bu disiplinin **yabancısı değil, tarihsel ev sahibisiniz.**
 
-İstatistik, **verilerden anlam çıkarma sanatıdır**. Sayılardan ibaret değildir; sayıların arkasındaki hikâyeyi keşfetmeye çalışır. İstatistik, karmaşık veri yığınlarını **düzenlememizi, özetlememizi ve yorumlamamızı** sağlar.
+İstatistik, **verilerden anlam çıkarma sanatıdır**. Sayılardan ibaret değildir; sayıların arkasındaki hikâyeyi keşfetmeye çalışır. Bir teknik olarak ise, İstatistik, karmaşık veri yığınlarını **düzenlememizi, özetlememizi ve yorumlamamızı** sağlar.
 
 ::: callout-tip
 **Kısa tanım:** İstatistik, belirsizlik altında veriye dayanarak **çıkarım** yapma ve **karar** alma sürecidir.
@@ -49,7 +49,7 @@ Bu tepki anlaşılır, fakat yanlış bir varsayıma dayanıyor: istatistiğin �
 
 En önemlisi ise, bugünün dünyasında istatistiksel düşünmeye her zamankinden daha çok ihtiyaç duyuyoruz. Veri bombardımanı altında yaşıyoruz ve sezgilerimiz bizi çoğu kez yanıltıyor. Haberler, politikalar, sağlık önerileri ve pazarlama mesajları sürekli istatistiksel iddialarla karşımıza çıkıyor. İstatistiksel düşünme, bu iddiaları eleştirel biçimde değerlendirmemizi; örneklem hatalarını, yanlılığı ve rastlantısallığı ayırt etmemizi sağlar.
 
-Dolayısı ile istatistik ve istatistiksel düşünme yeteneği bir sosyal bilim eğitiminin olmazsa olmazı durumundadır. Fakat bir sosyal bilim öğrencisi olarak farkınız şudur: mühendislik öğrencisi istatistiği bir hesaplama aracı olarak öğrenirken, siz onu bir argüman kurma ve kanıt oluşturma aracı olarak öğrenirsiniz.
+Dolayısı ile istatistik ve istatistiksel düşünme yeteneği, bugün artık bir sosyal bilim eğitiminin olmazsa olmazı durumundadır. Fakat bir sosyal bilim öğrencisi olarak farkınız şudur: mühendislik öğrencisi istatistiği bir hesaplama aracı olarak öğrenirken, siz onu bir argüman kurma ve kanıt oluşturma aracı olarak öğrenirsiniz.
 
 Bu ders de tam olarak ikincisini hedeflemekte ve sizi bu doğrultuda yetiştirmek üzere kurgulanmıştır.
 

@@ -69,42 +69,28 @@ R’da değişkenlerin farklı veri türleri olabilir. R’ın sık kullanılan 
 
 ## Matematiksel ve Mantıksal İşlemler — Kısa Hatırlatma
 
-Aritmetik (`+ - * / ^ %% %/%`), karşılaştırma (`== != < > <= >=`) ve
-mantıksal (`& | !`) operatörlerin tamamını 1. oturumda gördünüz. Bu
-haftanın konusu operatörler değil, **operatörlerin üzerinde çalıştığı
-veri türleri ve yapıları**.
+Aritmetik (`+ - * / ^ %% %/%`), karşılaştırma (`== != < > <= >=`) ve mantıksal (`& | !`) operatörlerin tamamını 1. oturumda gördünüz. Bu haftanın konusu operatörler değil, **operatörlerin üzerinde çalıştığı veri türleri ve yapıları**.
 
-Unuttuğunuz bir sözdizimi olursa depo kökündeki `R-Hizli-Referans.qmd`
-belgesine bakın; ders boyunca öğrendiğiniz her şey orada kümülatif
-olarak toplanıyor.
+Unuttuğunuz bir sözdizimi olursa depo kökündeki `R-Hizli-Referans.qmd` belgesine bakın; ders boyunca öğrendiğiniz her şey orada kümülatif olarak toplanıyor.
 
 ## Tür Zorlaması: R'ın Sessiz Dönüşümü
 
-Bir vektörün **tüm elemanları aynı türde olmak zorundadır**. Peki farklı
-türleri aynı `c()` içine koyarsanız R ne yapar? Hata vermez —
-**sessizce hepsini ortak bir türe çevirir.** Buna *tür zorlaması*
-(İng. *type coercion*) denir.
+Bir vektörün **tüm elemanları aynı türde olmak zorundadır**. Peki farklı türleri aynı `c()` içine koyarsanız R ne yapar? Hata vermez — **sessizce hepsini ortak bir türe çevirir.** Buna *tür zorlaması* (İng. *type coercion*) denir.
 
-Bunun neden önemli olduğunu soyut bir örnekle değil, sizin karşınıza
-çıkacağı biçimiyle görelim. Bir meclisteki parti sandalye sayılarını
-kaydediyorsunuz, ama bir parti için sayıyı bilmiyorsunuz:
+Bunun neden önemli olduğunu soyut bir örnekle değil, sizin karşınıza çıkacağı biçimiyle görelim. Bir meclisteki parti sandalye sayılarını kaydediyorsunuz, ama bir parti için sayıyı bilmiyorsunuz:
 
 ```{r}
 sandalyeler <- c(120, 85, "Bilinmiyor", 45)
 class(sandalyeler)
 ```
 
-Vektörün tamamı karaktere döndü. Artık 120 sayısı değil, `"120"`
-metnidir. Şimdi ortalamasını almayı deneyin:
+Vektörün tamamı karaktere döndü. Artık 120 sayısı değil, `"120"` metnidir. Şimdi ortalamasını almayı deneyin:
 
 ```{r}
 mean(sandalyeler)
 ```
 
-Dikkat: R **hata vermedi**. Bir uyarı basıp `NA` döndürdü. Uyarıyı
-görmezseniz — ki uzun bir script'in ortasında kolayca kaçırırsınız —
-analizinize sessizce bir `NA` girmiş olur. Bazı fonksiyonlar ise
-doğrudan durur:
+Dikkat: R **hata vermedi**. Bir uyarı basıp `NA` döndürdü. Uyarıyı görmezseniz — ki uzun bir script'in ortasında kolayca kaçırırsınız — analizinize sessizce bir `NA` girmiş olur. Bazı fonksiyonlar ise doğrudan durur:
 
 ```{r}
 #| error: true
@@ -113,7 +99,7 @@ sum(sandalyeler)
 
 Dönüşüm hiyerarşisi şöyledir — R daima **en esnek** türe doğru gider:
 
-```
+```         
 logical  →  integer  →  double  →  character
 (en katı)                          (en esnek)
 ```
@@ -124,41 +110,31 @@ class(c(1, 2, "üç"))          # numeric + character -> character
 sum(c(TRUE, TRUE, FALSE))     # TRUE = 1, FALSE = 0 -> 2
 ```
 
-Son satır bir tuzak değil, bir **araç**: `sum(x > 5)` ifadesi "kaç eleman
-5'ten büyük?" sorusunun en kısa cevabıdır.
+Son satır bir tuzak değil, bir **araç**: `sum(x > 5)` ifadesi "kaç eleman 5'ten büyük?" sorusunun en kısa cevabıdır.
 
 ::: callout-important
 ## Alan pratiğinde bunun karşılığı
 
-Anket, seçim ve gösterge verilerinde sayısal bir sütunun içine
-`"yok"`, `"-"`, `"N/A"`, `"cevapsız"` gibi tek bir metin hücresinin
-sızması yeterlidir: R **tüm sütunu** karakter okur, ortalama alamazsınız
-ve hatanın kaynağını sütunun 4.000. satırında ararsınız.
+Anket, seçim ve gösterge verilerinde sayısal bir sütunun içine `"yok"`, `"-"`, `"N/A"`, `"cevapsız"` gibi tek bir metin hücresinin sızması yeterlidir: R **tüm sütunu** karakter okur, ortalama alamazsınız ve hatanın kaynağını sütunun 4.000. satırında ararsınız.
 
-Bu yüzden bir veri setini içe aktardıktan sonra ilk yapacağınız şey
-`str()` çağırıp **her sütunun türünü kontrol etmektir.** Bu alışkanlığı
-bu hafta edinin.
+Bu yüzden bir veri setini içe aktardıktan sonra ilk yapacağınız şey `str()` çağırıp **her sütunun türünü kontrol etmektir.** Bu alışkanlığı bu hafta edinin.
 :::
 
 ## Eksik Veri: `NA` Bir Değer Değil, Bir Bilgi Yokluğudur
 
-`NA` sıfır değildir, boşluk da değildir. **"Bu değer bilinmiyor"**
-demektir. R'ın `NA` ile ilgili tüm davranışı bu tek cümleden çıkar:
+`NA` sıfır değildir, boşluk da değildir. **"Bu değer bilinmiyor"** demektir. R'ın `NA` ile ilgili tüm davranışı bu tek cümleden çıkar:
 
 ```{r}
 5 + NA
 ```
 
-Bilmediğiniz bir şeye 5 eklerseniz, sonucu yine bilemezsiniz. Aynı
-mantık şaşırtıcı görünen şu sonucu da açıklar:
+Bilmediğiniz bir şeye 5 eklerseniz, sonucu yine bilemezsiniz. Aynı mantık şaşırtıcı görünen şu sonucu da açıklar:
 
 ```{r}
 NA == NA
 ```
 
-`TRUE` değil, `NA` döner. Kimliğini bilmediğiniz iki kişinin aynı kişi
-olup olmadığını bilemezsiniz. Bu yüzden eksik değeri `==` ile
-arayamazsınız; `is.na()` kullanırsınız:
+`TRUE` değil, `NA` döner. Kimliğini bilmediğiniz iki kişinin aynı kişi olup olmadığını bilemezsiniz. Bu yüzden eksik değeri `==` ile arayamazsınız; `is.na()` kullanırsınız:
 
 ```{r}
 gelir <- c(4200, NA, 7350, 5100, NA)
@@ -172,31 +148,18 @@ mean(gelir, na.rm = TRUE)
 ::: callout-warning
 ## `na.rm = TRUE` masum bir teknik ayar değildir
 
-`na.rm = TRUE` yazdığınızda R'a "eksik gözlemleri **at**, kalanla
-hesapla" demiş olursunuz. Teknik olarak sorunsuz. Metodolojik olarak
-sorulması gereken soru şudur: **kim cevap vermedi?**
+`na.rm = TRUE` yazdığınızda R'a "eksik gözlemleri **at**, kalanla hesapla" demiş olursunuz. Teknik olarak sorunsuz. Metodolojik olarak sorulması gereken soru şudur: **kim cevap vermedi?**
 
-Bir gelir anketinde "cevap yok" diyen 500 kişi rastgele dağılmış
-olabilir — ya da sistematik biçimde en yüksek ve en düşük gelir
-gruplarından geliyor olabilir. İkinci durumda `na.rm = TRUE`
-ortalamayı düzeltmez, **yanlı** hale getirir ve bunu sessizce yapar.
+Bir gelir anketinde "cevap yok" diyen 500 kişi rastgele dağılmış olabilir — ya da sistematik biçimde en yüksek ve en düşük gelir gruplarından geliyor olabilir. İkinci durumda `na.rm = TRUE` ortalamayı düzeltmez, **yanlı** hale getirir ve bunu sessizce yapar.
 
-Eksik verinin rastgele olup olmadığı, örneklem ve temsil sorunlarının
-bir parçasıdır; 7. oturumda örnekleme konusunda buraya döneceğiz.
-Şimdilik kuralı şöyle aklınızda tutun: `na.rm = TRUE` bir çözüm değil,
-**bir varsayımdır.**
+Eksik verinin rastgele olup olmadığı, örneklem ve temsil sorunlarının bir parçasıdır; 7. oturumda örnekleme konusunda buraya döneceğiz. Şimdilik kuralı şöyle aklınızda tutun: `na.rm = TRUE` bir çözüm değil, **bir varsayımdır.**
 :::
 
 ## Kategorik Veri: `factor`
 
-Şu ana kadar üç tür gördünüz: sayısal, karakter, mantıksal. Sosyal
-bilimde en sık kullanılan tür ise dördüncüsüdür: **`factor`**, yani
-kategorik değişken.
+Şu ana kadar üç tür gördünüz: sayısal, karakter, mantıksal. Sosyal bilimde en sık kullanılan tür ise dördüncüsüdür: **`factor`**, yani kategorik değişken.
 
-Rejim türü (demokrasi / melez / otokrasi), eğitim düzeyi, Likert ölçeği
-(kesinlikle katılmıyorum … kesinlikle katılıyorum), bölge, parti — bunlar
-metin gibi görünür ama metin değildir. Aralarında **sonlu bir kategori
-kümesi** ve çoğu zaman bir **sıra** vardır.
+Rejim türü (demokrasi / melez / otokrasi), eğitim düzeyi, Likert ölçeği (kesinlikle katılmıyorum … kesinlikle katılıyorum), bölge, parti — bunlar metin gibi görünür ama metin değildir. Aralarında **sonlu bir kategori kümesi** ve çoğu zaman bir **sıra** vardır.
 
 ### Sırasız faktör
 
@@ -208,15 +171,11 @@ levels(rejim)
 table(rejim)
 ```
 
-`levels()` kategorilerin kümesini verir. `table()` ise frekans sayımı
-yapar — karakter vektöründe de çalışır, ama faktörde **hiç gözlenmemiş
-bir kategori bile** sonuçta sıfır olarak görünür. Bu, eksik kategoriyi
-fark etmenizi sağlar.
+`levels()` kategorilerin kümesini verir. `table()` ise frekans sayımı yapar — karakter vektöründe de çalışır, ama faktörde **hiç gözlenmemiş bir kategori bile** sonuçta sıfır olarak görünür. Bu, eksik kategoriyi fark etmenizi sağlar.
 
 ### Sıralı faktör
 
-Eğitim düzeyi kategorileri arasında bir sıra vardır ve bu sırayı R'a
-siz söylersiniz:
+Eğitim düzeyi kategorileri arasında bir sıra vardır ve bu sırayı R'a siz söylersiniz:
 
 ```{r}
 egitim <- factor(
@@ -229,16 +188,12 @@ egitim
 egitim[1] > egitim[2]   # "Lisans" > "Lise"
 ```
 
-Son satır önemlidir: R, karakter vektöründe yapamayacağı bir
-karşılaştırmayı burada yapabiliyor — çünkü **siz ona kategorilerin
-hiyerarşisini tanımladınız.** R'ın bildiği bir sıra değil, sizin
-tanımladığınız kavramsal sıra.
+Son satır önemlidir: R, karakter vektöründe yapamayacağı bir karşılaştırmayı burada yapabiliyor — çünkü **siz ona kategorilerin hiyerarşisini tanımladınız.** R'ın bildiği bir sıra değil, sizin tanımladığınız kavramsal sıra.
 
 ::: callout-warning
 ## Faktörlerin klasik tuzağı: `as.numeric()`
 
-Bir faktörü sayıya çevirmeye kalkarsanız R size **kategorinin
-değerini değil, seviye numarasını** verir:
+Bir faktörü sayıya çevirmeye kalkarsanız R size **kategorinin değerini değil, seviye numarasını** verir:
 
 ```{r}
 puanlar <- factor(c("10", "25", "40"))
@@ -246,20 +201,13 @@ as.numeric(puanlar)          # 1 2 3  — YANLIŞ!
 as.numeric(as.character(puanlar))  # 10 25 40  — doğrusu
 ```
 
-Sayısal bir sütun yanlışlıkla faktör olarak okunmuşsa, doğrudan
-`as.numeric()` çağırmak veriyi sessizce yok eder. Daima önce
-`as.character()`.
+Sayısal bir sütun yanlışlıkla faktör olarak okunmuşsa, doğrudan `as.numeric()` çağırmak veriyi sessizce yok eder. Daima önce `as.character()`.
 :::
 
 ::: callout-note
 ## Neden şimdi öğreniyoruz?
 
-`factor` üç yerde tekrar karşınıza çıkacak ve her seferinde bu haftaki
-temele dayanacak: 4. oturumda `ggplot2` kategorileri hangi sırayla
-çizeceğine faktör seviyelerine bakarak karar verir; 5. oturumda frekans
-tabloları ve gruplu özetler faktör üzerinden kurulur; 10. oturumda
-regresyonda kategorik değişkenler **kukla değişkenlere** dönüştürülür ve
-faktörün ilk seviyesi **referans kategori** olur.
+`factor` üç yerde tekrar karşınıza çıkacak ve her seferinde bu haftaki temele dayanacak: 4. oturumda `ggplot2` kategorileri hangi sırayla çizeceğine faktör seviyelerine bakarak karar verir; 5. oturumda frekans tabloları ve gruplu özetler faktör üzerinden kurulur; 10. oturumda regresyonda kategorik değişkenler **kukla değişkenlere** dönüştürülür ve faktörün ilk seviyesi **referans kategori** olur.
 :::
 
 # 2. R'da Temel Fonksiyonlar
@@ -275,8 +223,6 @@ R’ın Yerleşik Fonksiyonları Yerleşik fonksiyonlar, R dilinin varsayılan o
     ```{r}
     print("Merhaba Dünya")
     ```
-
-<!-- -->
 
 2.  sum(): Bir vektörün elemanlarının toplamını hesaplar.
 
@@ -395,12 +341,9 @@ R dilinde, veriler çeşitli veri yapıları kullanılarak organize edilir. Teme
 
 ## Vektörler
 
-R dilinde en temel veri yapılarından biri vektörlerdir. Vektörler, **aynı
-veri türüne** sahip bir dizi elemanı saklar. Vektör oluşturmak için `c()`
-fonksiyonu kullanılır.
+R dilinde en temel veri yapılarından biri vektörlerdir. Vektörler, **aynı veri türüne** sahip bir dizi elemanı saklar. Vektör oluşturmak için `c()` fonksiyonu kullanılır.
 
-Bir veri setindeki her sütun aslında bir vektördür. Aşağıda üç ülkenin
-2024 demokrasi skorunu tutuyoruz:
+Bir veri setindeki her sütun aslında bir vektördür. Aşağıda üç ülkenin 2024 demokrasi skorunu tutuyoruz:
 
 ```{r}
 ulkeler  <- c("Türkiye", "Almanya", "Tunus")     # karakter vektör
@@ -431,10 +374,7 @@ length(skorlar)
 ::: callout-note
 ## Vektörleştirme
 
-`skorlar / 10` yazdığınızda R her elemanı tek tek dolaşmanızı beklemez;
-işlemi **tüm vektöre birden** uygular. Buna *vektörleştirme* denir ve
-R'ın diğer dillerden en belirgin farkıdır. Başka dillerde döngü
-yazacağınız yerlerin çoğunda R'da tek satır yeterlidir.
+`skorlar / 10` yazdığınızda R her elemanı tek tek dolaşmanızı beklemez; işlemi **tüm vektöre birden** uygular. Buna *vektörleştirme* denir ve R'ın diğer dillerden en belirgin farkıdır. Başka dillerde döngü yazacağınız yerlerin çoğunda R'da tek satır yeterlidir.
 :::
 
 ## Mantıksal İndeksleme
@@ -475,12 +415,9 @@ sayilar[!(sayilar == 2)]             # 2'ye eşit OLMAYANLAR
 
 ## Listeler
 
-Listeler, **farklı türdeki** verileri bir arada saklayabilen veri
-yapılarıdır. Bir listenin içinde sayı, metin, mantıksal değer ve hatta
-başka bir vektör bulunabilir.
+Listeler, **farklı türdeki** verileri bir arada saklayabilen veri yapılarıdır. Bir listenin içinde sayı, metin, mantıksal değer ve hatta başka bir vektör bulunabilir.
 
-Listenin tipik kullanımı, tek bir varlığa ait **farklı türden bilgileri**
-bir arada tutmaktır — bir ülke profili gibi:
+Listenin tipik kullanımı, tek bir varlığa ait **farklı türden bilgileri** bir arada tutmaktır — bir ülke profili gibi:
 
 ```{r}
 ulke_profili <- list(
@@ -504,18 +441,13 @@ ulke_profili$nato_uyesi <- NULL
 str(ulke_profili)
 ```
 
-`str()` bir listenin iç yapısını görmenin en hızlı yoludur: kaç eleman
-var, her biri hangi türde, iç içe geçmiş bir yapı mı.
+`str()` bir listenin iç yapısını görmenin en hızlı yoludur: kaç eleman var, her biri hangi türde, iç içe geçmiş bir yapı mı.
 
 ## Matrisler
 
-Matris, satır ve sütunlar hâlinde düzenlenmiş **iki boyutlu ve homojen**
-bir yapıdır — tüm elemanları aynı türde olmalıdır.
+Matris, satır ve sütunlar hâlinde düzenlenmiş **iki boyutlu ve homojen** bir yapıdır — tüm elemanları aynı türde olmalıdır.
 
-Sosyal bilimde matrisin en doğal karşılığı, satırları ve sütunları
-**aynı varlık kümesi** olan tablolardır: ülkeler arası ticaret akışları,
-ittifak ağları, göç akımları. Hücre, satırdaki varlıktan sütundaki
-varlığa giden miktarı gösterir.
+Sosyal bilimde matrisin en doğal karşılığı, satırları ve sütunları **aynı varlık kümesi** olan tablolardır: ülkeler arası ticaret akışları, ittifak ağları, göç akımları. Hücre, satırdaki varlıktan sütundaki varlığa giden miktarı gösterir.
 
 ```{r}
 # Üç ülke arasındaki ihracat akışı (milyar $)
@@ -547,18 +479,12 @@ colSums(ticaret)   # her ülkenin toplam ithalatı
 ::: callout-note
 ## `byrow = TRUE` neden yazdık?
 
-`matrix()` sayıları varsayılan olarak **sütun sütun** doldurur. Yukarıdaki
-kodu okunabilir kılmak için sayıları satır satır yazdık, bu yüzden R'a
-"onları yazdığım sırayla, satır satır yerleştir" dedik. `byrow = TRUE`
-yazmayı unutursanız matris devrik hâlde kurulur ve tüm yorumunuz ters
-döner — hata mesajı almazsınız, yalnızca yanlış sonuç alırsınız.
+`matrix()` sayıları varsayılan olarak **sütun sütun** doldurur. Yukarıdaki kodu okunabilir kılmak için sayıları satır satır yazdık, bu yüzden R'a "onları yazdığım sırayla, satır satır yerleştir" dedik. `byrow = TRUE` yazmayı unutursanız matris devrik hâlde kurulur ve tüm yorumunuz ters döner — hata mesajı almazsınız, yalnızca yanlış sonuç alırsınız.
 :::
 
 ## Data Frameler
 
-Data frame, sütunları **farklı türde** olabilen iki boyutlu bir yapıdır
-ve sosyal bilimde çalışacağınız verinin neredeyse tamamı bu biçimdedir:
-her satır bir gözlem (ülke, kişi, yıl, olay), her sütun bir değişken.
+Data frame, sütunları **farklı türde** olabilen iki boyutlu bir yapıdır ve sosyal bilimde çalışacağınız verinin neredeyse tamamı bu biçimdedir: her satır bir gözlem (ülke, kişi, yıl, olay), her sütun bir değişken.
 
 ```{r}
 panel <- data.frame(
@@ -572,9 +498,7 @@ panel
 str(panel)
 ```
 
-`str()` çıktısına dikkat edin: `ulke` karakter, `skor` sayısal,
-`ab_uyesi` mantıksal, `rejim` ise faktör — ve faktörün seviyeleri de
-görünüyor. Dört farklı tür, tek tabloda.
+`str()` çıktısına dikkat edin: `ulke` karakter, `skor` sayısal, `ab_uyesi` mantıksal, `rejim` ise faktör — ve faktörün seviyeleri de görünüyor. Dört farklı tür, tek tabloda.
 
 ```{r}
 # Erişim: [satır, sütun]
@@ -618,14 +542,11 @@ Bu dört yapıyı ezberlemenize gerek yok. Elinizdeki veriye **iki soru** sorars
 
 # 4. Veri İçe Aktarma ve Kaydetme
 
-Şimdiye kadar veriyi elle yazdık. Gerçek çalışmada veri bir dosyadan,
-bir paketten ya da bir adresten gelir.
+Şimdiye kadar veriyi elle yazdık. Gerçek çalışmada veri bir dosyadan, bir paketten ya da bir adresten gelir.
 
 ## Paket İçinde Gelen Veri
 
-En kolay yol: bazı paketler veri setini içinde taşır. 1. oturumda
-tanıştığınız `gapminder` bunlardan biri — 142 ülkenin 1952–2007 arası
-yaşam beklentisi, nüfusu ve kişi başı geliri.
+En kolay yol: bazı paketler veri setini içinde taşır. 1. oturumda tanıştığınız `gapminder` bunlardan biri — 142 ülkenin 1952–2007 arası yaşam beklentisi, nüfusu ve kişi başı geliri.
 
 ```{r}
 library(gapminder)
@@ -633,9 +554,7 @@ library(gapminder)
 str(gapminder)
 ```
 
-`str()` çıktısı bu haftanın konularını tek ekranda topluyor: `country`
-ve `continent` **faktör**, `year` ve `pop` **tamsayı**, `lifeExp` ve
-`gdpPercap` **ondalıklı sayı**. Dört tür, bir data frame.
+`str()` çıktısı bu haftanın konularını tek ekranda topluyor: `country` ve `continent` **faktör**, `year` ve `pop` **tamsayı**, `lifeExp` ve `gdpPercap` **ondalıklı sayı**. Dört tür, bir data frame.
 
 ```{r}
 # Faktör sütunun kategorileri
@@ -649,9 +568,7 @@ uzun_omur <- gapminder[gapminder$year == 2007 & gapminder$lifeExp > 80, ]
 uzun_omur[, c("country", "lifeExp")]
 ```
 
-Bu tek satır, bu haftanın tamamını kullanıyor: bir data frame, iki
-mantıksal koşul, `&` operatörü, virgülle satır/sütun ayrımı ve sütun
-seçimi.
+Bu tek satır, bu haftanın tamamını kullanıyor: bir data frame, iki mantıksal koşul, `&` operatörü, virgülle satır/sütun ayrımı ve sütun seçimi.
 
 ## Dosyadan Veri: CSV ve Excel
 
@@ -681,24 +598,16 @@ R öğrenirken karşınıza mutlaka şuna benzer bir satır çıkacak:
 setwd("C:/Users/Ahmet/Masaüstü/odev")
 ```
 
-Bu satır **yalnızca Ahmet'in bilgisayarında** çalışır. Ödevinizi
-gönderdiğinizde, bir yıl sonra kendi yeni bilgisayarınızda açtığınızda,
-ya da Codespaces'te çalıştırdığınızda kodunuz çöker. Üstelik hata
-mesajı "dosya bulunamadı" der; asıl sorunun çalışma dizini olduğunu
-anlamanız zaman alır.
+Bu satır **yalnızca Ahmet'in bilgisayarında** çalışır. Ödevinizi gönderdiğinizde, bir yıl sonra kendi yeni bilgisayarınızda açtığınızda, ya da Codespaces'te çalıştırdığınızda kodunuz çöker. Üstelik hata mesajı "dosya bulunamadı" der; asıl sorunun çalışma dizini olduğunu anlamanız zaman alır.
 
-`here()` bu sorunu kökten çözer: proje kökünü (`.Rproj` dosyasının
-bulunduğu klasörü) **kendisi bulur** ve yolu oradan kurar.
+`here()` bu sorunu kökten çözer: proje kökünü (`.Rproj` dosyasının bulunduğu klasörü) **kendisi bulur** ve yolu oradan kurar.
 
 ```{r}
 #| eval: false
 here("data", "example_data.csv")
 ```
 
-Aynı satır sizin bilgisayarınızda, arkadaşınızın bilgisayarında ve
-Codespaces'te aynı dosyayı işaret eder. Bu, 1. oturumda konuştuğumuz
-**tekrarlanabilirlik** ilkesinin en somut karşılığıdır: kodunuz
-başkasının makinesinde çalışmıyorsa, sonuçlarınız da doğrulanamaz.
+Aynı satır sizin bilgisayarınızda, arkadaşınızın bilgisayarında ve Codespaces'te aynı dosyayı işaret eder. Bu, 1. oturumda konuştuğumuz **tekrarlanabilirlik** ilkesinin en somut karşılığıdır: kodunuz başkasının makinesinde çalışmıyorsa, sonuçlarınız da doğrulanamaz.
 :::
 
 ::: callout-note
@@ -711,10 +620,7 @@ başkasının makinesinde çalışmıyorsa, sonuçlarınız da doğrulanamaz.
 veri <- read.csv("https://.../dosya.csv")
 ```
 
-Kullanışlıdır ama kırılgandır: internet yoksa, adres değişirse veya
-kaynak siteyi kapatırsa analiziniz çalışmaz. Ciddi bir çalışmada veriyi
-**bir kez indirip** projenizin `data/` klasörüne koyun; hem tekrar
-üretilebilir olur hem de veri setinin o günkü hâli kayda geçer.
+Kullanışlıdır ama kırılgandır: internet yoksa, adres değişirse veya kaynak siteyi kapatırsa analiziniz çalışmaz. Ciddi bir çalışmada veriyi **bir kez indirip** projenizin `data/` klasörüne koyun; hem tekrar üretilebilir olur hem de veri setinin o günkü hâli kayda geçer.
 :::
 
 ## Veri Kaydetme
@@ -727,14 +633,11 @@ library(writexl)
 write_xlsx(panel, here("data", "panel.xlsx"))
 ```
 
-`row.names = FALSE` demezseniz R, satır numaralarını isimsiz bir ilk
-sütun olarak dosyaya yazar; o dosyayı tekrar okuduğunuzda gereksiz bir
-`X` sütunu görürsünüz.
+`row.names = FALSE` demezseniz R, satır numaralarını isimsiz bir ilk sütun olarak dosyaya yazar; o dosyayı tekrar okuduğunuzda gereksiz bir `X` sütunu görürsünüz.
 
 ## Veri Yapısını İnceleme
 
-Bir veri setini içe aktardıktan sonra **ilk yapacağınız şey** onu
-tanımaktır:
+Bir veri setini içe aktardıktan sonra **ilk yapacağınız şey** onu tanımaktır:
 
 ```{r}
 str(gapminder)      # kaç satır, kaç sütun, hangi sütun hangi türde
@@ -744,13 +647,8 @@ nrow(gapminder); ncol(gapminder)
 names(gapminder)
 ```
 
-Bu beş komut, "veriyi tanımak" dediğimiz şeyin ilk adımıdır. Özellikle
-`str()` çıktısına bakarken şunu sorun: **sayısal olmasını beklediğim
-bir sütun karakter olarak mı okunmuş?** Bu haftanın tür zorlaması
-bölümünde gördüğünüz sorun, gerçek veri setlerinde tam olarak burada
-yakalanır.
+Bu beş komut, "veriyi tanımak" dediğimiz şeyin ilk adımıdır. Özellikle `str()` çıktısına bakarken şunu sorun: **sayısal olmasını beklediğim bir sütun karakter olarak mı okunmuş?** Bu haftanın tür zorlaması bölümünde gördüğünüz sorun, gerçek veri setlerinde tam olarak burada yakalanır.
 
 ::: callout-note
-📚 Ek kaynak: Posit **Base R Cheat Sheet**. Bu haftanın sözdizimi
-`R-Hizli-Referans.qmd` belgesine de eklendi.
+📚 Ek kaynak: Posit **Base R Cheat Sheet**. Bu haftanın sözdizimi `R-Hizli-Referans.qmd` belgesine de eklendi.
 :::
