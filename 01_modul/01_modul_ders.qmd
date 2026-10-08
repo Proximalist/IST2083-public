@@ -376,7 +376,7 @@ Bu sorunun cevabı **tekrarlanabilirlik** kavramında yatıyor. Bir araştırmac
 **Bunun bedeli gerçek olabilir: Reinhart-Rogoff Vakası (2010).** Ekonomistler Carmen Reinhart ve Kenneth Rogoff, kamu borcu GSYH'nin %90'ını aştığında ekonomik büyümenin ciddi biçimde yavaşladığını iddia eden etkili bir makale yayımladılar — bu tez, birçok ülkede kemer sıkma politikalarını savunmak için kullanıldı. 2013'te bir doktora öğrencisi analizi tekrar etmeye çalıştığında, makalenin dayandığı **Excel tablosunda bazı ülkelerin formüle dahil edilmediğini** keşfetti. Hata düzeltildiğinde iddia edilen keskin eşik ortadan kalktı. **Ders:** Excel gibi arayüzler hesaplama adımlarını gizler; bir R script'i ve versiyon geçmişi ise her adımı denetime açık bırakır.
 :::
 
-Bu ders boyunca kullanacağınız ders deposu da bir GitHub deposudur — her hafta güncellenen içeriği **pull** ederek almanız, aslında bu sistemin en temel kullanımıdır.
+Bu ders boyunca kullanacağınız ders deposu da bir GitHub deposudur — her hafta güncellenen içeriği konsolda `source("update.R")` kodunu çalıştırarak almanız!
 
 ::: callout-note
 **Uygulamalı adımlar bu dosyada değil.** GitHub hesabı açma, depoyu klonlama ve haftalık güncelleme alma adımlarının tamamı **`GitHub Kullanım Kılavuzu`**'ndadır. R ve RStudio kurulumu için **`R ve RStudio Kurulum Rehberi`**'ne bakınız. Bu bölümün amacı yalnızca kavramı tanıtmaktır.

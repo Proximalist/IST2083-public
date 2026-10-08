@@ -1,6 +1,6 @@
 # IST2083 — Temel İstatistik ve R ile Veri Analizi
 
-**Marmara Üniversitesi, Siyasal Bilgiler Fakültesi · 2026–2027 Güz**  
+**Marmara Üniversitesi, Siyasal Bilgiler Fakültesi · 2026–2027 Güz**\
 Prof. Dr. Hakan Mehmetcik · Perşembe 09:30–12:30 · RTE.S1.138
 
 Bu depo dersin tüm materyallerini barındırır: ders notları, sunumlar, alıştırmalar, cevap anahtarları ve veri setleri.
@@ -29,7 +29,7 @@ Kendi bilgisayarınıza kurmayı tercih ederseniz `R_RStudio_Kurulum_Rehberi.pdf
 ## Ders programı
 
 | Oturum | Tarih | Konu | Modül |
-|-------------------:|-----------------|-----------------|-----------------|
+|---:|----|----|----|
 | 1 | 1 Ekim | Giriş: istatistiğin anlamı; R, RStudio, GitHub | `01_modul/` |
 | 2 | 8 Ekim | R'da veri türleri, veri yapıları ve temel fonksiyonlar | `02_modul/` |
 | — | 15 Ekim | *Ders yapılmaz* | — |
@@ -113,17 +113,17 @@ source("update.R")
 
 Notlar:
 
--   "Commit", "Push" ve "Pull" düğmelerini kullanmanıza gerek yoktur.
--   Bu depoya yükleme (push) yapamazsınız; bu normaldir.
--   Yanlışlıkla orijinal bir dosyayı düzenlerseniz endişelenmeyin: `update.R` değişikliklerinizi `my_work/yedek_...` klasörüne yedekler ve dosyayı orijinal haline getirir.
--   Adım adım anlatım ve hata çözümleri için **GitHub Kullanım Kılavuzu**'na bakınız.
+- "Commit", "Push" ve "Pull" düğmelerini kullanmanıza gerek yoktur.
+- Bu depoya yükleme (push) yapamazsınız; bu normaldir.
+- Yanlışlıkla orijinal bir dosyayı düzenlerseniz endişelenmeyin: `update.R` değişikliklerinizi `my_work/yedek_...` klasörüne yedekler ve dosyayı orijinal haline getirir.
+- Adım adım anlatım ve hata çözümleri için **GitHub Kullanım Kılavuzu**'na bakınız.
 
 ## Ders ortamı
 
 İki seçenekten birini kullanabilirsiniz:
 
--   **RStudio (yerel)** — dersin ana anlatım ortamı. Kurulum için Kurulum Rehberi'ne bakınız.
--   **GitHub Codespaces (bulut)** — tarayıcıda çalışır, kurulum gerektirmez; bir GitHub hesabı gerekir. Kılavuzda anlatılmıştır.
+- **RStudio (yerel)** — dersin ana anlatım ortamı. Kurulum için Kurulum Rehberi'ne bakınız.
+- **GitHub Codespaces (bulut)** — tarayıcıda çalışır, kurulum gerektirmez; bir GitHub hesabı gerekir. Kılavuzda anlatılmıştır.
 
 ## Soru ve sorun bildirme
 

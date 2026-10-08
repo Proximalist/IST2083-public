@@ -27,88 +27,82 @@ df-print: kable
 
 ## Kelimenin Kökeni Bile Size Ait
 
--   *Statistik* (Almanca) → Achenwall, 1740'ların sonu
--   Kaynağı: *statisticus* (devlet işleri) + *statista* (devlet adamı)
--   İstatistik en baştan beri **devletleri, toplumları anlama** bilimi
--   Siz bu disiplinin yabancısı değil, **ev sahibisiniz**
+- *Statistik* (Almanca) → Achenwall, 1740'ların sonu
+- Kaynağı: *statisticus* (devlet işleri) + *statista* (devlet adamı)
+- İstatistik en baştan beri **devletleri, toplumları anlama** bilimi
+- Siz bu disiplinin yabancısı değil, **ev sahibisiniz**
 
 ## Bir Tanıdık Tepki
 
 > "Ben bu bölümü sayılardan kaçmak için seçtim."
 
--   Anlaşılır ama yanlış bir varsayıma dayanıyor
--   Mühendis istatistiği **hesaplama** aracı olarak öğrenir
--   Siz onu **argüman kurma ve kanıt oluşturma** aracı olarak öğrenirsiniz
+- Anlaşılır ama yanlış bir varsayıma dayanıyor
+- Mühendis istatistiği **hesaplama** aracı olarak öğrenir
+- Siz onu **argüman kurma ve kanıt oluşturma** aracı olarak öğrenirsiniz
 
 ## İstatistik Nedir?
 
--   Verilerden anlam çıkarma sanatı
--   Sayıların arkasındaki hikâyeyi keşfetme
--   Düzenleme, özetleme, yorumlama
+- Verilerden anlam çıkarma sanatı
+- Sayıların arkasındaki hikâyeyi keşfetme
+- Düzenleme, özetleme, yorumlama
 
 ## Tarihte Bir Örnek: Nightingale'in Gül Diyagramı (1858)
 
 ![Nightingale'in gül diyagramı — kamu malı, Wikimedia Commons](images/nightingale-rose-diagram.jpg){height="480"}
 
-::: {.notes}
-Kırım Savaşı'nda askerlerin çoğu çarpışmada değil, önlenebilir hastane
-koşullarından öldü. Nightingale bunu Parlamentoya anlatmak için bu
-grafiği tasarladı — hastalık dilimi savaş yarası diliminden çok daha
-büyük, tek bakışta görülüyor.
+::: notes
+Kırım Savaşı'nda askerlerin çoğu çarpışmada değil, önlenebilir hastane koşullarından öldü. Nightingale bunu Parlamentoya anlatmak için bu grafiği tasarladı — hastalık dilimi savaş yarası diliminden çok daha büyük, tek bakışta görülüyor.
 :::
 
 ## Tarihte Bir Örnek: Du Bois'nın Paris Sergisi (1900)
 
 ![Du Bois'nın el çizimi infografiklerinden biri — kamu malı, LOC](images/dubois-1900-paris.jpg){height="420"}
 
-::: {.notes}
-Sosyolog W.E.B. Du Bois, Atlanta Üniversitesi öğrencileriyle 58 grafik
-hazırladı — Amerika'daki siyahi nüfusun eğitim, gelir, meslek
-örüntülerini dönemin ırkçı iddialarına karşı somut sayılarla gösterdi.
-Veri, bir argümana dönüştü.
+::: notes
+Sosyolog W.E.B. Du Bois, Atlanta Üniversitesi öğrencileriyle 58 grafik hazırladı — Amerika'daki siyahi nüfusun eğitim, gelir, meslek örüntülerini dönemin ırkçı iddialarına karşı somut sayılarla gösterdi. Veri, bir argümana dönüştü.
 :::
 
 ## Neden İstatistik?
 
--   Kamuoyu araştırmaları, seçim tahminleri
--   Ekonomi haberleri (enflasyon, işsizlik)
--   Sağlık araştırmaları
--   "Araştırmalara göre..." ile başlayan her iddia
+- Kamuoyu araştırmaları, seçim tahminleri
+- Ekonomi haberleri (enflasyon, işsizlik)
+- Sağlık araştırmaları
+- "Araştırmalara göre..." ile başlayan her iddia
 
 ## Kullanım Alanları
 
--   Bilimsel araştırmalar
--   Ekonomi ve siyaset
--   Sağlık
--   Günlük yaşam (reklam, müşteri, trafik)
+- Bilimsel araştırmalar
+- Ekonomi ve siyaset
+- Sağlık
+- Günlük yaşam (reklam, müşteri, trafik)
 
 ## İstatistik Ne İşe Yarar?
 
--   **Özetler**
--   **Karşılaştırır**
--   **Tahmin eder**
--   **Karar destekler**
+- **Özetler**
+- **Karşılaştırır**
+- **Tahmin eder**
+- **Karar destekler**
 
 ## Neden İstatistik Okumalıyız?
 
--   Eleştirel düşünme becerisi
--   Grafik ve rakamları sorgulama
--   Veri okuryazarlığı
+- Eleştirel düşünme becerisi
+- Grafik ve rakamları sorgulama
+- Veri okuryazarlığı
 
 > "Üç tür yalan vardır: yalan, nitelikli yalan ve istatistik." (Anonim)
 
 ## Önden Bir Uyarı: Korelasyon $\neq$ Nedensellik
 
--   Dondurma satışı artar → boğulma vakaları da artar
--   Dondurma boğulmaya yol açmıyor
--   İkisi de **sıcak hava**dan kaynaklanıyor
--   Ayrıntısı: **10. oturum**, regresyon
+- Dondurma satışı artar → boğulma vakaları da artar
+- Dondurma boğulmaya yol açmıyor
+- İkisi de **sıcak hava**dan kaynaklanıyor
+- Ayrıntısı: **10. oturum**, regresyon
 
 ## Yanıltıcı İstatistik: Kurgusal Örnek
 
--   Ankette A Partisi %38, B Partisi %41
--   Aradaki fark yalnızca 3 puan
--   Aynı sayılar, iki farklı eksenle...
+- Ankette A Partisi %38, B Partisi %41
+- Aradaki fark yalnızca 3 puan
+- Aynı sayılar, iki farklı eksenle...
 
 ## Grafik 1 — Dürüst (Eksen 0–100)
 
@@ -137,18 +131,15 @@ ggplot(veri, aes(x = parti, y = destek, fill = parti)) +
   theme_minimal()
 ```
 
-::: {.notes}
-ggplot2 sözdizimini 4. oturumda ayrıntılı öğreneceğiz — şimdilik yalnızca
-sonuca bakın.
+::: notes
+ggplot2 sözdizimini 4. oturumda ayrıntılı öğreneceğiz — şimdilik yalnızca sonuca bakın.
 :::
 
 ## Diğer Yanıltma Biçimleri
 
--   **Veri seçmeciliği:** zaman serisinin yalnızca lehe kısmı
--   **Oran yerine ham sayı:** "500 vaka artışı" — hangi nüfusta?
--   **Örneklem büyüklüğünü gizlemek:** 1936'da 2 milyon kişiye
-    ulaşılmasına rağmen yanlış tahmin — *kime* ulaşıldığı önemliydi
-    (ayrıntı: **7. oturum**)
+- **Veri seçmeciliği:** zaman serisinin yalnızca lehe kısmı
+- **Oran yerine ham sayı:** "500 vaka artışı" — hangi nüfusta?
+- **Örneklem büyüklüğünü gizlemek:** 1936'da 2 milyon kişiye ulaşılmasına rağmen yanlış tahmin — *kime* ulaşıldığı önemliydi (ayrıntı: **7. oturum**)
 
 ------------------------------------------------------------------------
 
@@ -156,22 +147,22 @@ sonuca bakın.
 
 ## Neden R?
 
--   İstatistik ve görselleştirmede güçlü
--   Akademide yaygın, geniş paket ekosistemi
--   Python ile tamamlayıcı, birbirini dışlamaz
+- İstatistik ve görselleştirmede güçlü
+- Akademide yaygın, geniş paket ekosistemi
+- Python ile tamamlayıcı, birbirini dışlamaz
 
 ## RStudio Arayüzü
 
--   **Source (Script)** — kalıcı kod
--   **Console** — anlık deneme
--   **Environment / History**
--   **Plots / Files / Packages / Help**
+- **Source (Script)** — kalıcı kod
+- **Console** — anlık deneme
+- **Environment / History**
+- **Plots / Files / Packages / Help**
 
 ## Neden Quarto?
 
--   Metin + çalıştırılabilir kod + çıktı, **aynı belgede**
--   "Okunabilir programlama" (literate programming)
--   Altı ay sonra hangi kodun neyi ürettiğini hatırlamanıza gerek yok
+- Metin + çalıştırılabilir kod + çıktı, **aynı belgede**
+- "Okunabilir programlama" (literate programming)
+- Altı ay sonra hangi kodun neyi ürettiğini hatırlamanıza gerek yok
 
 ## İlk Komutlar
 
@@ -194,9 +185,8 @@ library(gapminder)
 head(gapminder)
 ```
 
-::: {.notes}
-Hans Rosling'in Gapminder Vakfı — ülkelerin yaşam beklentisi, nüfus,
-kişi başı gelir. 1952–2007. Bu ders boyunca sık sık döneceğiz.
+::: notes
+Hans Rosling'in Gapminder Vakfı — ülkelerin yaşam beklentisi, nüfus, kişi başı gelir. 1952–2007. Bu ders boyunca sık sık döneceğiz.
 :::
 
 ## Temel Aritmetik
@@ -232,10 +222,10 @@ rep(1:3, times = 3)
 
 ## En Sık Karşılaşılan Hatalar
 
--   Sözdizimi: `3 x 5` yerine `3 * 5`
--   Kapanmamış parantez → konsolda `+` işareti
--   **Büyük/küçük harf duyarlılığı:** `Mean()` $\neq$ `mean()`
--   Eşleşmeyen tırnak işareti
+- Sözdizimi: `3 x 5` yerine `3 * 5`
+- Kapanmamış parantez → konsolda `+` işareti
+- **Büyük/küçük harf duyarlılığı:** `Mean()` $\neq$ `mean()`
+- Eşleşmeyen tırnak işareti
 
 ## Hata Örneği
 
@@ -263,41 +253,40 @@ example(mean)  # yardım sayfasındaki örnekleri çalıştırır
 
 ## Versiyon Kontrolü Nedir?
 
--   Bir dosyadaki her değişikliğin zaman içinde kaydı
--   İstenildiğinde önceki bir duruma dönebilme
--   **Git** = yazılım, **GitHub** = bulut platformu
+- Bir dosyadaki her değişikliğin zaman içinde kaydı
+- İstenildiğinde önceki bir duruma dönebilme
+- **Git** = yazılım, **GitHub** = bulut platformu
 
 ## Neden Bir Sosyal Bilim Öğrencisi Bunu Bilmeli?
 
--   Anahtar kavram: **tekrarlanabilirlik**
--   Bir bulgu, altı ay sonra **aynı sonucu** verebilmeli
--   Hangi kod hangi tabloyu üretti? Versiyon kontrolü bunu kaydeder
+- Anahtar kavram: **tekrarlanabilirlik**
+- Bir bulgu, altı ay sonra **aynı sonucu** verebilmeli
+- Hangi kod hangi tabloyu üretti? Versiyon kontrolü bunu kaydeder
 
 ## Bedeli Gerçek Olabilir: Reinhart-Rogoff (2010)
 
--   "Kamu borcu %90'ı aşarsa büyüme durur" tezi
--   Kemer sıkma politikalarını savunmak için kullanıldı
--   2013: bir doktora öğrencisi tekrar etmeye çalıştı
--   **Excel tablosunda bazı ülkeler formüle dahil edilmemiş**
+- "Kamu borcu %90'ı aşarsa büyüme durur" tezi
+- Kemer sıkma politikalarını savunmak için kullanıldı
+- 2013: bir doktora öğrencisi tekrar etmeye çalıştı
+- **Excel tablosunda bazı ülkeler formüle dahil edilmemiş**
 
-::: {.notes}
-Ders: Excel arayüzü hesaplama adımlarını gizler. R script'i ve versiyon
-geçmişi her adımı denetime açık bırakır.
+::: notes
+Ders: Excel arayüzü hesaplama adımlarını gizler. R script'i ve versiyon geçmişi her adımı denetime açık bırakır.
 :::
 
 ## Bu Derste Ne Yapacağız?
 
--   Ders deposu bir GitHub deposu
--   Her hafta **pull** ederek güncel materyali alacaksınız
--   Uygulamalı adımlar: *GitHub Kullanım Kılavuzu* ve
-    *R ve RStudio Kurulum Rehberi*
+- Ders deposu bir GitHub deposu
+- Her hafta konsolda `source("update.R")` kodunu çalıştırarak güncel materyali alacaksınız
+- Uygulamalı adımlar: *GitHub Kullanım Kılavuzu* ve *R ve RStudio Kurulum Rehberi*
 
 ------------------------------------------------------------------------
 
 # Sırada Ne Var?
 
--   Bu haftanın **alıştırma dosyası** ve **cevap anahtarı** depoda
--   Notlandırılmıyor — kendi durumunuzu ölçmek için
--   2. oturum: veri türleri, veri yapıları, temel fonksiyonlar
+- Bu haftanın **alıştırma dosyası** ve **cevap anahtarı** depoda
+- Notlandırılmıyor — kendi durumunuzu ölçmek için
+- 
+  2.  oturum: veri türleri, veri yapıları, temel fonksiyonlar
 
 # Soru & Cevap
