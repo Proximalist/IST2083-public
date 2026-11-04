@@ -51,7 +51,7 @@ Bu oturumun sonunda:
 
 # 1. Neden Veriye Bakmalıyız?
 
-1.  oturumda aynı iki sayıyı (%38 ve %41) iki farklı eksenle çizmiş ve birinin "baş başa bir yarış", ötekinin "ezici bir fark" gibi göründüğünü görmüştük. O örnek, grafiğin **yanıltabileceğini** gösteriyordu. Bu bölüm tersini gösteriyor: grafiğe bakmamak da yanıltır.
+İlk hafta oturumunda aynı iki sayıyı (%38 ve %41) iki farklı eksenle çizmiş ve birinin "baş başa bir yarış", ötekinin "ezici bir fark" gibi göründüğünü görmüştük. O örnek, grafiğin **yanıltabileceğini** gösteriyordu. Bu bölüm tersini gösteriyor: grafiğe bakmamak da yanıltır.
 
 İstatistikçi Francis Anscombe 1973'te dört küçük veri seti yayımladı. Her birinde 11 gözlem ve iki değişken ($x$, $y$) vardır. R bu veriyi `anscombe` adıyla hazır getirir. Önce dört seti uzun biçimde tek bir tabloya toplayalım, sonra her grubun özet istatistiklerine bakalım:
 
@@ -133,7 +133,7 @@ Bandın genişliği, 340.000 kişiyle yola çıkan ordunun Moskova'ya varana kad
 ::: callout-note
 ## Kaynak
 
-Veri, Minard'ın haritasının Howard Wilkinson tarafından dijitalleştirilmiş hâlidir ve R'da `HistData` paketiyle (`Minard.troops`, `Minard.cities`, `Minard.temp`) dağıtılır; burada üç küçük CSV olarak `data/` klasörüne eklendi. Bkz. Friendly, M. (2002). Visions and re-visions of Charles Joseph Minard. *Journal of Educational and Behavioral Statistics*, 27(1), 31–51.
+Veri, Minard'ın haritasının Howard Wilkinson tarafından dijitalleştirilmiş hâlidir ve R'da `HistData` paketiyle (`Minard.troops`, `Minard.cities`, `Minard.temp`) dağıtılır; burada üç küçük CSV olarak `data/` klasörüne bulunabilir. Bkz. Friendly, M. (2002). Visions and re-visions of Charles Joseph Minard. *Journal of Educational and Behavioral Statistics*, 27(1), 31–51.
 :::
 
 ------------------------------------------------------------------------
@@ -253,7 +253,7 @@ Soldaki grafikte noktaların saydamlığı sizin istediğiniz 0,5 **değildir**:
 ## 3.2 Hangi özellik hangi tür değişkene?
 
 | Görsel özellik | `aes()` adı | Sayısal değişkenle | Kategorik değişkenle |
-|----|----|----|----|
+|------------------|------------------|------------------|------------------|
 | Yatay / dikey konum | `x`, `y` | Evet | Evet |
 | Renk (nokta, çizgi) | `color` | Evet — renk geçişi | Evet — ayrı renkler |
 | Dolgu rengi (çubuk, kutu, alan) | `fill` | Evet — renk geçişi | Evet — ayrı renkler |
@@ -857,7 +857,7 @@ ggplot(gapminder_2007, aes(x = gdpPercap, y = lifeExp, color = continent)) +
 
 ## 11.4 Dürüst eksenler
 
-1.  oturumdaki "algı ve gerçek" örneğinin kuralını artık adıyla koyabiliriz: **çubuk grafiğinin ekseni sıfırdan başlamalıdır.** Çubuk grafiği değeri çubuğun **uzunluğuyla** gösterir; eksen 35'ten başlarsa, 41'lik çubuk 38'lik çubuğun iki katı uzun görünür ve göz bu uzunluk oranını okur. ggplot2 bu nedenle `geom_col()` ve `geom_bar()` için ekseni sıfırdan başlatır.
+Birinci oturumdaki "algı ve gerçek" örneğinin kuralını artık adıyla koyabiliriz: **çubuk grafiğinin ekseni sıfırdan başlamalıdır.** Çubuk grafiği değeri çubuğun **uzunluğuyla** gösterir; eksen 35'ten başlarsa, 41'lik çubuk 38'lik çubuğun iki katı uzun görünür ve göz bu uzunluk oranını okur. ggplot2 bu nedenle `geom_col()` ve `geom_bar()` için ekseni sıfırdan başlatır.
 
 Nokta ve çizgi grafikleri için bu kural **geçerli değildir**: bu grafikler değeri uzunlukla değil **konumla** gösterir. 8. bölümdeki yaşam beklentisi grafiklerinin ekseni 40'tan başlıyordu; sıfırdan başlasaydı tüm değişim grafiğin üst kenarında sıkışmış bir çizgiye dönüşürdü. Yanıltıcı olan, eksenin sıfırdan başlamaması değil, **uzunluğun anlam taşıdığı** bir grafikte başlamamasıdır.
 
@@ -882,7 +882,7 @@ ggsave("rosling.png", plot = rosling,
 # 12. Hangi Soru, Hangi Grafik?
 
 | Soru | Değişkenler | Grafik | `ggplot2` |
-|----|----|----|----|
+|------------------|------------------|------------------|------------------|
 | Değerler nasıl dağılıyor? | 1 sayısal | Histogram, yoğunluk | `geom_histogram()`, `geom_density()` |
 | Kategoriler ne sıklıkta görülüyor? | 1 kategorik | Çubuk | `geom_bar()` (ham veri), `geom_col()` (hazır sayı) |
 | İki değişken birlikte nasıl değişiyor? | 2 sayısal | Dağılım | `geom_point()`; çok gözlemde `alpha` veya `geom_jitter()` |
