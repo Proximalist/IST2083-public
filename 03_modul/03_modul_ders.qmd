@@ -95,7 +95,7 @@ Bir özet istatistik, veriyi **tek bir sayıya** sıkıştırır ve bu sıkışt
 
 Anscombe dörtlüsü grafiğin **istatistiksel** gücünü gösterir: aynı sayılar, farklı gerçekler saklayabilir. Grafiğin bir de **anlatısal** gücü vardır ve bunun en çok anılan örneği mühendis Charles Joseph Minard'ın 1869'da çizdiği, Napolyon'un 1812 Rusya seferini anlatan haritasıdır. İstatistikçi Edward Tufte bu haritayı "bugüne kadar çizilmiş en iyi istatistiksel grafik" olarak tanımlar.
 
-Minard'ın orijinal haritasını taşıyan bant, tek bir çizgide **altı değişkeni** birleştirir: ordunun coğrafi konumu (boylam-enlem), asker sayısı (bandın kalınlığı), yön (gidiş/dönüş, renk), zaman (şehir ve tarih etiketleri) ve — ayrı bir panelde — sıcaklık. Haritayı bizzat yeniden üretmeyeceğiz (1869 tarihli bir sanat eserinin taranmış görüntüsünü basmak yerine, altındaki veriyi kullanıp **kendi** grafiğimizi çizeceğiz); ama bu verinin dijitalleştirilmiş hâli (Wilkinson, *The Grammar of Graphics*'in ekleri için, doksanlarda) herkese açıktır ve bu tür bir grafiği ggplot2'de üretmenin kendisi literatürde "Minard'ın Meydan Okuması" (Friendly, 2002) diye anılan klasik bir alıştırmadır:
+Minard'ın orijinal haritasını taşıyan bant, tek bir çizgide **altı değişkeni** birleştirir: ordunun coğrafi konumu (boylam-enlem), asker sayısı (bandın kalınlığı), yön (gidiş/dönüş, renk), zaman (şehir ve tarih etiketleri) ve — ayrı bir panelde — sıcaklık. Haritayı bizzat yeniden üretmeyeceğiz (1869 tarihli bir sanat eserinin taranmış görüntüsünü basmak yerine, altındaki veriyi kullanıp **kendi** grafiğimizi çizeceğiz); ama bu verinin dijitalleştirilmiş hâli (Wilkinson, *The Grammar of Graphics*) herkese açıktır ve bu tür bir grafiği ggplot2'de üretmenin kendisi literatürde "Minard'ın Meydan Okuması" (Friendly, 2002) diye anılan klasik bir alıştırmadır:
 
 ```{r}
 #| fig-height: 5.4
@@ -642,7 +642,7 @@ gapminder |>
 
 ## 9.1 Log ölçeği
 
-2.  bölümdeki gelir–yaşam beklentisi grafiğine dönelim. Noktaların çoğu grafiğin sol kenarına sıkışmıştı. Nedeni kişi başı gelirin dağılımıdır:
+İkinci bölümdeki gelir–yaşam beklentisi grafiğine dönelim. Noktaların çoğu grafiğin sol kenarına sıkışmıştı. Nedeni kişi başı gelirin dağılımıdır:
 
 ```{r}
 #| fig-height: 2.8

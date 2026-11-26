@@ -26,33 +26,33 @@ library(ggplot2)
 
 Sayısal değişkenlerden bahsettiğimizde, aslında rastgele bir olayın sayısal bir özetini ifade eden bir **rastgele değişkenden** söz ederiz.
 
--   **Kesikli Rastgele Değişken:** Sayılabilir sayıda sonuca sahip bir rastgele değişkendir.
+- **Kesikli Rastgele Değişken:** Sayılabilir sayıda sonuca sahip bir rastgele değişkendir.
 
--   **Sürekli Rastgele Değişken:** Sayılamayacak kadar çok (sonsuz) sonuca sahip bir rastgele değişkendir.
+- **Sürekli Rastgele Değişken:** Sayılamayacak kadar çok (sonsuz) sonuca sahip bir rastgele değişkendir.
 
 ------------------------------------------------------------------------
 
 #### **Kesikli Rastgele Değişken Örnekleri**
 
--   Bir ailedeki çocuk sayısı,
+- Bir ailedeki çocuk sayısı,
 
--   Sinemada bir Cuma gecesi seyirci sayısı,
+- Sinemada bir Cuma gecesi seyirci sayısı,
 
--   Bir doktor muayenehanesindeki hasta sayısı,
+- Bir doktor muayenehanesindeki hasta sayısı,
 
--   Onluk bir kutuda bulunan hatalı ampul sayısı.
+- Onluk bir kutuda bulunan hatalı ampul sayısı.
 
 #### **Sürekli Rastgele Değişken Örnekleri**
 
--   Kütle,
+- Kütle,
 
--   Sıcaklık,
+- Sıcaklık,
 
--   Enerji,
+- Enerji,
 
--   Hız,
+- Hız,
 
--   Uzunluk vb.
+- Uzunluk vb.
 
 ### **Olasılık Dağılımı (Probability Distribution)**
 
@@ -60,11 +60,11 @@ Bir **olasılık dağılımı**, rastgele bir değişkenin alabileceği tüm ola
 
 1.  **Kesikli Rastgele Değişkenler İçin:**
 
-    -   Kesikli değişkenlerde olasılık dağılımı, her bir sonucun belirli bir olasılığa sahip olduğu bir liste ya da tablo şeklinde ifade edilir. Bu tür dağılımlar **olasılık kütle fonksiyonu (Probability Mass Function, PMF)** ile tanımlanır.
+    - Kesikli değişkenlerde olasılık dağılımı, her bir sonucun belirli bir olasılığa sahip olduğu bir liste ya da tablo şeklinde ifade edilir. Bu tür dağılımlar **olasılık kütle fonksiyonu (Probability Mass Function, PMF)** ile tanımlanır.
 
 2.  **Sürekli Rastgele Değişkenler İçin:**
 
-    -   Sürekli değişkenlerde olasılık dağılımı, rastgele değişkenin belirli bir aralıktaki değerleri almasının olasılığını gösterir. Sürekli dağılımlar **olasılık yoğunluk fonksiyonu (Probability Density Function, PDF)** ile ifade edilir ve toplam olasılık 1'e eşittir.
+    - Sürekli değişkenlerde olasılık dağılımı, rastgele değişkenin belirli bir aralıktaki değerleri almasının olasılığını gösterir. Sürekli dağılımlar **olasılık yoğunluk fonksiyonu (Probability Density Function, PDF)** ile ifade edilir ve toplam olasılık 1'e eşittir.
 
 ![](images/olasilik1.png)
 
@@ -75,12 +75,12 @@ Bir **olasılık dağılımı**, rastgele bir değişkenin alabileceği tüm ola
 Bir madeni paranın iki kez atılması durumunda, yazıların sayısını ifade eden rastgele değişkeni X olarak tanımlayalım. Olasılık dağılımı şu şekilde ifade edilebilir:
 
 | $X$ (Yazı Sayısı) | $P(X)$ (Olasılık) |
-|:-------------------|:-------------------|
-| 0 (Hiç yazı yok)    | $P(X=0)=0.25$       |
-| 1 (Bir yazı)        | $P(X=1)=0.50$       |
-| 2 (İki yazı)        | $P(X=2)=0.25$       |
+|:------------------|:------------------|
+| 0 (Hiç yazı yok)  | $P(X=0)=0.25$     |
+| 1 (Bir yazı)      | $P(X=1)=0.50$     |
+| 2 (İki yazı)      | $P(X=2)=0.25$     |
 
--   **Açıklama:** X'in alabileceği değerler 0,1,2'dir ve bu değerlerin gerçekleşme olasılıklarının toplamı 1'e eşittir.
+- **Açıklama:** X'in alabileceği değerler 0,1,2'dir ve bu değerlerin gerçekleşme olasılıklarının toplamı 1'e eşittir.
 
 ------------------------------------------------------------------------
 
@@ -94,7 +94,7 @@ $$
 
 Bu PDF'yi kullanarak belirli bir hız aralığındaki olasılığı hesaplayabiliriz:
 
--   Örneğin, aracın hızının 60 ile 80 km/s arasında olma olasılığı:
+- Örneğin, aracın hızının 60 ile 80 km/s arasında olma olasılığı:
 
 $$
 P(60 \leq X \leq 80) = \int_{60}^{80} \frac{1}{120} \, dx = \frac{80 - 60}{120} = \frac{20}{120} = 0.167
@@ -106,7 +106,7 @@ $$
 
 1.  **Kesikli Dağılımlar:**
 
-    -   **Binom Dağılımı:** Örneğin, bir ürünü üreten makinenin belirli bir üretim partisindeki kusurlu ürün sayısını modellemek.
+    - **Binom Dağılımı:** Örneğin, bir ürünü üreten makinenin belirli bir üretim partisindeki kusurlu ürün sayısını modellemek.
 
 ```{r}
 #| label: fig-binom
@@ -136,7 +136,7 @@ ggplot(data.frame(k = 0:n_deneme, p = olasiliklar_binom), aes(k, p)) +
 
 **Basitçe söylemek gerekirse:** Bir deneyi belirli sayıda tekrarlıyorsanız ve her denemenin yalnızca iki olası sonucu varsa (örneğin, başarılı/başarısız), binom dağılımını kullanabilirsiniz.
 
--   **Poisson Dağılımı:** Belirli bir zamanda bir mağazaya gelen müşteri sayısını modellemek.
+- **Poisson Dağılımı:** Belirli bir zamanda bir mağazaya gelen müşteri sayısını modellemek.
 
 ```{r}
 #| label: fig-poisson
@@ -157,15 +157,7 @@ ggplot(data.frame(k = k_poisson, p = olasiliklar_poisson), aes(k, p)) +
 ::: callout-note
 ## Siyaset biliminde Poisson: Nadir Olaylar (Rare Events)
 
-Poisson dağılımı siyaset bilimi ve uluslararası ilişkilerde en çok
-**nadir olay** modellemesinde kullanılır: bir yılda patlak veren iç
-savaş sayısı, bir ayda gerçekleşen terör saldırısı sayısı veya bir
-yasama döneminde veto edilen yasa sayısı gibi. Bu değişkenler
-**sayılabilir** (0, 1, 2, ...), tam sayıdır ve belirli bir zaman
-aralığında **nadiren** gerçekleşir — tam olarak Poisson'un aradığı
-koşullar. Bu tür olayları açıklayan regresyon modellerine **Poisson
-regresyonu** (ve aşırı yayılım varsa türevi olan **Negatif Binom
-regresyonu**) denir.
+Poisson dağılımı siyaset bilimi ve uluslararası ilişkilerde en çok **nadir olay** modellemesinde kullanılır: bir yılda patlak veren iç savaş sayısı, bir ayda gerçekleşen terör saldırısı sayısı veya bir yasama döneminde veto edilen yasa sayısı gibi. Bu değişkenler **sayılabilir** (0, 1, 2, ...), tam sayıdır ve belirli bir zaman aralığında **nadiren** gerçekleşir — tam olarak Poisson'un aradığı koşullar. Bu tür olayları açıklayan regresyon modellerine **Poisson regresyonu** (ve aşırı yayılım varsa türevi olan **Negatif Binom regresyonu**) denir.
 :::
 
 #### **Poisson Dağılımının Ana Özellikleri:**
@@ -184,7 +176,7 @@ regresyonu**) denir.
 
 **Sürekli Dağılımlar:**
 
--   **Normal Dağılım:** Örneğin, bir popülasyondaki bireylerin boy uzunluklarını modellemek.
+- **Normal Dağılım:** Örneğin, bir popülasyondaki bireylerin boy uzunluklarını modellemek.
 
 ```{r}
 #| label: fig-normal
@@ -200,17 +192,9 @@ ggplot(data.frame(x = c(-4, 4)), aes(x)) +
 ::: callout-warning
 ## Sosyal bilimlerde değişkenler nadiren normal dağılır
 
-Boy, kilo gibi biyolojik ölçümler genellikle normal dağılır. Ancak
-sosyal bilimlerdeki insan davranışları ve kurumlar — gelir dağılımı,
-ülke nüfusları, savaş ölümleri — çoğunlukla **sağa çarpık**tır ve
-normal dağılmaz.
+Boy, kilo gibi biyolojik ölçümler genellikle normal dağılır. Ancak sosyal bilimlerdeki insan davranışları ve kurumlar — gelir dağılımı, ülke nüfusları, savaş ölümleri — çoğunlukla **sağa çarpık**tır ve normal dağılmaz.
 
-Modül 07'de gördüğümüz **Merkezi Limit Teoremi'nin (CLT)** bizim için
-bu kadar önemli olmasının sebebi tam olarak budur: değişkenin kendisi
-normal dağılmasa bile, o değişkenin **örneklem ortalaması** (örneklem
-büyüdükçe) normal dağılıma yakınsar. Hipotez testi ve güven aralığı
-hesaplarının çoğu, tekil gözlemin değil, bu örneklem ortalamasının
-normalliğine dayanır.
+Modül 07'de gördüğümüz **Merkezi Limit Teoremi'nin (CLT)** bizim için bu kadar önemli olmasının sebebi tam olarak budur: değişkenin kendisi normal dağılmasa bile, o değişkenin **örneklem ortalaması** (örneklem büyüdükçe) normal dağılıma yakınsar. Hipotez testi ve güven aralığı hesaplarının çoğu, tekil gözlemin değil, bu örneklem ortalamasının normalliğine dayanır.
 :::
 
 #### **Normal Dağılımın Ana Özellikleri:**
@@ -223,7 +207,7 @@ normalliğine dayanır.
 
 **Basitçe ifade etmek gerekirse:** Bir şeyi ölçüyorsanız ve sonuçlar simetrik bir çan eğrisi oluşturuyorsa normal dağılımı kullanabilirsiniz. Bu genellikle boy, kilo, sınav notları gibi sürekli ve merkezi bir değerin etrafında değişen veriler için geçerlidir.
 
--   **Üstel Dağılım:** Belirli bir cihazın arızalanma süresini modellemek.
+- **Üstel Dağılım:** Belirli bir cihazın arızalanma süresini modellemek.
 
 ```{r}
 #| label: fig-ustel
@@ -256,45 +240,45 @@ ggplot(data.frame(x = c(0, 4)), aes(x)) +
 
 ### **Kullanım Farklılıkları**
 
--   **Binom Dağılımı:**
+- **Binom Dağılımı:**
 
-    -   Kesikli sonuçlara ve sabit sayıda denemeye sahiptir.
+  - Kesikli sonuçlara ve sabit sayıda denemeye sahiptir.
 
-    -   Her denemenin iki olası sonucu vardır (örneğin, evet/hayır, geçme/kalma).
+  - Her denemenin iki olası sonucu vardır (örneğin, evet/hayır, geçme/kalma).
 
-    -   Örneğin, bir seçimde evet oyu verenlerin sayısı veya 10 üründen kaçının kusurlu olduğu gibi durumlarda kullanılır.
+  - Örneğin, bir seçimde evet oyu verenlerin sayısı veya 10 üründen kaçının kusurlu olduğu gibi durumlarda kullanılır.
 
--   **Normal Dağılım:**
+- **Normal Dağılım:**
 
-    -   Sürekli verilere uygulanır ve genellikle ortalama çevresinde kümelenir.
+  - Sürekli verilere uygulanır ve genellikle ortalama çevresinde kümelenir.
 
-    -   Boy, kilo veya test skorları gibi ölçümlerde sıklıkla kullanılır.
+  - Boy, kilo veya test skorları gibi ölçümlerde sıklıkla kullanılır.
 
-    -   İstatistiksel çıkarımlar için matematiksel özelliklerinden dolayı oldukça kullanışlıdır.
+  - İstatistiksel çıkarımlar için matematiksel özelliklerinden dolayı oldukça kullanışlıdır.
 
--   **Poisson Dağılımı:**
+- **Poisson Dağılımı:**
 
-    -   Kesikli bir dağılımdır.
+  - Kesikli bir dağılımdır.
 
-    -   Belirli bir zaman veya mekân aralığında gerçekleşen olayların sayısını modellemek için kullanılır.
+  - Belirli bir zaman veya mekân aralığında gerçekleşen olayların sayısını modellemek için kullanılır.
 
-    -   Örneğin, bir kütüphanede bir saatte alınan ödünç kitap sayısını modellemek.
+  - Örneğin, bir kütüphanede bir saatte alınan ödünç kitap sayısını modellemek.
 
--   **Üstel Dağılım:**
+- **Üstel Dağılım:**
 
-    -   Sürekli bir dağılımdır.
+  - Sürekli bir dağılımdır.
 
-    -   İki olay arasındaki süreyi modellemek için kullanılır.
+  - İki olay arasındaki süreyi modellemek için kullanılır.
 
-    -   Örneğin, bir mağazaya gelen müşteriler arasında geçen süreyi modellemek.
+  - Örneğin, bir mağazaya gelen müşteriler arasında geçen süreyi modellemek.
 
 ### **Poisson ve Üstel Dağılımın İlişkisi**
 
 Poisson ve üstel dağılımlar birbirine bağlıdır:
 
--   **Poisson dağılımı, belirli bir süre içindeki olayların sayısını modellemek için kullanılırken;**
+- **Poisson dağılımı, belirli bir süre içindeki olayların sayısını modellemek için kullanılırken;**
 
--   **Üstel dağılım, bu olaylar arasındaki süreyi modellemek için kullanılır.**
+- **Üstel dağılım, bu olaylar arasındaki süreyi modellemek için kullanılır.**
 
 Örneğin, bir çağrı merkezinde bir saatte alınan çağrı sayısını modellemek için Poisson dağılımını, çağrılar arasındaki bekleme süresini modellemek için ise üstel dağılımı kullanabilirsiniz.
 
@@ -326,8 +310,8 @@ R dilinde istatistiksel dağılımlarla çalışırken kullanılan fonksiyonlar�
 
 Bu fonksiyon, dağılımın **yüksekliğini** (olasılık yoğunluğunu) verir.
 
--   **Sürekli dağılımlarda** (örn. `dnorm`): Eğrinin $x$ noktasındaki yüksekliğini verir ($f(x)$). Bu tek başına bir olasılık değeri değildir (sürekli dağılımlarda tek bir noktanın olasılığı 0'dır), ancak eğrinin şeklini çizdirmek için kullanılır.
--   **Kesikli dağılımlarda** (örn. `dbinom`): Olayın tam olarak o değerde gerçekleşme olasılığını verir ($P(X=k)$).
+- **Sürekli dağılımlarda** (örn. `dnorm`): Eğrinin $x$ noktasındaki yüksekliğini verir ($f(x)$). Bu tek başına bir olasılık değeri değildir (sürekli dağılımlarda tek bir noktanın olasılığı 0'dır), ancak eğrinin şeklini çizdirmek için kullanılır.
+- **Kesikli dağılımlarda** (örn. `dbinom`): Olayın tam olarak o değerde gerçekleşme olasılığını verir ($P(X=k)$).
 
 Örnek (Normal Dağılım) — standart normal dağılımın (ortalama=0, ss=1) tam tepe noktasındaki (0 noktası) yüksekliği nedir?
 
@@ -396,10 +380,7 @@ Kırmızı kesik çizgi $x=1$'i temsil ederken, mavi gölgeli alan $P(X\le1)$ k�
 ::: callout-note
 ## İleriye bakış: p-değeri
 
-Bir sonraki modülde göreceğimiz ünlü **p-değeri (p-value)**, aslında
-tam olarak bu `p` fonksiyonunun (örneğin `pt` veya `pnorm`) hesapladığı
-sol veya sağ kuyruk alanıdır — "bulduğum bu sonucun şans eseri olma
-olasılığı nedir?" sorusunun cevabı.
+Bir sonraki modülde göreceğimiz ünlü **p-değeri (p-value)**, aslında tam olarak bu `p` fonksiyonunun (örneğin `pt` veya `pnorm`) hesapladığı sol veya sağ kuyruk alanıdır — "bulduğum bu sonucun şans eseri olma olasılığı nedir?" sorusunun cevabı.
 :::
 
 ------------------------------------------------------------------------
@@ -438,9 +419,7 @@ Kırmızı kesik çizgi x değerinin %95'lik dilime denk geldiği noktayı işar
 ::: callout-note
 ## İleriye bakış: güven aralığı
 
-Makalelerde sıkça gördüğünüz **%95 Güven Aralığı** hesaplamalarında,
-aralığın sınırlarını belirleyen sihirli sayı (1.96) doğrudan bu `q`
-fonksiyonuyla bulunur:
+Makalelerde sıkça gördüğünüz **%95 Güven Aralığı** hesaplamalarında, aralığın sınırlarını belirleyen sihirli sayı (1.96) doğrudan bu `q` fonksiyonuyla bulunur:
 
 ```{r}
 qnorm(0.975)
